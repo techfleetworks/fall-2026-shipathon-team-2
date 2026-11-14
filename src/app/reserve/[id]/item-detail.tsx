@@ -45,6 +45,7 @@ export default function ItemDetail({ id }: { id: string }) {
   const [slotIndex, setSlotIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [code, setCode] = useState<string | null>(null);
+  const [soldOut, setSoldOut] = useState(false);
 
   // Item not found
   if (!item) {
@@ -61,14 +62,46 @@ export default function ItemDetail({ id }: { id: string }) {
   }
 
   const isFree = item.price_cents === 0;
+  // Demo: an item with only 1 left "sells out" while you're deciding. Real
+  // availability is enforced by the backend on reserve (J3).
+  const demoSellsOut = item.quantity_left === 1;
 
   function reserve() {
     setSaving(true);
     // Mock save. Real reserving (via Supabase) is the J3 integration task later.
     setTimeout(() => {
+      if (demoSellsOut) {
+        setSoldOut(true);
+        setSaving(false);
+        return;
+      }
       setCode(makeCode());
       setSaving(false);
     }, 600);
+  }
+
+  // --- Sold-out screen (the last one got taken while deciding) ---
+  if (soldOut) {
+    return (
+      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-6 py-16">
+        <Link href="/reserve" className="text-sm text-muted hover:text-primary">
+          ← Back to browse
+        </Link>
+        <h1 className="font-display text-3xl font-semibold tracking-tight">
+          Just missed it 😔
+        </h1>
+        <p className="text-muted">
+          Sorry — <strong>{item.title}</strong> sold out while you were
+          deciding. Someone grabbed the last one.
+        </p>
+        <Link
+          href="/reserve"
+          className="rounded-full bg-primary px-5 py-3 text-center font-semibold text-primary-foreground transition hover:bg-primary-hover"
+        >
+          Browse other items
+        </Link>
+      </main>
+    );
   }
 
   // --- Confirmation screen (after reserving) ---

@@ -29,6 +29,9 @@ export default function ReserveList() {
   const [category, setCategory] = useState<"all" | Category>("all");
   const [price, setPrice] = useState<(typeof PRICE_FILTERS)[number]>("all");
   const [tags, setTags] = useState<string[]>([]);
+  // Mock verification state. Real verified status comes from the user's profile
+  // later (Flow 2 / backend). For now a demo toggle stands in.
+  const [verified, setVerified] = useState(false);
 
   function toggleTag(tag: string) {
     setTags((cur) =>
@@ -56,10 +59,44 @@ export default function ReserveList() {
           ? l.price_cents === 0
           : l.price_cents > 0,
     )
-    .filter((l) => tags.every((t) => l.dietary_tags.includes(t)));
+    .filter((l) => tags.every((t) => l.dietary_tags.includes(t)))
+    // Unverified members don't see free items (they need to verify first).
+    .filter((l) => verified || l.price_cents > 0);
 
   return (
     <>
+      {/* Verification status (mock for now) */}
+      {verified ? (
+        <div className="flex items-center justify-between gap-2 rounded-2xl border border-accent bg-accent-soft px-4 py-3 text-sm">
+          <span className="font-semibold text-accent">
+            ✓ You&apos;re verified — free items unlocked
+          </span>
+          <button
+            onClick={() => setVerified(false)}
+            className="text-muted underline"
+          >
+            Reset (demo)
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-surface px-4 py-3 text-sm">
+          <span className="text-muted">
+            🔒 Free items are reserved for verified members.
+          </span>
+          <span className="flex items-center gap-4">
+            <Link href="/verify" className="font-semibold text-primary underline">
+              Verify eligibility →
+            </Link>
+            <button
+              onClick={() => setVerified(true)}
+              className="text-muted underline"
+            >
+              Skip (demo)
+            </button>
+          </span>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap gap-2">
