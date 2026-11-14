@@ -75,7 +75,10 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before your first change. Short version:
 
 ## Team
 
-_Add names and roles here._
+| Name | Role | Owns |
+|---|---|---|
+| Sofia | Backend | Supabase: database, sign-in, security rules |
+| Vichea and Sara | Frontend | Screens and Vercel |
 
 ## License
 
