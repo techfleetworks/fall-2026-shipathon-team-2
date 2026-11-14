@@ -6,13 +6,15 @@ Tech Fleet Catalyst Cup Shipathon 2026 · Team 2
 
 ## The problem
 
-Single-income parents are stretched thin by rising grocery prices, while small local food businesses throw away good surplus food every week. This app connects the two: small, independent stores (not big chains) list surplus groceries, and verified low-income single parents reserve them for free or at a discount and pick them up.
+Single-income parents are stretched thin by rising grocery prices, while small local food businesses throw away good surplus food every week. This app connects the two: small, independent stores (not big chains) list surplus groceries, and verified low-income families reserve them for free or at a discount and pick them up.
 
 **Launch area:** Palms, LA County.
 
 ## Who it's for
 
 **Chloe Bennett**, 29, single mom of Leo (5). Hybrid customer success rep living in Palms on one ~$48k income, with under $200 a month to spare. No safety net, handles every errand alone, and feels inflation hardest on essentials.
+
+Chloe is our **design persona**, not the limit of who we serve. We design for the hardest case (one income, a family to feed, no safety net) because if the app works for her, it works for the wider low-income population. The app itself serves **low-income families** broadly, not only single parents.
 
 ## MVP: the core loop
 
