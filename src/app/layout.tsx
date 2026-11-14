@@ -1,17 +1,24 @@
 import type { Metadata } from "next";
-import { Fraunces, Nunito_Sans } from "next/font/google";
+import { Lora, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Display font for headings — warm, friendly serif (not a generic default).
-const fraunces = Fraunces({
+// Display font for headings — warm, friendly serif (per DESIGN.md).
+const lora = Lora({
   variable: "--font-display",
   subsets: ["latin"],
   display: "swap",
 });
 
-// Body font — rounded, highly readable, warm.
-const nunitoSans = Nunito_Sans({
+// UI & body font — clean, friendly humanist sans.
+const jakarta = Plus_Jakarta_Sans({
   variable: "--font-body",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Monospace for prices, distances and pickup times (tabular alignment).
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -29,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${nunitoSans.variable} h-full antialiased`}
+      className={`${lora.variable} ${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

@@ -177,10 +177,10 @@ export default function ItemDetail({ id }: { id: string }) {
           </span>
         ) : (
           <>
-            <span className="text-2xl font-semibold text-price">
+            <span className="font-mono text-2xl font-semibold text-price">
               {formatPrice(item.price_cents)}
             </span>
-            <span className="text-muted line-through">
+            <span className="font-mono text-muted line-through">
               {formatPrice(item.original_price_cents)}
             </span>
           </>
@@ -207,10 +207,10 @@ export default function ItemDetail({ id }: { id: string }) {
             <button
               key={slot.start}
               onClick={() => setSlotIndex(i)}
-              className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+              className={`min-h-[48px] rounded-lg border px-4 font-mono text-sm font-medium transition ${
                 slotIndex === i
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border text-muted hover:border-primary"
+                  ? "border-pickup bg-pickup text-pickup-foreground"
+                  : "border-border text-muted hover:border-pickup"
               }`}
             >
               {formatTimeRange(slot.start, slot.end)}
@@ -223,7 +223,7 @@ export default function ItemDetail({ id }: { id: string }) {
       <button
         onClick={reserve}
         disabled={slotIndex === null || saving}
-        className="rounded-full bg-primary px-5 py-3 text-center font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+        className="min-h-[48px] rounded-xl bg-primary px-5 py-3 text-center font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
       >
         {saving
           ? "Reserving…"
@@ -233,11 +233,10 @@ export default function ItemDetail({ id }: { id: string }) {
               ? "Reserve (Free)"
               : `Reserve for ${formatPrice(item.price_cents)}`}
       </button>
-      {!isFree && (
-        <p className="text-center text-sm text-muted">
-          You&apos;ll pay at the store when you pick up.
-        </p>
-      )}
+      <p className="text-center text-sm text-muted">
+        {!isFree && "You'll pay at the store when you pick up. "}
+        Free cancellation up to 5 minutes after reserving.
+      </p>
     </main>
   );
 }

@@ -1,49 +1,55 @@
 @import "tailwindcss";
 
+/* Sunlit Neighborhood Market theme v2 */
+
 /* ---------------------------------------------------------------
-   Design tokens — the ONE place our colors live.
-   To re-skin the whole app (e.g. to match a hi-fi design later),
-   change the values here and every screen updates automatically.
+   Design tokens — "Sunlit Neighborhood Market" (see DESIGN.md).
+   Change values here to re-skin the whole app.
    --------------------------------------------------------------- */
 :root {
-  --background: #fbf5ec;        /* warm cream page background */
-  --surface: #ffffff;          /* cards, raised areas */
-  --foreground: #2b2018;       /* warm near-black text */
-  --muted: #8a7c6d;            /* secondary text */
-  --border: #ece1d3;           /* soft warm borders */
+  --background: #fbf8f3;   /* warm oat / sunlit paper */
+  --surface: #ffffff;      /* cards */
+  --foreground: #1c1917;   /* warm charcoal ink */
+  --muted: #57534e;        /* stone (secondary ink) */
+  --border: #e6dfd5;       /* warm card border */
 
-  --primary: #c85a2b;          /* terracotta — buttons & highlights */
-  --primary-hover: #ac4a20;
+  --primary: #1e4d3b;          /* deep avocado / forest — all CTAs */
+  --primary-hover: #163a2d;
   --primary-foreground: #ffffff;
 
-  --accent: #2e6a41;           /* fresh green — "Free" tag text */
-  --accent-soft: #e4f0e4;      /* "Free" tag background */
+  --pickup: #d95d39;           /* LA terracotta — pickup times ONLY */
+  --pickup-foreground: #ffffff;
 
-  --price: #8a531a;            /* price tag text */
-  --price-soft: #f8e7cc;       /* price tag background */
+  --accent: #1e4d3b;           /* "Free" tag text (green family) */
+  --accent-soft: #e7efe9;      /* "Free" tag background */
+
+  --price: #1c1917;            /* price text (bold, tabular) */
+  --price-soft: #f4efe6;       /* soft sand price pill */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1b1611;
-    --surface: #251d16;
-    --foreground: #f2e9dd;
-    --muted: #a4947f;
-    --border: #392f25;
+    --background: #1b1714;
+    --surface: #262019;
+    --foreground: #f3ece2;
+    --muted: #a79e92;
+    --border: #3a322a;
 
-    --primary: #d9743f;
-    --primary-hover: #e58a57;
-    --primary-foreground: #231308;
+    --primary: #4c9a78;
+    --primary-hover: #5aa988;
+    --primary-foreground: #0f2019;
 
-    --accent: #8fd2a3;
-    --accent-soft: #223a2b;
+    --pickup: #e8754f;
+    --pickup-foreground: #201008;
 
-    --price: #e9b574;
-    --price-soft: #3a2c18;
+    --accent: #9fd0b5;
+    --accent-soft: #223a2e;
+
+    --price: #f3ece2;
+    --price-soft: #332b20;
   }
 }
 
-/* Expose the tokens to Tailwind so we can write bg-primary, text-muted, etc. */
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
@@ -53,6 +59,8 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
+  --color-pickup: var(--pickup);
+  --color-pickup-foreground: var(--pickup-foreground);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-price: var(--price);
@@ -60,10 +68,12 @@
 
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px; /* min body size to prevent mobile zoom */
 }

@@ -6,6 +6,7 @@ export type Store = {
   id: string;
   name: string;
   address: string;
+  distance_mi: number; // DEMO ONLY — not in the data contract
 };
 
 export type Category = "produce" | "bakery" | "dairy" | "pantry";
@@ -41,9 +42,9 @@ function dateOnly(daysFromNow: number): string {
 }
 
 export const stores: Store[] = [
-  { id: "s1", name: "Palms Corner Market", address: "3420 Motor Ave, Los Angeles, CA 90034" },
-  { id: "s2", name: "Rose Ave Bakery", address: "220 Rose Ave, Los Angeles, CA 90291" },
-  { id: "s3", name: "Overland Pantry", address: "3715 Overland Ave, Los Angeles, CA 90034" },
+  { id: "s1", name: "Palms Corner Market", address: "3420 Motor Ave, Los Angeles, CA 90034", distance_mi: 0.4 },
+  { id: "s2", name: "Rose Ave Bakery", address: "220 Rose Ave, Los Angeles, CA 90291", distance_mi: 0.8 },
+  { id: "s3", name: "Overland Pantry", address: "3715 Overland Ave, Los Angeles, CA 90034", distance_mi: 1.1 },
 ];
 
 export const listings: Listing[] = [
