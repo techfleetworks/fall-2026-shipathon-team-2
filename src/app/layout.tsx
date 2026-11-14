@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
+import { AccountBar, AccountBarPlaceholder } from "@/components/account-bar";
 import "./globals.css";
 import { AppStoreProvider } from "@/lib/store";
 
@@ -25,6 +27,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
+        <Suspense fallback={<AccountBarPlaceholder />}>
+          <AccountBar />
+        </Suspense>
         <AppStoreProvider>{children}</AppStoreProvider>
       </body>
     </html>

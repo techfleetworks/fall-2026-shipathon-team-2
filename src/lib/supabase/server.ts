@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 
 // Supabase client for Server Components, Server Functions and Route Handlers.
 // Runs on the server. Create a new one per request; don't share it.
@@ -7,6 +8,10 @@ import { cookies } from "next/headers";
 // Note: this project has Cache Components enabled. A page that calls this
 // reads cookies, so wrap the part that uses it in <Suspense>.
 export async function createClient() {
+  // Supabase checks the current time (to see if a session expired), which
+  // Next.js won't allow while prerendering. This makes everything after it
+  // wait for a real request.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient(
