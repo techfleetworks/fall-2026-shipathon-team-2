@@ -1,26 +1,79 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Sunlit Neighborhood Market theme v2 */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ---------------------------------------------------------------
+   Design tokens — "Sunlit Neighborhood Market" (see DESIGN.md).
+   Change values here to re-skin the whole app.
+   --------------------------------------------------------------- */
+:root {
+  --background: #fbf8f3;   /* warm oat / sunlit paper */
+  --surface: #ffffff;      /* cards */
+  --foreground: #1c1917;   /* warm charcoal ink */
+  --muted: #57534e;        /* stone (secondary ink) */
+  --border: #e6dfd5;       /* warm card border */
+
+  --primary: #1e4d3b;          /* deep avocado / forest — all CTAs */
+  --primary-hover: #163a2d;
+  --primary-foreground: #ffffff;
+
+  --pickup: #d95d39;           /* LA terracotta — pickup times ONLY */
+  --pickup-foreground: #ffffff;
+
+  --accent: #1e4d3b;           /* "Free" tag text (green family) */
+  --accent-soft: #e7efe9;      /* "Free" tag background */
+
+  --price: #1c1917;            /* price text (bold, tabular) */
+  --price-soft: #f4efe6;       /* soft sand price pill */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1b1714;
+    --surface: #262019;
+    --foreground: #f3ece2;
+    --muted: #a79e92;
+    --border: #3a322a;
+
+    --primary: #4c9a78;
+    --primary-hover: #5aa988;
+    --primary-foreground: #0f2019;
+
+    --pickup: #e8754f;
+    --pickup-foreground: #201008;
+
+    --accent: #9fd0b5;
+    --accent-soft: #223a2e;
+
+    --price: #f3ece2;
+    --price-soft: #332b20;
   }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-pickup: var(--pickup);
+  --color-pickup-foreground: var(--pickup-foreground);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-price: var(--price);
+  --color-price-soft: var(--price-soft);
+
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px; /* min body size to prevent mobile zoom */
 }

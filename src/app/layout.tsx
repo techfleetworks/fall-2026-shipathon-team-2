@@ -1,31 +1,42 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lora, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Display font for headings — warm, friendly serif (per DESIGN.md).
+const lora = Lora({
+  variable: "--font-display",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// UI & body font — clean, friendly humanist sans.
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-body",
   subsets: ["latin"],
+  display: "swap",
+});
+
+// Monospace for prices, distances and pickup times (tabular alignment).
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Shipathon Team 2",
-    template: "%s · Shipathon Team 2",
+    default: "Plenty · Shipathon Team 2",
+    template: "%s · Plenty",
   },
   description:
-    "Surplus groceries from small local stores for single-parent families in Palms, LA County.",
+    "Surplus groceries from small local stores for low-income families in LA County.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${lora.variable} ${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

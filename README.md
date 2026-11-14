@@ -4,6 +4,8 @@
 
 Tech Fleet Catalyst Cup Shipathon 2026 · Team 2
 
+**Live demo:** https://fall-2026-shipathon-team-2.vercel.app
+
 ## The problem
 
 Single-income parents are stretched thin by rising grocery prices, while small local food businesses throw away good surplus food every week. This app connects the two: small, independent stores (not big chains) list surplus groceries, and verified low-income single parents reserve them for free or at a discount and pick them up.

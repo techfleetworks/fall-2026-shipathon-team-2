@@ -24,16 +24,22 @@ const flows = [
 export default function Home() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-10 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <p className="text-sm font-medium uppercase tracking-wide text-zinc-500">
-          Shipathon Team 2 · Palms, LA County
+      <header className="flex flex-col gap-4">
+        {/* Wordmark — placeholder name, easy to change */}
+        <div className="flex items-center gap-2">
+          <span className="font-display text-2xl font-semibold tracking-tight text-primary">
+            Plenty
+          </span>
+        </div>
+        <p className="text-sm font-medium uppercase tracking-wide text-muted">
+          LA County
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight">
+        <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
           Good food from local stores, for families who need it
         </h1>
-        <p className="text-lg text-zinc-600 dark:text-zinc-400">
-          Small neighborhood stores list surplus groceries. Single parents
-          reserve them free or discounted and pick them up.
+        <p className="text-lg text-muted">
+          Small neighborhood stores list surplus groceries. Families on a
+          limited income reserve them free or discounted and pick them up.
         </p>
       </header>
 
@@ -42,16 +48,16 @@ export default function Home() {
           <Link
             key={flow.href}
             href={flow.href}
-            className="flex items-start gap-4 rounded-lg border border-zinc-200 p-5 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
+            className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-primary"
           >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-sm font-semibold text-white dark:bg-zinc-100 dark:text-zinc-900">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
               {flow.step}
             </span>
             <span className="flex flex-col gap-1">
-              <span className="font-medium">{flow.title}</span>
-              <span className="text-zinc-600 dark:text-zinc-400">
-                {flow.description}
+              <span className="font-display text-lg font-semibold">
+                {flow.title}
               </span>
+              <span className="text-muted">{flow.description}</span>
             </span>
           </Link>
         ))}
