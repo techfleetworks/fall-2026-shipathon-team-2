@@ -38,7 +38,7 @@ Nice-to-have if time allows: business-side flows (posting surplus).
 
 ## Run it locally
 
-You need [Node.js](https://nodejs.org) 20 or newer.
+You need [Node.js](https://nodejs.org) 22 or newer (required by the Supabase libraries). Check with `node --version`.
 
 ```bash
 git clone https://github.com/techfleetworks/fall-2026-shipathon-team-2.git
