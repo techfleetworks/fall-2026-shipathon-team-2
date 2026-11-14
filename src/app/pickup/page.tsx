@@ -12,8 +12,8 @@ export default function Page() {
       <Link href="/" className="text-sm text-zinc-500 hover:underline">
         ← Home
       </Link>
-      <p className="text-sm font-medium uppercase tracking-wide text-zinc-500">
-        Flow 3
+      <p className="text-sm font-medium uppercase tracking-wide text-muted">
+        Step 3 of 3
       </p>
       <h1 className="text-3xl font-semibold">Pick up</h1>
       <p className="text-lg text-zinc-600 dark:text-zinc-400">
