@@ -1,6 +1,6 @@
 # Contributing
 
-Two developers share this repo with a hard deadline, so these few rules keep us from overwriting each other's work.
+Three developers (Sofia Aguilar, Vichea Tephang and Sara) share this repo with a hard deadline, so these few rules keep us from overwriting each other's work.
 
 ## The workflow
 
@@ -25,7 +25,7 @@ Two developers share this repo with a hard deadline, so these few rules keep us 
 ## Rules
 
 - **Never push straight to `main`.** `main` is what gets deployed to Vercel.
-- **Split work by flow** so you rarely edit the same files: one person owns `/reserve`, the other owns `/verify` and `/pickup`. Shared pieces (layout, components in `src/components/`) need a heads-up in the team chat.
+- **Split work by layer** so we rarely edit the same files. Frontend (Vichea and Sara) owns all screens: `src/app/` and `src/components/`, plus Vercel. Backend (Sofia) owns Supabase (tables, sign-in, security rules, any SQL in `supabase/`) and the connection code in `src/lib/supabase/`. The data contract (table and field names) is shared: change it only after telling the rest of the team in the team chat.
 - **Pull `main` into your branch daily** (`git pull origin main`) so conflicts stay small.
 - **Never commit keys.** Real values go in `.env.local`, which git ignores. If you add a new variable, add a placeholder to `.env.example`.
 - **Run `npm run lint` and `npm run build` before opening a pull request.** If the build fails, Vercel will fail too.
