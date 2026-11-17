@@ -1,24 +1,12 @@
 import type { Metadata } from "next";
-import { Lora, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-// Display font for headings — warm, friendly serif (per DESIGN.md).
-const lora = Lora({
-  variable: "--font-display",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-// UI & body font — clean, friendly humanist sans.
-const jakarta = Plus_Jakarta_Sans({
+// One sans family for the whole app. On Apple devices the CSS stack prefers the
+// native system font (SF Pro); Inter is the look-alike webfont for everywhere else.
+// See DESIGN.md.
+const inter = Inter({
   variable: "--font-body",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-// Monospace for prices, distances and pickup times (tabular alignment).
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -34,10 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${lora.variable} ${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

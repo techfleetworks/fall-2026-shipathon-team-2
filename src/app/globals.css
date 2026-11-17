@@ -1,52 +1,61 @@
 @import "tailwindcss";
 
-/* Sunlit Neighborhood Market theme v2 */
+/* Green & Purple theme (see DESIGN.md) */
 
 /* ---------------------------------------------------------------
-   Design tokens — "Sunlit Neighborhood Market" (see DESIGN.md).
-   Change values here to re-skin the whole app.
+   Design tokens — "Green & Purple" marketplace (see DESIGN.md).
+   Semantic names stay stable; change values here to re-skin the app.
+   Brand hex confirmed by the team.
    --------------------------------------------------------------- */
 :root {
-  --background: #fbf8f3;   /* warm oat / sunlit paper */
-  --surface: #ffffff;      /* cards */
-  --foreground: #1c1917;   /* warm charcoal ink */
-  --muted: #57534e;        /* stone (secondary ink) */
-  --border: #e6dfd5;       /* warm card border */
+  --background: #f4f1e9;   /* warm cream canvas */
+  --surface: #ffffff;      /* cards (pop against the cream) */
+  --foreground: #1a1a1a;   /* ink */
+  --muted: #6b7280;        /* secondary ink */
+  --border: #e5e7eb;       /* card + chip borders */
 
-  --primary: #1e4d3b;          /* deep avocado / forest — all CTAs */
-  --primary-hover: #163a2d;
+  --primary: #1c8057;          /* brand green — CTAs, active tab/nav */
+  --primary-hover: #155e40;    /* deep green — hover/pressed, discount badge */
   --primary-foreground: #ffffff;
+  --primary-soft: #d7ebd2;     /* light green tint — active nav pill, map, Free bg */
 
-  --pickup: #d95d39;           /* LA terracotta — pickup times ONLY */
+  --savings: #5d2e77;          /* purple — "Save $X", Filter, secondary accent */
+  --savings-soft: #efe9f3;
+
+  --pickup: #1c8057;           /* pickup times / selected time slot (brand green) */
   --pickup-foreground: #ffffff;
 
-  --accent: #1e4d3b;           /* "Free" tag text (green family) */
-  --accent-soft: #e7efe9;      /* "Free" tag background */
+  --accent: #1c8057;           /* "Free" tag text (green family) */
+  --accent-soft: #d7ebd2;      /* "Free" tag background (light green tint) */
 
-  --price: #1c1917;            /* price text (bold, tabular) */
-  --price-soft: #f4efe6;       /* soft sand price pill */
+  --price: #1a1a1a;            /* price text (bold) */
+  --price-soft: #f4efe6;       /* soft neutral price pill */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1b1714;
-    --surface: #262019;
-    --foreground: #f3ece2;
-    --muted: #a79e92;
-    --border: #3a322a;
+    --background: #14130f;
+    --surface: #1f1d18;
+    --foreground: #f3f1ea;
+    --muted: #a8a29a;
+    --border: #35322c;
 
-    --primary: #4c9a78;
-    --primary-hover: #5aa988;
-    --primary-foreground: #0f2019;
+    --primary: #3fae7f;
+    --primary-hover: #52c08f;
+    --primary-foreground: #0b1f16;
+    --primary-soft: #1f3a2c;
 
-    --pickup: #e8754f;
-    --pickup-foreground: #201008;
+    --savings: #b794d6;
+    --savings-soft: #2e2440;
 
-    --accent: #9fd0b5;
-    --accent-soft: #223a2e;
+    --pickup: #3fae7f;
+    --pickup-foreground: #0b1f16;
 
-    --price: #f3ece2;
-    --price-soft: #332b20;
+    --accent: #9fd8ba;
+    --accent-soft: #1f3a2c;
+
+    --price: #f3f1ea;
+    --price-soft: #2a271f;
   }
 }
 
@@ -59,6 +68,9 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-savings: var(--savings);
+  --color-savings-soft: var(--savings-soft);
   --color-pickup: var(--pickup);
   --color-pickup-foreground: var(--pickup-foreground);
   --color-accent: var(--accent);
@@ -66,14 +78,15 @@
   --color-price: var(--price);
   --color-price-soft: var(--price-soft);
 
-  --font-sans: var(--font-body);
-  --font-display: var(--font-display);
-  --font-mono: var(--font-mono);
+  /* One sans family — SF Pro on Apple, Inter elsewhere (see DESIGN.md). */
+  --font-sans: -apple-system, BlinkMacSystemFont, var(--font-body), system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, var(--font-body), system-ui, sans-serif;
+  --font-mono: -apple-system, BlinkMacSystemFont, var(--font-body), system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, var(--font-body), system-ui, sans-serif;
   font-size: 16px; /* min body size to prevent mobile zoom */
 }
