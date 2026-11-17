@@ -1,26 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useAppStore } from "@/lib/store";
 
-// Favorite toggle (demo-only local state; real favorites come from the profile later).
+// Favorite toggle, backed by the shared store (favorites are by store).
 export default function FavoriteButton({
-  label = "Save to favorites",
+  storeId,
   size = 36,
 }: {
-  label?: string;
+  storeId: string;
   size?: number;
 }) {
-  const [on, setOn] = useState(false);
+  const { isFavorite, toggleFavorite } = useAppStore();
+  const on = isFavorite(storeId);
   return (
     <button
       type="button"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        setOn((v) => !v);
+        toggleFavorite(storeId);
       }}
       aria-pressed={on}
-      aria-label={label}
+      aria-label={on ? "Remove from favorites" : "Save to favorites"}
       style={{ width: size, height: size }}
       className="flex shrink-0 items-center justify-center rounded-full border border-border bg-surface text-muted transition-colors hover:border-primary"
     >

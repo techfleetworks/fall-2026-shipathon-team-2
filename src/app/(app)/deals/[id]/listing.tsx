@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { getListing, getStore, saveDollars } from "@/lib/fake-data";
 import { formatDollars } from "@/lib/format";
 import FavoriteButton from "@/components/favorite-button";
+import { useAppStore } from "@/lib/store";
 
 function clock(iso: string): string {
   return new Date(iso)
@@ -22,6 +23,7 @@ function makeCode(): string {
 export default function Listing({ id }: { id: string }) {
   const item = getListing(id);
   const store = item ? getStore(item.store_id) : undefined;
+  const { addReservation } = useAppStore();
 
   const [qty, setQty] = useState(1);
   const [step, setStep] = useState<"detail" | "arrival" | "done">("detail");
@@ -68,7 +70,14 @@ export default function Listing({ id }: { id: string }) {
         setSaving(false);
         return;
       }
-      setCode(makeCode());
+      const newCode = makeCode();
+      setCode(newCode);
+      addReservation({
+        listingId: item!.id,
+        qty,
+        code: newCode,
+        arrivalLabel: times[arrival]?.label ?? item!.pickup_label,
+      });
       setStep("done");
       setSaving(false);
     }, 600);
@@ -176,7 +185,7 @@ export default function Listing({ id }: { id: string }) {
 
       <div className="flex items-center justify-between gap-2">
         <span className="font-semibold text-muted">{store?.name} · {store?.distance_mi} mi</span>
-        <FavoriteButton />
+        <FavoriteButton storeId={item.store_id} />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">

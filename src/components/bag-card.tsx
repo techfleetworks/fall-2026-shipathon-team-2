@@ -44,7 +44,7 @@ export default function BagCard({ listing }: { listing: Listing }) {
           <span className="truncate font-semibold leading-tight">
             {store?.name} · {store?.distance_mi} mi
           </span>
-          <FavoriteButton size={28} />
+          <FavoriteButton storeId={listing.store_id} size={28} />
         </div>
 
         {/* Bag title */}
