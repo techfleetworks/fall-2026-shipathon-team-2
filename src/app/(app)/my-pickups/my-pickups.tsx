@@ -36,7 +36,7 @@ export default function MyPickups() {
                 <p className="font-semibold">{store?.name}</p>
                 <p className="text-sm text-muted">Pick up {l.pickup_label}</p>
                 <p className="text-sm text-muted">
-                  {l.title} · {l.price_cents === 0 ? "Free" : formatDollars(l.price_cents * r.qty)}
+                  {l.title} · {l.price_cents === 0 ? "Free" : formatDollars(l.price_cents * r.quantity)}
                 </p>
               </Link>
             );

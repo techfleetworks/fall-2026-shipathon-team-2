@@ -75,9 +75,9 @@ export default function Listing({ id }: { id: string }) {
       setCode(newCode);
       addReservation({
         listingId: item!.id,
-        qty,
+        quantity: qty,
         code: newCode,
-        arrivalLabel: times[arrival]?.label ?? item!.pickup_label,
+        arrival_at: times[arrival]?.iso ?? item!.pickup_start,
       });
       setStep("done");
       setSaving(false);

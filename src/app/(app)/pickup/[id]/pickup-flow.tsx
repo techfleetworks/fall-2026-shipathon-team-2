@@ -56,8 +56,8 @@ export default function PickupFlow({ id }: { id: string }) {
   }
 
   const free = listing.price_cents === 0;
-  const total = listing.price_cents * reservation.qty;
-  const save = saveDollars(listing) * reservation.qty;
+  const total = listing.price_cents * reservation.quantity;
+  const save = saveDollars(listing) * reservation.quantity;
 
   // P3 · Show code
   if (step === "code") {

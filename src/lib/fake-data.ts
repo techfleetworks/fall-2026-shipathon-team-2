@@ -7,6 +7,7 @@ export type Store = {
   id: string;
   name: string;
   address: string;
+  zip_code: string; // covered-area check (data contract)
   distance_mi: number; // DEMO ONLY — not in the data contract
 };
 
@@ -48,10 +49,10 @@ function dateOnly(daysFromNow: number): string {
 }
 
 export const stores: Store[] = [
-  { id: "s1", name: "Sunrise Bakery", address: "220 Rose Ave, Los Angeles, CA 90291", distance_mi: 0.6 },
-  { id: "s2", name: "Vida Market", address: "3420 Motor Ave, Los Angeles, CA 90034", distance_mi: 1.1 },
-  { id: "s3", name: "Corner Fresh", address: "3715 Overland Ave, Los Angeles, CA 90034", distance_mi: 1.8 },
-  { id: "s4", name: "Palms Pantry", address: "3600 Palms Blvd, Los Angeles, CA 90034", distance_mi: 0.9 },
+  { id: "s1", name: "Sunrise Bakery", address: "220 Rose Ave, Los Angeles, CA 90291", zip_code: "90291", distance_mi: 0.6 },
+  { id: "s2", name: "Vida Market", address: "3420 Motor Ave, Los Angeles, CA 90034", zip_code: "90034", distance_mi: 1.1 },
+  { id: "s3", name: "Corner Fresh", address: "3715 Overland Ave, Los Angeles, CA 90034", zip_code: "90034", distance_mi: 1.8 },
+  { id: "s4", name: "Palms Pantry", address: "3600 Palms Blvd, Los Angeles, CA 90034", zip_code: "90034", distance_mi: 0.9 },
 ];
 
 export const listings: Listing[] = [

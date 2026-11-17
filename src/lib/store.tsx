@@ -9,9 +9,9 @@ import { listings, getListing, saveDollars } from "@/lib/fake-data";
 export type Reservation = {
   id: string;
   listingId: string;
-  qty: number;
+  quantity: number;
   code: string;
-  arrivalLabel: string;
+  arrival_at: string; // ISO; the arrival time the user picked (contract field)
   status: "upcoming" | "picked_up";
 };
 
@@ -31,8 +31,8 @@ type Store = {
 // Seed so the tabs look lived-in on first visit (matches the Figma mockups).
 const SEED_FAVORITES = ["s1", "s2"];
 const SEED_RESERVATIONS: Reservation[] = [
-  { id: "r1", listingId: "b1", qty: 1, code: "PLNTY-4821", arrivalLabel: "3:30 pm", status: "upcoming" },
-  { id: "r0", listingId: "b2", qty: 1, code: "PLNTY-7781", arrivalLabel: "4:00 pm", status: "picked_up" },
+  { id: "r1", listingId: "b1", quantity: 1, code: "PLNTY-4821", arrival_at: "2026-11-17T15:30:00-08:00", status: "upcoming" },
+  { id: "r0", listingId: "b2", quantity: 1, code: "PLNTY-7781", arrival_at: "2026-11-17T16:00:00-08:00", status: "picked_up" },
 ];
 
 const Ctx = createContext<Store | null>(null);
@@ -80,7 +80,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     const pickedUp = reservations.filter((r) => r.status === "picked_up");
     const savedThisMonth = pickedUp.reduce((sum, r) => {
       const l = getListing(r.listingId);
-      return sum + (l ? saveDollars(l) * r.qty : 0);
+      return sum + (l ? saveDollars(l) * r.quantity : 0);
     }, 0);
     return {
       reservations,
