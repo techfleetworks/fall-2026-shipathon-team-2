@@ -6,6 +6,12 @@ export function formatPrice(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+// Whole-dollar display used by the bag flows, e.g. "$6" (drops .00), "$6.50" otherwise.
+export function formatDollars(cents: number): string {
+  const d = cents / 100;
+  return Number.isInteger(d) ? `$${d}` : `$${d.toFixed(2)}`;
+}
+
 function time(d: Date): string {
   return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 }
