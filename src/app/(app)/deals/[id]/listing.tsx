@@ -23,7 +23,7 @@ function makeCode(): string {
 export default function Listing({ id }: { id: string }) {
   const item = getListing(id);
   const store = item ? getStore(item.store_id) : undefined;
-  const { addReservation } = useAppStore();
+  const { addReservation, verified } = useAppStore();
 
   const [qty, setQty] = useState(1);
   const [step, setStep] = useState<"detail" | "arrival" | "done">("detail");
@@ -222,7 +222,7 @@ export default function Listing({ id }: { id: string }) {
         </div>
       </div>
 
-      {free ? (
+      {free && !verified ? (
         <Link href="/welcome" className="min-h-[52px] rounded-full bg-primary px-5 py-3.5 text-center font-semibold text-primary-foreground transition hover:bg-primary-hover">
           Verify to reserve (free)
         </Link>
@@ -232,7 +232,11 @@ export default function Listing({ id }: { id: string }) {
         </button>
       )}
       <p className="text-center text-xs text-muted">
-        {free ? "Free bags are for verified members." : "Pay at the store on pickup. Free cancellation until an hour before."}
+        {free && !verified
+          ? "Free bags are for verified members."
+          : free
+            ? "Free for verified members. Free cancellation until an hour before."
+            : "Pay at the store on pickup. Free cancellation until an hour before."}
       </p>
     </main>
   );

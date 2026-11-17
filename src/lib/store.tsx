@@ -18,6 +18,8 @@ export type Reservation = {
 type Store = {
   reservations: Reservation[];
   favorites: string[]; // store ids
+  verified: boolean;
+  setVerified: (v: boolean) => void;
   addReservation: (r: Omit<Reservation, "id" | "status">) => string;
   markPickedUp: (id: string) => void;
   isFavorite: (storeId: string) => boolean;
@@ -38,17 +40,20 @@ const Ctx = createContext<Store | null>(null);
 export function AppStoreProvider({ children }: { children: React.ReactNode }) {
   const [reservations, setReservations] = useState<Reservation[]>(SEED_RESERVATIONS);
   const [favorites, setFavorites] = useState<string[]>(SEED_FAVORITES);
+  const [verified, setVerified] = useState(false);
 
   // Load persisted state after mount (keeps server/client first render identical).
   useEffect(() => {
     try {
       const r = localStorage.getItem("plenty.reservations");
       const f = localStorage.getItem("plenty.favorites");
+      const v = localStorage.getItem("plenty.verified");
       // Hydration-safe load: first render matches the server seed, then we sync
       // from storage. Intentional one-time setState in effect.
       /* eslint-disable react-hooks/set-state-in-effect */
       if (r) setReservations(JSON.parse(r));
       if (f) setFavorites(JSON.parse(f));
+      if (v) setVerified(JSON.parse(v));
       /* eslint-enable react-hooks/set-state-in-effect */
     } catch {
       /* ignore unavailable storage */
@@ -65,6 +70,11 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("plenty.favorites", JSON.stringify(favorites));
     } catch {}
   }, [favorites]);
+  useEffect(() => {
+    try {
+      localStorage.setItem("plenty.verified", JSON.stringify(verified));
+    } catch {}
+  }, [verified]);
 
   const value = useMemo<Store>(() => {
     const pickedUp = reservations.filter((r) => r.status === "picked_up");
@@ -75,6 +85,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     return {
       reservations,
       favorites,
+      verified,
+      setVerified,
       addReservation: (r) => {
         const id = `r${Date.now()}`;
         setReservations((cur) => [{ ...r, id, status: "upcoming" }, ...cur]);
@@ -92,7 +104,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
       savedThisMonth,
       pickupCount: pickedUp.length,
     };
-  }, [reservations, favorites]);
+  }, [reservations, favorites, verified]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

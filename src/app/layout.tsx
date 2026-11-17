@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { AppStoreProvider } from "@/lib/store";
 
 // One sans family for the whole app. On Apple devices the CSS stack prefers the
 // native system font (SF Pro); Inter is the look-alike webfont for everywhere else.
@@ -23,7 +24,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AppStoreProvider>{children}</AppStoreProvider>
+      </body>
     </html>
   );
 }
