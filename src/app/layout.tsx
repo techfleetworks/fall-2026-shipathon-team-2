@@ -1,33 +1,32 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { AppStoreProvider } from "@/lib/store";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// One sans family for the whole app. On Apple devices the CSS stack prefers the
+// native system font (SF Pro); Inter is the look-alike webfont for everywhere else.
+// See DESIGN.md.
+const inter = Inter({
+  variable: "--font-body",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Shipathon Team 2",
-    template: "%s · Shipathon Team 2",
+    default: "Plenty · Shipathon Team 2",
+    template: "%s · Plenty",
   },
   description:
-    "Surplus groceries from small local stores for single-parent families in Palms, LA County.",
+    "Surplus groceries from small local stores for low-income families in LA County.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col">
+        <AppStoreProvider>{children}</AppStoreProvider>
+      </body>
     </html>
   );
 }
