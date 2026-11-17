@@ -46,7 +46,8 @@ in the badge, not just a green dot).
 ## 3. Typography
 
 **Font (confirmed): the system font stack — SF Pro on Apple devices, Inter everywhere else.**
-Use `-apple-system, system-ui, "Inter", sans-serif`. iPhones/iPads render real SF Pro
+Use `-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif` (Inter must come
+before `system-ui`, or non-Apple devices grab Segoe/Roboto first). iPhones/iPads render real SF Pro
 (matches the mockup, free via the OS); Android/desktop/web render Inter (a near-identical
 look-alike). Load Inter as a webfont for non-Apple platforms. The old serif (Lora) and
 mono (JetBrains) are dropped — one sans family, weights 400/500/600/700.
@@ -161,7 +162,7 @@ mono (JetBrains) are dropped — one sans family, weights 400/500/600/700.
   --color-thumb-bg:      #EDE7DD;
 
   /* Typography — SF Pro on Apple devices, Inter elsewhere */
-  --font-sans: -apple-system, system-ui, "Inter", sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
 
   /* Radii */
   --radius-card:  16px;
