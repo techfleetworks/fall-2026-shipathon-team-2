@@ -213,6 +213,34 @@ begin
 end;
 $$;
 
+-- Manual no-show (MVP): marks a reservation as no_show and puts the bags back
+-- so someone else can reserve them. Not callable by app users; run it from the
+-- Supabase SQL Editor (or later, a store/admin tool):
+--   select public.mark_no_show('<reservation id>');
+create or replace function public.mark_no_show(p_reservation_id uuid)
+returns void
+language plpgsql security definer set search_path = ''
+as $$
+declare
+  v_res public.reservations%rowtype;
+begin
+  select * into v_res from public.reservations where id = p_reservation_id for update;
+  if not found then
+    raise exception 'Reservation not found';
+  end if;
+  if v_res.status <> 'reserved' then
+    raise exception 'Only a reserved order can become a no-show';
+  end if;
+
+  update public.reservations set status = 'no_show' where id = p_reservation_id;
+  update public.listings
+     set quantity_left = quantity_left + v_res.quantity
+   where id = v_res.listing_id;
+end;
+$$;
+
+revoke execute on function public.mark_no_show(uuid) from public, anon, authenticated;
+
 revoke execute on function public.complete_verification(text) from public, anon;
 revoke execute on function public.reserve_listing(uuid, integer, timestamptz) from public, anon;
 grant execute on function public.complete_verification(text) to authenticated;
