@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { getListing, getStore, saveDollars } from "@/lib/fake-data";
 import { formatDollars } from "@/lib/format";
@@ -179,8 +180,12 @@ export default function Listing({ id }: { id: string }) {
 
       <h1 className="text-2xl font-bold tracking-tight">{item.title}</h1>
 
-      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl bg-price-soft text-5xl" aria-hidden>
-        {item.emoji}
+      <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl bg-price-soft">
+        {item.image_key ? (
+          <Image src={`/bags/${item.image_key}`} alt={item.title} fill className="object-contain p-6" />
+        ) : (
+          <span className="text-5xl" aria-hidden>{item.emoji}</span>
+        )}
       </div>
 
       <div className="flex items-center justify-between gap-2">

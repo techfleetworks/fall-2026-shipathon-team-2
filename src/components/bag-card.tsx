@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   type Listing,
   getStore,
@@ -30,12 +31,13 @@ export default function BagCard({ listing }: { listing: Listing }) {
       href={`/deals/${listing.id}`}
       className="flex gap-3 rounded-2xl border border-border bg-surface p-3 shadow-[var(--shadow-card,0_2px_8px_rgba(0,0,0,0.05))] transition-colors hover:border-primary"
     >
-      {/* Thumbnail (placeholder until real photos) */}
-      <div
-        className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-price-soft text-3xl"
-        aria-hidden
-      >
-        {listing.emoji}
+      {/* Thumbnail */}
+      <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-price-soft">
+        {listing.image_key ? (
+          <Image src={`/bags/${listing.image_key}`} alt="" width={80} height={80} className="h-full w-full object-contain p-1.5" />
+        ) : (
+          <span className="text-3xl" aria-hidden>{listing.emoji}</span>
+        )}
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1">

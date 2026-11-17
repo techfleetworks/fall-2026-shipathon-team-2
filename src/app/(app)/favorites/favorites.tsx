@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAppStore, bestListingForStore } from "@/lib/store";
 import { getStore, saveDollars } from "@/lib/fake-data";
 import { formatDollars } from "@/lib/format";
@@ -36,8 +37,12 @@ export default function Favorites() {
                 </div>
                 {best ? (
                   <Link href={`/deals/${best.id}`} className="flex items-center gap-3">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-price-soft text-2xl" aria-hidden>
-                      {best.emoji}
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-price-soft">
+                      {best.image_key ? (
+                        <Image src={`/bags/${best.image_key}`} alt="" width={56} height={56} className="h-full w-full object-contain p-1" />
+                      ) : (
+                        <span className="text-2xl" aria-hidden>{best.emoji}</span>
+                      )}
                     </div>
                     <div className="flex flex-col">
                       <span className="text-xs text-muted">Today&apos;s deal</span>
