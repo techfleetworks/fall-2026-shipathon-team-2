@@ -3,6 +3,14 @@
 Read this before writing any code. Also read `AGENTS.md` (framework gotchas:
 Next.js 16 Cache Components, Tailwind v4, deploy notes).
 
+## Architecture decisions (ADRs)
+
+Read every ADR in `docs/adr` before making changes, and write a new ADR for every
+big decision (hard-to-reverse choices like database, framework, hosting, or a
+major architectural pattern). Use [`docs/adr/TEMPLATE.md`](docs/adr/TEMPLATE.md),
+number files in order, and never erase a past ADR — supersede it with a new one
+and mark the old one "Replaced by ADR-XXXX".
+
 ## Design: DESIGN.md is the source of truth — follow it every time
 
 Before building or changing **any** UI, read [`DESIGN.md`](DESIGN.md) and build to
