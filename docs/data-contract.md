@@ -1,3 +1,8 @@
+> **Status: superseded (Nov 19).** This is the grocery model v1, which is what
+> the code and `supabase/` use today. It is being replaced by
+> [data-contract-v2.md](data-contract-v2.md) (off-peak services), pending team
+> agreement. Do not use v1 for new work.
+
 # Data contract — Plenty (Team 2)
 
 > **Status: v1, updated for Sofia's review (task T1).** The single agreement on

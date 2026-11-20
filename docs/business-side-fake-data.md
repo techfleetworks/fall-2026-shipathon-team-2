@@ -1,3 +1,7 @@
+> **Obsolete (Nov 19).** This describes the grocery model (surplus items from
+> stores), which the team has replaced with off-peak service slots. Kept for
+> history only. See [data-contract-v2.md](data-contract-v2.md).
+
 # Business-side fake data — Plenty (Team 2)
 
 Source: `src/lib/fake-data.ts` (frontend task F3). Field names match

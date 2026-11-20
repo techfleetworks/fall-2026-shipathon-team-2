@@ -1,5 +1,10 @@
 # DESIGN.md — Plenty (Team 2)
 
+> **Direction change (Nov 19):** the vision, persona and flows moved from groceries
+> to off-peak service slots. Palette, type and tokens are unchanged. Screen labels
+> that mention "Deals near Palms", "bag" or "reserve" are old and will be renamed
+> by frontend once the persona vote and [screens-and-flows.md](docs/screens-and-flows.md) are agreed.
+
 > **Status: recreated from the Figma "Deals near Palms" mockup
 > (node 165:310, "Green & Purple"), brand colors and font confirmed by the team.**
 > This replaces the old "Sunlit Neighborhood Market" spec. Type sizes remain

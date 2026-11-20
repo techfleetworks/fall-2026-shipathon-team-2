@@ -6,33 +6,42 @@ Tech Fleet Catalyst Cup Shipathon 2026 · Team 2
 
 **Live demo:** https://fall-2026-shipathon-team-2.vercel.app
 
+> **Direction change (Nov 19):** the app is no longer about groceries. It now
+> books **off-peak time slots** at local service businesses, at a discount.
+> The old grocery docs are kept for history and marked as replaced. See
+> [docs/personas.md](docs/personas.md) for the persona vote.
+
 ## The problem
 
-Single-income parents are stretched thin by rising grocery prices, while small local food businesses throw away good surplus food every week. This app connects the two: small, independent stores (not big chains) list surplus groceries, and verified low-income families reserve them for free or at a discount and pick them up.
+Local service businesses (hair salons, laundromats, car repair, childcare and more) have empty time slots, especially on weekday mornings and afternoons. Those slots earn nothing. Families on a tight budget pay full price for the same services at busy times, or go without.
+
+This app connects the two: local, independent businesses fill their off-peak slots at a discount, and customers book them and pay the business in person.
 
 **Launch area:** Palms, LA County.
 
 ## Who it's for
 
-**Chloe Bennett**, 29, single mom of Leo (5). Hybrid customer success rep living in Palms on one ~$48k income, with under $200 a month to spare. No safety net, handles every errand alone, and feels inflation hardest on essentials.
+The persona is **being chosen by the team**. Three candidates are in [docs/personas.md](docs/personas.md) for a vote.
 
-Chloe is our **design persona**, not the limit of who we serve. We design for the hardest case (one income, a family to feed, no safety net) because if the app works for her, it works for the wider low-income population. The app itself serves **low-income families** broadly, not only single parents.
+Our mission is still **low-income families**. The MVP does not check eligibility (no verification flow), so this is a stated goal, not an enforced rule.
 
 ## MVP: the core loop
 
-Filter → reserve → choose a pickup window → get a code/QR → pick up.
+Find an off-peak slot → book it → get a code → show the code at the business → pay the discounted price there.
 
-Three task flows:
+Two task flows (see [docs/screens-and-flows.md](docs/screens-and-flows.md) for the screens):
 
 | Flow | Route | What it does |
 |---|---|---|
-| 1. Find & reserve | `/reserve` | Browse nearby surplus, reserve items, choose a pickup window |
-| 2. Verify eligibility | `/verify` | Confirm eligibility via SNAP/EBT, Medicaid or other benefit proof. Mocked for the MVP — no image is stored |
-| 3. Pick up | `/pickup` | Show a code/QR at the store to collect the order |
+| 1. Find & book | `/reserve` | Browse off-peak slots by service and time, book one, get a code |
+| 2. My bookings | `/pickup` | Show the booking code at the business |
 
-Rules: free items are for verified users only. Discounted items are paid at the store.
+Rules:
+- Anyone can book. There is no eligibility check in the MVP.
+- Customers pay the business in person, at the discounted price. The app takes no payment.
+- A booking holds the slot until its start time. After that the slot is gone.
 
-Nice-to-have if time allows: business-side flows (posting surplus).
+Nice-to-have if time allows: business-side flows (posting slots).
 
 ## Tech stack
 
@@ -59,10 +68,23 @@ Open http://localhost:3000.
 ```
 src/app/
   page.tsx          Home
-  reserve/page.tsx  Flow 1: find & reserve
-  verify/page.tsx   Flow 2: verify eligibility
-  pickup/page.tsx   Flow 3: pick up with code
+  reserve/page.tsx  Flow 1: find & book
+  pickup/page.tsx   Flow 2: my bookings, show the code
 ```
+
+Routes are provisional and may change after the screen review.
+
+## Documents
+
+| Document | What it covers |
+|---|---|
+| [docs/personas.md](docs/personas.md) | Persona candidates for the team vote |
+| [docs/screens-and-flows.md](docs/screens-and-flows.md) | Flows and screens for the off-peak model |
+| [docs/data-contract-v2.md](docs/data-contract-v2.md) | Proposed database model (pending agreement) |
+| [docs/data-contract.md](docs/data-contract.md) | Grocery model v1 (current in code, being replaced) |
+| [docs/privacy-and-retention.md](docs/privacy-and-retention.md) | Draft privacy terms and data retention |
+| [DESIGN.md](DESIGN.md) | Visual design system (frontend) |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Team workflow |
 
 ## Working together
 
@@ -74,6 +96,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before your first change. Short version:
 |---|---|
 | MVP scope locked | Fri Nov 13 |
 | Hi-fi prototype | Wed Nov 18 |
+| Direction change and docs | Thu Nov 19 |
 | Feature freeze | Fri Nov 20 |
 | All deliverables in | Sun Nov 22 |
 
@@ -81,8 +104,8 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before your first change. Short version:
 
 | Name | Role | Owns |
 |---|---|---|
-| Sofia | Backend | Supabase: database, sign-in, security rules |
-| Vichea and Sara | Frontend | Screens and Vercel |
+| Sofia Aguilar | Backend | Supabase: database, sign-in, security rules |
+| Vichea Tephang and Sara (last name to confirm) | Frontend | Screens, design system and Vercel |
 
 ## License
 

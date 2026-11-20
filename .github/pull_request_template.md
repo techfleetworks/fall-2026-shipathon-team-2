@@ -4,14 +4,13 @@
 
 ## Which flow
 
-- [ ] 1. Find & reserve
-- [ ] 2. Verify eligibility
-- [ ] 3. Pick up
+- [ ] 1. Find & book
+- [ ] 2. My bookings
 - [ ] Shared / setup / docs
 
 ## How to test
 
-<!-- Steps a reviewer can follow, e.g. "go to /reserve, filter by produce, reserve an item". -->
+<!-- Steps a reviewer can follow, e.g. "go to /reserve, filter by haircut, book a slot". -->
 
 ## Screenshots
 
