@@ -1,3 +1,8 @@
+> **Describes the grocery model (v1), not the off-peak service model.** Calls,
+> names and error messages here will change once
+> [data-contract-v2.md](data-contract-v2.md) is agreed. Do not build against
+> this doc for new work until it is rewritten.
+
 # Backend how-to (for the frontend)
 
 How to read and write real data from Supabase. Table and field names are in
