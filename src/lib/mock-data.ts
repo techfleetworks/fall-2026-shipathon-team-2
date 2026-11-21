@@ -47,6 +47,13 @@ export interface Booking {
   serviceId: string;
   slotId: string;
   code: string;
+  /** Short booking reference shown on tickets (Confirm, Booked, Show code). */
+  ref: string;
+  /** 6-digit number staff type if the QR scan fails (Figma P4 shows "481 927"). */
+  pin: string;
+  /** Display copy for the slot, kept identical across screens. */
+  dayLabel: string;
+  timeRange: string;
   status: BookingStatus;
 }
 
@@ -97,8 +104,17 @@ export const demoBooking: Booking = {
   serviceId: "s1",
   slotId: "sl2",
   code: "SPRT-7K3QZ9",
+  ref: "SPRT-4821",
+  pin: "481927",
+  dayLabel: "Tue 24",
+  timeRange: "2:30–3:00 pm",
   status: "booked",
 };
+
+// Savings so far this month (P5 "All done"). One kept booking in the demo.
+export const monthSavings = { amount: 16, bookings: 1 };
+
+export const getBooking = (id: string) => (id === demoBooking.id ? demoBooking : undefined);
 
 export const getBusiness = (id: string) => businesses.find((b) => b.id === id);
 export const getService = (id: string) => services.find((s) => s.id === id);

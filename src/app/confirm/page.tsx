@@ -49,7 +49,7 @@ export default function ConfirmPage() {
             </div>
             <div className="text-right">
               <p className="text-label-md text-text-secondary">Booking ID</p>
-              <p className="text-body-lg text-text-primary">SPRT-4821</p>
+              <p className="text-body-lg text-text-primary">{demoBooking.ref}</p>
             </div>
           </div>
         </div>

@@ -98,9 +98,9 @@ CheckboxRow), `switch`, `badge` (CategoryBadge, StatusBadge, SavePill), `spinner
 **To build (composite — build with their first screen, then reuse):**
 - `OfferCard` — business photo, name, category badge, price (reg → paid), SavePill,
   distance/time. Used on Deals (H1), Favorites.
-- `BookingTicket` — business, service, date/time, code, status; the P-flow card.
+- ☑ `BookingTicket` — business, service, date/time, code, status; the P-flow card.
 - `InfoBox` — tonal panel for rules/notes (e.g. "cash at the shop", limit info).
-- `BottomSheet` — scrim + handle, Elevation 3 (Verify-to-reserve, cancel, time pick).
+- ☑ `BottomSheet` — scrim + handle, Elevation 3 (Verify-to-reserve, cancel, time pick).
 - `Dialog` — centered, title = what happens, destructive action right in red (cancel).
 - `SegmentedControl` — two options + check (Deals List/Map).
 - `BookingCode` — large 6-char code display (SPRT-XXXXXX) for Show code (P4).
@@ -186,14 +186,14 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☐ R6b · One booking at a time — `825:4700` (limit-reached state)
 
 ### After booking
-- ☐ P1 · Booked — `825:4772` → `/booked/[id]`
-- ☐ P1c · Cancel booking? — `825:5645` (dialog)
+- ☑ P1 · Booked — `825:4772` → `/booked/[id]`
+- ☑ P1c · Cancel booking? — `825:5645` (dialog)
 - ☐ P2 · Reminder — `825:3999` (notification reference)
-- ☐ P3 · It's today — `825:4824` → `/today/[id]`
+- ☑ P3 · It’s today — `825:4824` → `/today/[id]`
 - ☐ P3m · Missed booking — `825:4875` → `/today/[id]` missed state
-- ☐ P4 · Show code — `825:4915` → `/code/[id]`
+- ☑ P4 · Show code — `825:4915` → `/code/[id]`
 - ☐ P4o · Show code (offline) — `825:5879` (offline state)
-- ☐ P5 · All done — `825:4955` → `/saved/[id]`
+- ☑ P5 · All done — `825:4955` → `/saved/[id]`
 - ☐ P6 · Rate your visit — `825:5956` → `/rate/[id]` (needs 336px; tight at 375)
 
 ### Account & support
@@ -251,4 +251,14 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   added the Deals "See all" + "From your favorites" row. Note: Splash/Welcome app
   mark is still the SVG recreation (the green Fresh Cuts mark is a business logo,
   separate from the app icon) — swap to the exact Figma app-icon export if wanted.
+- 2026-11-21 — Splash/Welcome now use the exact Figma app-icon export (`1e3ad6a`).
+- 2026-11-21 — After booking: P1 Booked, P1c Cancel sheet (+ cancelled state), P3 It’s
+  today, P4 Show code, P5 All done built + verified at 375px. Added BookingTicket,
+  BottomSheet (native `<dialog>`), PageHeader, decorative QrCode (not scannable — staff
+  type the 6-digit pin). Mock booking gained `ref`/`pin`/`dayLabel`/`timeRange`; Confirm
+  now reads `ref`. Flow: Confirm → `/booked/bk1` → Show my code → `/code/bk1` → Done →
+  `/saved/bk1` (Done stands in for the missing business-confirm screen). `/today/bk1`
+  is reachable by URL until My bookings (H2) links to it. Add to calendar downloads a
+  real .ics; Get directions opens Google Maps. Note: the Figma Fresh Cuts logo export
+  is lettering only, so P5 draws the badge circle behind it.
 - _(add each screen as it lands)_
