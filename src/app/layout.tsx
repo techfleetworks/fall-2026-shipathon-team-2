@@ -16,11 +16,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Plenty · Shipathon Team 2",
-    template: "%s · Plenty",
+    default: "Sparetime · Shipathon Team 2",
+    template: "%s · Sparetime",
   },
   description:
-    "Surplus groceries from small local stores for low-income families in LA County.",
+    "Discounted off-peak services from small local businesses for low-income individuals and families in LA County.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
