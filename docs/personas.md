@@ -1,42 +1,37 @@
-# Persona candidates — for team vote
+# Persona — Dana
 
-**Status: proposal.** Vichea and Sara pick one. The chosen persona replaces
-Chloe in the README and in the design notes. All three are fictional.
+**Status: decided (Nov 20, 2026).** Dana is the representative persona for the
+MVP. She replaces the earlier candidates (Chloe, Jorge, and the retired Emily
+and Marco). Her details are **hypotheses invented to make her concrete**, not
+research findings.
 
-Each candidate is a low-income household that would book off-peak services at
-a discount. Each has different service needs, so the vote also decides which
-demo services we show first.
+## MVP-only note
 
-## A. Dana, 41 — part-time receptionist
+Dana is the persona for the **MVP only**. She is a **job seeker**, which makes the
+cost of getting ready for work concrete — the exact services the MVP starts with
+(grooming and laundry). The product itself is for the **wider audience of
+low-income individuals and families in LA County**, not only job seekers.
 
-- One income: two part-time jobs, about $30k a year. One child, age 9.
-- Off-peak needs: a haircut on a weekday morning, a laundromat slot on her day off.
-- Why she uses the app: she is not free during the day, and full-price salon
-  visits are the first thing she cuts.
-- What she needs from the app: a price she can see before she walks in, and
-  a time that fits around school pickup.
+## Dana — the part-time receptionist
 
-## B. Jorge, 52 — restaurant line cook
+- **Snapshot:** 34, works part-time at a dental office front desk in LA, rents a
+  room, takes the bus, picks up extra shifts when she can. Applying for full-time
+  office roles.
+- **Goals:** look put together at a job where appearance is part of the work; keep
+  up basic self-care without going into debt; land a full-time role with steadier
+  pay.
+- **Pain points:** unpredictable hours mean unpredictable pay. No buffer for a
+  haircut or for cleaning a blazer, so those get cut first. No time to hunt for
+  deals. Unsure whether a discounted slot means rushed or lower-quality service.
+- **Tech comfort:** high. Uses her phone for banking, transit and booking. Likely
+  on a limited data plan and may not have home broadband.
+- **How she would use Sparetime:** books a weekday daytime slot a day or two ahead,
+  once her schedule is known, and checks the price before the time.
+- **In her words (invented):** "If it's cheaper on Tuesday afternoon, I'll take
+  Tuesday afternoon."
 
-- Works split shifts, so his free time is mid-morning and mid-afternoon on weekdays.
-- Off-peak needs: car repair and car wash slots when the shop is quiet.
-- Why he uses the app: a broken car costs him a shift, and he can't afford a
-  full-price repair on a $36k income.
-- What he needs from the app: a clear code he can show the shop, and a way
-  to cancel when a shift changes.
+## Design implications
 
-## C. Chloe, 29 — customer success rep (continuity)
-
-- Single mom of Leo (5), about $48k a year, under $200 a month spare.
-- Off-peak needs: daycare or babysitting slots on weekday afternoons, and a
-  haircut on a weekday morning.
-- Why she uses the app: childcare is her biggest monthly cost, and off-peak
-  slots are cheaper than full-price daycare.
-- What she needs from the app: clear prices, and a booking she can change
-  without a phone call.
-
-## Recommendation
-
-Option C keeps the work we've already done (the persona note, the design
-story). Option A gives the widest demo range (salon and laundromat). Option B
-is the least obvious and shows car services. The team can pick any of them.
+- Show **price and savings first**, then time.
+- Keep booking to **a few taps**.
+- Make **cancel easy** — her hours change.
