@@ -24,7 +24,8 @@ export type IconName =
   | "ticket"
   | "sliders"
   | "scissors"
-  | "shirt";
+  | "shirt"
+  | "lock";
 
 const PATHS: Record<IconName, { d: string; fill?: boolean }[]> = {
   "chevron-left": [{ d: "M15 18l-6-6 6-6" }],
@@ -47,6 +48,7 @@ const PATHS: Record<IconName, { d: string; fill?: boolean }[]> = {
   sliders: [{ d: "M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" }],
   scissors: [{ d: "M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12" }],
   shirt: [{ d: "M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z" }],
+  lock: [{ d: "M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4" }],
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {

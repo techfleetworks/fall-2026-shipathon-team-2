@@ -111,8 +111,51 @@ export const demoBooking: Booking = {
   status: "booked",
 };
 
-// Savings so far this month (P5 "All done"). One kept booking in the demo.
-export const monthSavings = { amount: 16, bookings: 1 };
+// Past (kept) bookings this month, shown on My bookings (H2). Shop-side copy
+// (labels, dates) mirrors the Figma; prices match the services above.
+export interface PastBooking {
+  id: string;
+  businessId: string;
+  serviceId: string;
+  label: string;
+  paid: number;
+  saved: number;
+  dateLabel: string;
+}
+
+export const pastBookings: PastBooking[] = [
+  { id: "pb1", businessId: "b4", serviceId: "s4", label: "Wash and fold", paid: 6, saved: 9, dateLabel: "Nov 18" },
+  { id: "pb2", businessId: "b5", serviceId: "s5", label: "Pressing", paid: 9, saved: 21, dateLabel: "Nov 12" },
+];
+
+// Savings so far this month. Before the demo visit: past bookings only (My
+// bookings). After it: past + the demo booking (P5 "All done").
+export function monthSavings({ includeDemo }: { includeDemo: boolean }) {
+  const demoSaved = includeDemo ? savings(getService(demoBooking.serviceId)!) : 0;
+  return {
+    amount: pastBookings.reduce((sum, b) => sum + b.saved, 0) + demoSaved,
+    bookings: pastBookings.length + (includeDemo ? 1 : 0),
+  };
+}
+
+export const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+// Saved places (H4 Favorites; also the Deals "From your favorites" row).
+export interface Favorite {
+  businessId: string;
+  serviceId: string;
+  blurb: string;
+  offers: string;
+}
+
+export const favorites: Favorite[] = [
+  { businessId: "b1", serviceId: "s1", blurb: "Haircuts", offers: "3 offers today" },
+  { businessId: "b4", serviceId: "s4", blurb: "Wash and fold", offers: "1 offer today" },
+  { businessId: "b5", serviceId: "s5", blurb: "Dry cleaning and pressing", offers: "1 offer tomorrow" },
+];
+
+// "(213) 555-0142" → "(213) ***-**42"
+export const maskPhone = (phone: string) => phone.replace(/\d{3}-\d{2}(\d{2})$/, "***-**$1");
 
 export const getBooking = (id: string) => (id === demoBooking.id ? demoBooking : undefined);
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { NavBar } from "@/components/ui/nav-bar";
 import { IconButton } from "@/components/ui/icon-button";
@@ -115,7 +116,12 @@ export default function DealsPage() {
 
         <div className="mt-5 flex items-center justify-between px-5">
           <h2 className="text-title-sm text-text-heading">From your favorites</h2>
-          <span className="text-body-sm text-action-primary">See all</span>
+          <Link
+            href="/favorites"
+            className="-mr-3 inline-flex min-h-[48px] items-center rounded-full px-3 text-body-sm text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+          >
+            See all<span className="sr-only"> favorites</span>
+          </Link>
         </div>
         <div className="mt-3 flex gap-3 overflow-x-auto px-5">
           {[

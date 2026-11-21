@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Screen, ScreenBody, BottomActionBar } from "@/components/ui/screen";
 import { ButtonLink } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
-import { getBooking, getBusiness, getService, monthSavings, savings } from "@/lib/mock-data";
+import { getBooking, getBusiness, getService, monthSavings, plural, savings } from "@/lib/mock-data";
 
 // P5 · All done — "You saved $X". Shown after the shop confirms the visit.
 export const instant = false;
@@ -17,6 +17,7 @@ export default async function SavedPage({ params }: PageProps<"/saved/[id]">) {
 
   const shortName = business.name.split(" ").slice(0, 2).join(" ");
   const saved = savings(service);
+  const month = monthSavings({ includeDemo: true });
 
   return (
     <Screen>
@@ -60,7 +61,7 @@ export default async function SavedPage({ params }: PageProps<"/saved/[id]">) {
         </div>
 
         <p className="mt-4 border-t border-border-default pt-4 text-body-md text-text-secondary">
-          ${monthSavings.amount} saved this month · {monthSavings.bookings} booking
+          ${month.amount} saved this month · {plural(month.bookings, "booking")}
         </p>
       </ScreenBody>
 

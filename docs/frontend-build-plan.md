@@ -197,13 +197,13 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☐ P6 · Rate your visit — `825:5956` → `/rate/[id]` (needs 336px; tight at 375)
 
 ### Account & support
-- ☐ H2 · My bookings — `825:5016` → `/bookings`
-- ☐ H3 · Account — `825:5058` → `/account`
+- ☑ H2 · My bookings — `825:5016` → `/bookings`
+- ☑ H3 · Account — `825:5058` → `/account`
 - ☐ H3s · Settings — `825:5215` → `/account/settings`
 - ☐ H3p · Privacy and your data — `825:5289` → `/account/privacy`
 - ☐ H3b · How bookings work — `825:5709` → `/account/how-bookings-work`
 - ☐ H3d · Your details — `825:5922` → `/account/details`
-- ☐ H4 · Favorites — `825:5167` → `/favorites`
+- ☑ H4 · Favorites — `825:5167` → `/favorites`
 
 ### Business side (BLOCKER — not in Figma yet)
 - ☐ Business confirms — design + build (`/staff/confirm`): code entry · wrong code ·
@@ -261,4 +261,13 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   is reachable by URL until My bookings (H2) links to it. Add to calendar downloads a
   real .ics; Get directions opens Google Maps. Note: the Figma Fresh Cuts logo export
   is lettering only, so P5 draws the badge circle behind it.
+- 2026-11-21 — Bottom-nav tabs: H2 My bookings, H3 Account, H4 Favorites built +
+  verified at 375px (nav no longer 404s). Upcoming shows the demo booking (→ `/booked/bk1`);
+  the Figma empty state renders when nothing is booked. Past = Spin City + Prime Press
+  (`pastBookings`), with Book again → offer. "Saved this month" is now computed
+  (`monthSavings`) so H2 ($30 · 2) and P5 ($46 · 3) agree — Figma's "$16 · 1" didn't
+  add up once past visits are listed. Account rows without a screen yet (details,
+  booking limit, settings, support) show "Soon" and aren't tappable; Privacy → `/privacy`;
+  Log out → `/welcome` (no real session yet). Favorites hearts toggle locally (reset on
+  reload). Deals "See all" favorites now links to `/favorites`. Added `lock` icon.
 - _(add each screen as it lands)_
