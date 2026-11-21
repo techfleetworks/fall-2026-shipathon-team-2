@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Plus_Jakarta_Sans } from "next/font/google";
-import { Suspense } from "react";
-import { AccountBar, AccountBarPlaceholder } from "@/components/account-bar";
 import "./globals.css";
 import { AppStoreProvider } from "@/lib/store";
 
@@ -34,9 +32,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${bricolage.variable} ${jakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Suspense fallback={<AccountBarPlaceholder />}>
-          <AccountBar />
-        </Suspense>
         <AppStoreProvider>{children}</AppStoreProvider>
       </body>
     </html>
