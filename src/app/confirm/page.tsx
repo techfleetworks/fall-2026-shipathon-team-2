@@ -24,7 +24,10 @@ export default function ConfirmPage() {
         {/* Summary */}
         <div className="overflow-hidden rounded-lg border border-border-default">
           <div className="flex items-center gap-3 p-4">
-            <div className="h-12 w-12 shrink-0 rounded-md" style={{ background: `hsl(${business.photoHue} 42% 80%)` }} />
+            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-surface-muted">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={business.photo} alt="" className="h-full w-full object-cover" />
+            </div>
             <div>
               <p className="text-title-sm text-text-primary">{business.name}</p>
               <p className="text-body-md text-text-secondary">{service.name}</p>

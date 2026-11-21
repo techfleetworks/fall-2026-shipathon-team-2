@@ -244,4 +244,11 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   verified. Added OfferCard, InfoBox, ButtonLink. Removed the old grocery `(app)`
   route group (replaced by these). Param routes use `export const instant = false`
   (Cache Components). Flow: Deals → Offer → Pick time → Confirm → `/booked/[id]`.
+- 2026-11-21 — Real Figma images (option A): exported the demo shop photos +
+  Fresh Cuts logo to `public/figma/`, and mirrored the Figma businesses, prices
+  and photos exactly in `mock-data.ts` (Fresh Cuts, Studio 7, Main St, Spin City,
+  Prime Press). Wired photos into OfferCard, Offer hero + logo, Confirm thumbnail;
+  added the Deals "See all" + "From your favorites" row. Note: Splash/Welcome app
+  mark is still the SVG recreation (the green Fresh Cuts mark is a business logo,
+  separate from the app icon) — swap to the exact Figma app-icon export if wanted.
 - _(add each screen as it lands)_

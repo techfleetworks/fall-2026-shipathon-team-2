@@ -1,8 +1,7 @@
-// Mock data for the Sparetime happy-path prototype. Fake businesses only (photos
-// are placeholders). Numbers are kept consistent across screens per the Figma
-// handoff: Tue 24 · 2:30 pm · $12 paid / $28 regular · 12:30 pm cancel deadline ·
-// cash at the shop. Replace with Supabase queries when wiring the real backend
-// (see docs/data-contract-v2.md and docs/frontend-build-plan.md §7).
+// Mock data for the Sparetime happy-path prototype. Mirrors the Figma demo exactly:
+// the same fictional businesses, services, prices and photos shown on the screens.
+// Photos are the AI-generated demo images exported from Figma (public/figma/*).
+// Replace with Supabase queries when wiring the real backend.
 
 export type Category = "haircut" | "laundry" | "care";
 
@@ -16,11 +15,12 @@ export interface Business {
   id: string;
   name: string;
   category: Category;
+  address: string;
   area: string;
   distanceMi: number;
   rating: number;
-  /** placeholder image hue for the photo block until real photos are exported */
-  photoHue: number;
+  photo: string;
+  logo?: string;
 }
 
 export interface Service {
@@ -34,9 +34,8 @@ export interface Service {
 export interface Slot {
   id: string;
   serviceId: string;
-  /** ISO-like display is derived in the UI; keep raw parts for the prototype */
-  day: string; // e.g. "Tue 24"
-  time: string; // e.g. "2:30 pm"
+  day: string;
+  time: string;
   taken: boolean;
 }
 
@@ -47,7 +46,7 @@ export interface Booking {
   businessId: string;
   serviceId: string;
   slotId: string;
-  code: string; // SPRT-XXXXXX
+  code: string;
   status: BookingStatus;
 }
 
@@ -58,7 +57,6 @@ export interface User {
   missCount: number;
 }
 
-/** Trust-ladder limit derived from kept/miss counts (rules §5). */
 export function bookingLimit(user: Pick<User, "keptCount" | "missCount">): number | "unlimited" {
   if (user.missCount >= 2) return 1;
   if (user.keptCount >= 4) return "unlimited";
@@ -69,34 +67,35 @@ export function bookingLimit(user: Pick<User, "keptCount" | "missCount">): numbe
 export const savings = (s: Service) => s.regularPrice - s.offPeakPrice;
 
 export const businesses: Business[] = [
-  { id: "b1", name: "Fresh Cuts Barber", category: "haircut", area: "Palms", distanceMi: 0.8, rating: 4.8, photoHue: 24 },
-  { id: "b2", name: "Sudsy Laundromat", category: "laundry", area: "Mar Vista", distanceMi: 1.2, rating: 4.6, photoHue: 210 },
-  { id: "b3", name: "Crease & Care Cleaners", category: "care", area: "Culver City", distanceMi: 1.9, rating: 4.7, photoHue: 45 },
-  { id: "b4", name: "The Corner Chair", category: "haircut", area: "Palms", distanceMi: 2.3, rating: 4.5, photoHue: 12 },
+  { id: "b1", name: "Fresh Cuts Barbershop", category: "haircut", address: "1420 W 7th St, Westlake", area: "Westlake", distanceMi: 0.6, rating: 4.8, photo: "/figma/fresh-cuts.png", logo: "/figma/fresh-cuts-logo.svg" },
+  { id: "b2", name: "Studio 7 Salon", category: "haircut", address: "815 S Hill St, Downtown LA", area: "Downtown LA", distanceMi: 0.9, rating: 4.6, photo: "/figma/studio-7.png" },
+  { id: "b3", name: "Main St Barbers", category: "haircut", address: "2047 S Main St, South Park", area: "South Park", distanceMi: 1.2, rating: 4.7, photo: "/figma/main-st.png" },
+  { id: "b4", name: "Spin City Laundry", category: "laundry", address: "535 Alvarado St, Westlake", area: "Westlake", distanceMi: 0.6, rating: 4.5, photo: "/figma/spin-city.png" },
+  { id: "b5", name: "Prime Press", category: "care", address: "312 E 2nd St, Little Tokyo", area: "Little Tokyo", distanceMi: 1.1, rating: 4.7, photo: "/figma/prime-press.png" },
 ];
 
 export const services: Service[] = [
   { id: "s1", businessId: "b1", name: "Haircut", regularPrice: 28, offPeakPrice: 12 },
-  { id: "s2", businessId: "b2", name: "Wash & fold (per load)", regularPrice: 20, offPeakPrice: 9 },
-  { id: "s3", businessId: "b3", name: "Shirt press (5 items)", regularPrice: 22, offPeakPrice: 11 },
-  { id: "s4", businessId: "b4", name: "Haircut", regularPrice: 30, offPeakPrice: 14 },
+  { id: "s2", businessId: "b2", name: "Wash, cut and style", regularPrice: 40, offPeakPrice: 18 },
+  { id: "s3", businessId: "b3", name: "Classic cut", regularPrice: 22, offPeakPrice: 10 },
+  { id: "s4", businessId: "b4", name: "Wash and fold, 15 lb", regularPrice: 15, offPeakPrice: 6 },
+  { id: "s5", businessId: "b5", name: "Shirt press (5 items)", regularPrice: 30, offPeakPrice: 9 },
 ];
 
 export const slots: Slot[] = [
-  { id: "sl1", serviceId: "s1", day: "Tue 24", time: "2:30 pm", taken: false },
-  { id: "sl2", serviceId: "s1", day: "Tue 24", time: "3:00 pm", taken: true },
-  { id: "sl3", serviceId: "s1", day: "Tue 24", time: "3:30 pm", taken: false },
-  { id: "sl4", serviceId: "s1", day: "Wed 25", time: "11:00 am", taken: false },
+  { id: "sl1", serviceId: "s1", day: "Tue 24", time: "2:00 pm", taken: false },
+  { id: "sl2", serviceId: "s1", day: "Tue 24", time: "2:30 pm", taken: false },
+  { id: "sl3", serviceId: "s1", day: "Tue 24", time: "3:00 pm", taken: true },
+  { id: "sl4", serviceId: "s1", day: "Tue 24", time: "3:30 pm", taken: true },
 ];
 
 export const user: User = { firstName: "Dana", phone: "(213) 555-0142", keptCount: 0, missCount: 0 };
 
-// The canonical demo booking used across the P-flow screens.
 export const demoBooking: Booking = {
   id: "bk1",
   businessId: "b1",
   serviceId: "s1",
-  slotId: "sl1",
+  slotId: "sl2",
   code: "SPRT-7K3QZ9",
   status: "booked",
 };

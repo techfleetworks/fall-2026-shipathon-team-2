@@ -12,7 +12,7 @@ export interface Offer {
   price: number;
   regular: number;
   availability: string;
-  photoHue: number;
+  photo: string;
 }
 
 export function OfferCard({ offer }: { offer: Offer }) {
@@ -23,10 +23,9 @@ export function OfferCard({ offer }: { offer: Offer }) {
       href={`/offer/${offer.id}`}
       className="flex items-stretch gap-3 rounded-lg border border-border-default bg-surface-card p-3 transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
     >
-      <div
-        className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md"
-        style={{ background: `hsl(${offer.photoHue} 45% 86%)` }}
-      >
+      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md bg-surface-muted">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={offer.photo} alt="" className="h-full w-full object-cover" />
         <span className="absolute bottom-1 left-1 rounded-xs bg-accent-primary px-1.5 py-0.5 text-label-sm text-on-action">
           {pct}% off
         </span>

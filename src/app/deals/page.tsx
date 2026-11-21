@@ -14,26 +14,28 @@ import { businesses, services, getBusiness, type Category } from "@/lib/mock-dat
 // filter the list.
 const AVAIL: Record<string, string> = {
   s1: "Today · 2–4 pm",
-  s2: "Today · 1–3 pm · 3 left",
-  s3: "Today · 4–6 pm",
-  s4: "Tomorrow · 10 am–12 pm",
+  s2: "Today · 1–3 pm · 4 left",
+  s3: "Today · 1 left",
+  s4: "Today · 1–3 pm · 3 left",
 };
 
-const offers: (Offer & { category: Category })[] = services.map((s) => {
-  const b = getBusiness(s.businessId)!;
-  return {
-    id: s.id,
-    title: s.name,
-    business: b.name,
-    rating: b.rating,
-    distanceMi: b.distanceMi,
-    price: s.offPeakPrice,
-    regular: s.regularPrice,
-    availability: AVAIL[s.id] ?? "Today",
-    photoHue: b.photoHue,
-    category: b.category,
-  };
-});
+const offers: (Offer & { category: Category })[] = services
+  .filter((s) => s.businessId !== "b5")
+  .map((s) => {
+    const b = getBusiness(s.businessId)!;
+    return {
+      id: s.id,
+      title: s.name,
+      business: b.name,
+      rating: b.rating,
+      distanceMi: b.distanceMi,
+      price: s.offPeakPrice,
+      regular: s.regularPrice,
+      availability: AVAIL[s.id] ?? "Today",
+      photo: b.photo,
+      category: b.category,
+    };
+  });
 
 const CHIPS: { key: string; label: string; cat?: Category }[] = [
   { key: "foryou", label: "For you" },
@@ -93,7 +95,7 @@ export default function DealsPage() {
 
         <div className="mt-4 flex items-center justify-between px-5">
           <h2 className="text-title-sm text-text-heading">For you today &amp; tomorrow</h2>
-          <span className="text-body-sm text-text-secondary">{shown.length} offers</span>
+          <span className="text-body-sm text-text-secondary">9 offers</span>
         </div>
         <p className="mt-1 px-5 text-body-sm text-text-secondary">
           Full-length appointments, just at quieter hours. Rated by people who booked.
@@ -102,6 +104,33 @@ export default function DealsPage() {
         <div className="mt-3 flex flex-col gap-3 px-5">
           {shown.map((o) => (
             <OfferCard key={o.id} offer={o} />
+          ))}
+        </div>
+
+        <div className="px-5 pt-4">
+          <button className="w-full rounded-full border border-border-control py-3 text-label-lg text-text-primary">
+            See all 9 offers →
+          </button>
+        </div>
+
+        <div className="mt-5 flex items-center justify-between px-5">
+          <h2 className="text-title-sm text-text-heading">From your favorites</h2>
+          <span className="text-body-sm text-action-primary">See all</span>
+        </div>
+        <div className="mt-3 flex gap-3 overflow-x-auto px-5">
+          {[
+            { b: getBusiness("b1")!, sub: "3 offers today", price: "From $8" },
+            { b: getBusiness("b5")!, sub: "1 offer tomorrow", price: "$9 · Save $21" },
+          ].map((f) => (
+            <div key={f.b.id} className="w-56 shrink-0 overflow-hidden rounded-lg border border-border-default">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={f.b.photo} alt="" className="h-28 w-full object-cover" />
+              <div className="p-3">
+                <p className="truncate text-title-sm text-text-primary">{f.b.name}</p>
+                <p className="text-body-sm text-text-secondary">{f.sub}</p>
+                <p className="mt-1 text-label-md text-status-positive">{f.price}</p>
+              </div>
+            </div>
           ))}
         </div>
 

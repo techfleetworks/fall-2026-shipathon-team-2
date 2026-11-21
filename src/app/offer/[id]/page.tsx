@@ -25,7 +25,9 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
     <div className="min-h-dvh w-full bg-bg-canvas">
       <div className="relative mx-auto flex min-h-dvh max-w-[430px] flex-col bg-surface-default pb-28">
         {/* Hero */}
-        <div className="relative h-52 w-full" style={{ background: `hsl(${business.photoHue} 42% 80%)` }}>
+        <div className="relative h-52 w-full overflow-hidden bg-surface-muted">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={business.photo} alt={business.name} className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
             <Link href="/deals" aria-label="Go back" className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-default/90 text-text-primary">
               <Icon name="chevron-left" />
@@ -35,8 +37,13 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
               <span className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-default/90 text-text-primary"><Icon name="heart" size={20} /></span>
             </div>
           </div>
-          <div className="absolute -bottom-7 left-5 flex h-16 w-16 items-center justify-center rounded-full border-4 border-surface-default bg-surface-muted">
-            <Icon name="scissors" className="text-action-primary" />
+          <div className="absolute -bottom-7 left-5 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-surface-default bg-surface-default">
+            {business.logo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={business.logo} alt={`${business.name} logo`} className="h-full w-full object-cover" />
+            ) : (
+              <Icon name="scissors" className="text-action-primary" />
+            )}
           </div>
         </div>
 
