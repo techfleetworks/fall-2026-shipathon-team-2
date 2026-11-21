@@ -175,14 +175,14 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☐ O5l · Use your location — `825:5591` (branch of /about)
 
 ### Browse & book
-- ☐ H1 · Deals — `825:4273` → `/deals`
+- ☑ H1 · Deals — `825:4273` → `/deals`
 - ☐ H1m · Deals (map) — `825:5340` → `/deals/map`
 - ☐ H1e · No results — `825:5781` (empty state of /deals)
 - ☐ R3 · Filters — `825:4357` (sheet on /deals)
-- ☐ R5 · Offer — `825:4489` → `/offer/[id]`
-- ☐ R5t · Pick a time — `825:4594` → `/offer/[id]/time`
+- ☑ R5 · Offer — `825:4489` → `/offer/[id]`
+- ☑ R5t · Pick a time — `825:4594` → `/offer/[id]/time`
 - ☐ R5x · Slot just taken — `825:5832` (error on pick/confirm)
-- ☐ R6 · Confirm — `825:4638` → `/confirm`
+- ☑ R6 · Confirm — `825:4638` → `/confirm`
 - ☐ R6b · One booking at a time — `825:4700` (limit-reached state)
 
 ### After booking
@@ -240,4 +240,8 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   added logo, StepBar, StepShell; root `/` redirects to `/splash`.
 - 2026-11-21 — Onboarding batch 2: O3 Reason, O4 Timing, O5 About built + verified;
   added RadioCard. Sign-up flow complete → `/deals`.
+- 2026-11-21 — Find & book: H1 Deals, R5 Offer, R5t Pick time, R6 Confirm built +
+  verified. Added OfferCard, InfoBox, ButtonLink. Removed the old grocery `(app)`
+  route group (replaced by these). Param routes use `export const instant = false`
+  (Cache Components). Flow: Deals → Offer → Pick time → Confirm → `/booked/[id]`.
 - _(add each screen as it lands)_

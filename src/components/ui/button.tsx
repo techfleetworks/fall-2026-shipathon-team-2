@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Spinner } from "./spinner";
@@ -58,5 +59,26 @@ export function Button({
         </>
       )}
     </button>
+  );
+}
+
+// Navigation CTA styled like a Button (renders an <a> — use for links, not actions).
+export function ButtonLink({
+  href,
+  variant = "filled",
+  fullWidth,
+  children,
+  className,
+}: {
+  href: string;
+  variant?: Variant;
+  fullWidth?: boolean;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <Link href={href} className={cn(base, variants[variant], fullWidth && "w-full", className)}>
+      {children}
+    </Link>
   );
 }
