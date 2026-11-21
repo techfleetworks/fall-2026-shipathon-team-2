@@ -1,5 +1,12 @@
 # DESIGN.md — Plenty (Team 2)
 
+> **⚠️ SUPERSEDED for look & feel (Nov 21) — see [ADR-0005](docs/adr/0005-sparetime-figma-design-system.md).**
+> The visual system below (green/purple palette, type, tokens) is **out of date**. The
+> source of truth for colour, type, spacing, corners and components is now the **Sparetime
+> design system in Figma** ("Shipathon Team 2" → page "DS cleanup (working)"), regenerated
+> into [`src/app/globals.css`](src/app/globals.css). Use this file only for **product rules
+> not covered by the Figma Rules frame**, not for visual styling.
+
 > **Direction change (Nov 19):** the vision, persona and flows moved from groceries
 > to off-peak service slots. Palette, type and tokens are unchanged. Screen labels
 > that mention "Deals near Palms", "bag" or "reserve" are old and will be renamed
