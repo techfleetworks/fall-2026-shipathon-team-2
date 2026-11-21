@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-// The app opens on the Deals tab. (Onboarding/welcome flow routes here later.)
+// Entry point → the Sparetime splash, which advances into the sign-up flow.
 export default function Home() {
-  redirect("/deals");
+  redirect("/splash");
 }

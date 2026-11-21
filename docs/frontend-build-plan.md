@@ -162,10 +162,10 @@ cancel deadline; cash at the shop).
 File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ done.
 
 ### Onboarding / sign-up
-- ☐ O0a · Splash — `825:4055` → `/splash`
-- ☐ O0 · Welcome — `825:4074` → `/welcome`
-- ☐ O1 · Phone — `825:4097` → `/phone`
-- ☐ O2 · Code — `825:4128` → `/verify`
+- ☑ O0a · Splash — `825:4055` → `/splash`
+- ☑ O0 · Welcome — `825:4074` → `/welcome`
+- ☑ O1 · Phone — `825:4097` → `/phone`
+- ☑ O2 · Code — `825:4128` → `/verify`
 - ☐ O2e · Wrong code — `825:5747` (branch of /verify)
 - ☐ O3 · What brings you here — `825:4159` → `/reason`
 - ☐ O3c · Tell us in your words — `825:5097` → `/reason/custom`
@@ -236,4 +236,6 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
 - 2026-11-21 — Phase 0 (tokens, fonts, ADR-0005) committed `1974b5f`.
 - 2026-11-21 — Phase 1 component kit committed `65d84ba`.
 - 2026-11-21 — This plan + shared infra (mock data, shell) added.
+- 2026-11-21 — Onboarding batch 1: Splash, Welcome, Phone, Code built + verified;
+  added logo, StepBar, StepShell; root `/` redirects to `/splash`.
 - _(add each screen as it lands)_
