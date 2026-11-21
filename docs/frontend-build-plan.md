@@ -167,10 +167,10 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☑ O1 · Phone — `825:4097` → `/phone`
 - ☑ O2 · Code — `825:4128` → `/verify`
 - ☐ O2e · Wrong code — `825:5747` (branch of /verify)
-- ☐ O3 · What brings you here — `825:4159` → `/reason`
+- ☑ O3 · What brings you here — `825:4159` → `/reason`
 - ☐ O3c · Tell us in your words — `825:5097` → `/reason/custom`
-- ☐ O4 · When works — `825:4199` → `/timing`
-- ☐ O5 · About you — `825:4237` → `/about`
+- ☑ O4 · When works — `825:4199` → `/timing`
+- ☑ O5 · About you — `825:4237` → `/about`
 - ☐ O5b · Booking reminders — `825:5519` (branch of /about)
 - ☐ O5l · Use your location — `825:5591` (branch of /about)
 
@@ -238,4 +238,6 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
 - 2026-11-21 — This plan + shared infra (mock data, shell) added.
 - 2026-11-21 — Onboarding batch 1: Splash, Welcome, Phone, Code built + verified;
   added logo, StepBar, StepShell; root `/` redirects to `/splash`.
+- 2026-11-21 — Onboarding batch 2: O3 Reason, O4 Timing, O5 About built + verified;
+  added RadioCard. Sign-up flow complete → `/deals`.
 - _(add each screen as it lands)_

@@ -65,3 +65,44 @@ export function CheckboxRow({ label, checked, onChange }: { label: ReactNode; ch
     </Row>
   );
 }
+
+// Bordered radio CARD with a title + subtitle (Figma O3). Selected = violet ring
+// + violet title + filled radio.
+export function RadioCard({
+  title,
+  subtitle,
+  checked,
+  onChange,
+}: {
+  title: string;
+  subtitle: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={checked}
+      onClick={onChange}
+      className={cn(
+        "flex w-full items-start gap-3 rounded-lg border p-4 text-left transition-colors",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2",
+        checked ? "border-action-primary ring-1 ring-action-primary" : "border-border-default hover:bg-surface-muted",
+      )}
+    >
+      <span
+        className={cn(
+          "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2",
+          checked ? "border-action-primary" : "border-border-control",
+        )}
+      >
+        {checked && <span className="h-3 w-3 rounded-full bg-action-primary" />}
+      </span>
+      <span className="flex flex-col gap-0.5">
+        <span className={cn("text-title-sm", checked ? "text-action-primary" : "text-text-primary")}>{title}</span>
+        <span className="text-body-md text-text-secondary">{subtitle}</span>
+      </span>
+    </button>
+  );
+}
