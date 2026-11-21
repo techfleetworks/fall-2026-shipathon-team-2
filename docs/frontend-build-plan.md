@@ -166,7 +166,7 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☑ O0 · Welcome — `825:4074` → `/welcome`
 - ☑ O1 · Phone — `825:4097` → `/phone`
 - ☑ O2 · Code — `825:4128` → `/verify`
-- ☐ O2e · Wrong code — `825:5747` (branch of /verify)
+- ☑ O2e · Wrong code — `825:5747` (branch of /verify)
 - ☑ O3 · What brings you here — `825:4159` → `/reason`
 - ☐ O3c · Tell us in your words — `825:5097` → `/reason/custom`
 - ☑ O4 · When works — `825:4199` → `/timing`
@@ -199,10 +199,10 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 ### Account & support
 - ☑ H2 · My bookings — `825:5016` → `/bookings`
 - ☑ H3 · Account — `825:5058` → `/account`
-- ☐ H3s · Settings — `825:5215` → `/account/settings`
-- ☐ H3p · Privacy and your data — `825:5289` → `/account/privacy`
-- ☐ H3b · How bookings work — `825:5709` → `/account/how-bookings-work`
-- ☐ H3d · Your details — `825:5922` → `/account/details`
+- ☑ H3s · Settings — `825:5215` → `/account/settings`
+- ☑ H3p · Privacy and your data — `825:5289` → `/account/privacy`
+- ☑ H3b · How bookings work — `825:5709` → `/account/how-bookings-work`
+- ☑ H3d · Your details — `825:5922` → `/account/details`
 - ☑ H4 · Favorites — `825:5167` → `/favorites`
 
 ### Business side (BLOCKER — not in Figma yet)
@@ -270,4 +270,25 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   booking limit, settings, support) show "Soon" and aren't tappable; Privacy → `/privacy`;
   Log out → `/welcome` (no real session yet). Favorites hearts toggle locally (reset on
   reload). Deals "See all" favorites now links to `/favorites`. Added `lock` icon.
+- 2026-11-21 — Account sub-screens: H3d Your details (inline first-name edit with
+  validation; phone change "Soon"), H3b How bookings work (status from `limitStatus()`),
+  H3s Settings (notification switches; Area/Search "Soon"; Terms → `/terms`), H3p Privacy
+  (retention per `docs/privacy-and-retention.md` — bookings 12 months; Delete account →
+  confirm sheet → status; Download my data "Soon"). Account rows now link to these; only
+  Customer support (no Figma screen) stays "Soon". Added shared `ListGroup`/`ListRow` and
+  globe/accessibility/shield icons. **Data change:** `user.keptCount` 0 → 2 to match the
+  two past bookings, so the limit reads "2 at a time" (Figma showed 1). All edits are
+  demo-local until Supabase is wired.
+- 2026-11-21 — **Real sign-up (step 1 of the "working app" plan).** New `src/lib/account.ts`
+  keeps the person's own account on the device (localStorage) behind hooks, so Supabase
+  can replace it in one file. Phone starts empty, formats as typed, validates a US
+  number. **Demo code:** a random 6-digit code is generated and shown in a "text
+  message" banner labelled "Demo: in the live app this code arrives by text message"
+  (real SMS needs a paid provider + US carrier registration); the code is really
+  checked (O2e copy on mismatch) with a 30 s resend. "Call me instead" removed (can't
+  work in the demo). Reason/timing/About start blank; Continue waits for an answer;
+  About needs name + area + a service. Every "Dana" replaced by the typed name
+  (Deals "Good morning/afternoon/evening, {name}", Confirm, Account, Your details).
+  Splash sends signed-up people to Deals. Log out clears the device. Sample `user`
+  keeps only kept/miss counts until history goes real (step 3).
 - _(add each screen as it lands)_

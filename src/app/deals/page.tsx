@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useGreeting, useProfile } from "@/lib/account";
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { NavBar } from "@/components/ui/nav-bar";
 import { IconButton } from "@/components/ui/icon-button";
@@ -48,6 +49,8 @@ const CHIPS: { key: string; label: string; cat?: Category }[] = [
 
 export default function DealsPage() {
   const [chip, setChip] = useState("foryou");
+  const profile = useProfile();
+  const greeting = useGreeting();
   const activeCat = CHIPS.find((c) => c.key === chip)?.cat;
   const shown = activeCat ? offers.filter((o) => o.category === activeCat) : offers;
 
@@ -55,7 +58,10 @@ export default function DealsPage() {
     <Screen>
       <ScreenBody className="px-0 py-0">
         <div className="flex items-center justify-between px-5 pt-4">
-          <p className="text-title-md text-text-heading">Good morning, Dana</p>
+          <p className="text-title-md text-text-heading">
+            {greeting}
+            {profile?.firstName ? `, ${profile.firstName}` : ""}
+          </p>
           <IconButton icon="sliders" label="Settings" />
         </div>
 

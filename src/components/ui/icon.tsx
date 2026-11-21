@@ -25,7 +25,10 @@ export type IconName =
   | "sliders"
   | "scissors"
   | "shirt"
-  | "lock";
+  | "lock"
+  | "globe"
+  | "accessibility"
+  | "shield";
 
 const PATHS: Record<IconName, { d: string; fill?: boolean }[]> = {
   "chevron-left": [{ d: "M15 18l-6-6 6-6" }],
@@ -49,6 +52,9 @@ const PATHS: Record<IconName, { d: string; fill?: boolean }[]> = {
   scissors: [{ d: "M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12" }],
   shirt: [{ d: "M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z" }],
   lock: [{ d: "M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4" }],
+  globe: [{ d: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" }, { d: "M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" }],
+  accessibility: [{ d: "M12 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" }, { d: "M5 8.5l7 1.5 7-1.5M12 10v4.5M12 14.5L8.5 21M12 14.5l3.5 6.5" }],
+  shield: [{ d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" }, { d: "M9 12l2 2 4-4" }],
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {

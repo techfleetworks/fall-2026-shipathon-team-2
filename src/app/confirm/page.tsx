@@ -8,11 +8,13 @@ import { Switch } from "@/components/ui/switch";
 import { InfoBox } from "@/components/ui/info-box";
 import { Icon } from "@/components/ui/icon";
 import { demoBooking, getBusiness, getService, savings } from "@/lib/mock-data";
+import { useProfile } from "@/lib/account";
 
 // R6 · Confirm booking. Uses the canonical demo booking (Fresh Cuts · Haircut).
 export default function ConfirmPage() {
   const router = useRouter();
   const [remind, setRemind] = useState(true);
+  const profile = useProfile();
   const business = getBusiness(demoBooking.businessId)!;
   const service = getService(demoBooking.serviceId)!;
   const save = savings(service);
@@ -76,7 +78,9 @@ export default function ConfirmPage() {
             <Icon name="user" size={22} className="text-text-secondary" />
             <div className="flex-1">
               <p className="text-title-sm text-text-primary">Booking name</p>
-              <p className="text-body-sm text-text-secondary">Dana · the shop sees first name only</p>
+              <p className="text-body-sm text-text-secondary">
+                {profile?.firstName || "Your first name"} · the shop sees first name only
+              </p>
             </div>
             <Icon name="chevron-right" size={20} className="text-text-secondary" />
           </button>

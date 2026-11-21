@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { StepShell } from "@/components/onboarding/step-shell";
 import { Button } from "@/components/ui/button";
 import { RadioCard } from "@/components/ui/choice";
+import { updateProfile } from "@/lib/account";
+import { useRequirePhone } from "@/components/onboarding/use-require-phone";
 
-// O3 · What brings you here. Step 3 of 5. One tap, no proof; every answer leads to
-// the same optional timing step.
+// O3 · What brings you here. Step 3 of 5. One tap, no proof; nothing pre-picked.
+// Every answer leads to the same optional timing step.
 const OPTIONS = [
   { key: "job", title: "Getting ready for a job", subtitle: "Interview, first day, or still searching" },
   { key: "saving", title: "Saving money", subtitle: "Haircuts, laundry and clothing care" },
@@ -16,13 +18,25 @@ const OPTIONS = [
 
 export default function ReasonPage() {
   const router = useRouter();
-  const [choice, setChoice] = useState("job");
+  const profile = useRequirePhone();
+  const [choice, setChoice] = useState<string | null>(profile?.reason ?? null);
 
   return (
     <StepShell
       step={3}
-      onBack={() => router.push("/verify")}
-      action={<Button fullWidth onClick={() => router.push("/timing")}>Continue</Button>}
+      onBack={() => router.push("/phone")}
+      action={
+        <Button
+          fullWidth
+          disabled={!choice}
+          onClick={() => {
+            updateProfile({ reason: choice });
+            router.push("/timing");
+          }}
+        >
+          Continue
+        </Button>
+      }
     >
       <h1 className="text-headline-lg text-text-heading">What brings you here?</h1>
       <p className="mt-2 text-body-lg text-text-secondary">Pick one. We&rsquo;ll use it to sort your offers.</p>

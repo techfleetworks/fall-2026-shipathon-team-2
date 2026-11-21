@@ -58,8 +58,6 @@ export interface Booking {
 }
 
 export interface User {
-  firstName: string;
-  phone: string;
   keptCount: number;
   missCount: number;
 }
@@ -69,6 +67,25 @@ export function bookingLimit(user: Pick<User, "keptCount" | "missCount">): numbe
   if (user.keptCount >= 4) return "unlimited";
   if (user.keptCount >= 2) return 2;
   return 1;
+}
+
+// Plain-language status for "How bookings work" (H3b), following the trust ladder.
+export function limitStatus(u: Pick<User, "keptCount" | "missCount">): { headline: string; detail: string } {
+  const limit = bookingLimit(u);
+  const kept = `You've shown up for ${u.keptCount} booking${u.keptCount === 1 ? "" : "s"}.`;
+  if (u.missCount >= 2) {
+    return { headline: "1 booking at a time", detail: "Two missed bookings reset your limit to one at a time. Show up to book more." };
+  }
+  if (limit === "unlimited") return { headline: "No limit", detail: `${kept} Keep showing up to keep it.` };
+  if (limit === 2) {
+    const left = 4 - u.keptCount;
+    return { headline: "2 bookings at a time", detail: `${kept} ${left === 1 ? "One" : "Two"} more and there's no limit.` };
+  }
+  const left = 2 - u.keptCount;
+  return {
+    headline: "1 booking at a time",
+    detail: u.keptCount === 0 ? "Show up for 2 bookings and you can hold 2 at once." : `${kept} ${left === 1 ? "One" : "Two"} more and you can hold 2 at once.`,
+  };
 }
 
 export const savings = (s: Service) => s.regularPrice - s.offPeakPrice;
@@ -96,7 +113,9 @@ export const slots: Slot[] = [
   { id: "sl4", serviceId: "s1", day: "Tue 24", time: "3:30 pm", taken: true },
 ];
 
-export const user: User = { firstName: "Dana", phone: "(213) 555-0142", keptCount: 0, missCount: 0 };
+// keptCount matches pastBookings below (2 kept visits) so every screen agrees;
+// by the trust ladder that means 2 bookings at a time.
+export const user: User = { keptCount: 2, missCount: 0 };
 
 export const demoBooking: Booking = {
   id: "bk1",
@@ -154,8 +173,6 @@ export const favorites: Favorite[] = [
   { businessId: "b5", serviceId: "s5", blurb: "Dry cleaning and pressing", offers: "1 offer tomorrow" },
 ];
 
-// "(213) 555-0142" → "(213) ***-**42"
-export const maskPhone = (phone: string) => phone.replace(/\d{3}-\d{2}(\d{2})$/, "***-**$1");
 
 export const getBooking = (id: string) => (id === demoBooking.id ? demoBooking : undefined);
 

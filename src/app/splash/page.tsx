@@ -3,12 +3,14 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SparetimeLogo, BRAND_GRADIENT } from "@/components/brand/logo";
+import { isSignedUp } from "@/lib/account";
 
 // O0a · Splash. Brief brand moment, then advances to Welcome.
 export default function Splash() {
   const router = useRouter();
   useEffect(() => {
-    const t = setTimeout(() => router.replace("/welcome"), 1400);
+    // Returning (signed-up) people go straight to Deals; everyone else to Welcome.
+    const t = setTimeout(() => router.replace(isSignedUp() ? "/deals" : "/welcome"), 1400);
     return () => clearTimeout(t);
   }, [router]);
 
