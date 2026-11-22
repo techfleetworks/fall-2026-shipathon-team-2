@@ -73,7 +73,9 @@ your data to provide that service. We may disclose data if the law requires it.
 You can view and edit your information in Settings, download your data, or delete
 your account at any time. If you live in **California** you also have the right to
 know what we collect, to request deletion or correction, and not to be treated
-differently for using these rights. Contact: _[privacy contact email, to be added]_.
+differently for using these rights. This is a demo, so there's no privacy contact yet; a real address will be
+added before launch. To delete everything now, use "Start fresh on this device"
+in Account.
 
 ## Security
 

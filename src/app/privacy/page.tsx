@@ -126,7 +126,9 @@ export default function PrivacyPage() {
         delete your account at any time. If you live in <strong>California</strong>{" "}
         you also have the right to know what we collect, to request deletion or
         correction, and not to be treated differently for using these rights.
-        Contact: <span className="text-text-secondary">[privacy contact email, to be added]</span>.
+        This is a demo, so there&apos;s no privacy contact yet; a real address will be
+        added before launch. To delete everything now, use &ldquo;Start fresh on
+        this device&rdquo; in Account.
       </p>
 
       <H2>Security</H2>
