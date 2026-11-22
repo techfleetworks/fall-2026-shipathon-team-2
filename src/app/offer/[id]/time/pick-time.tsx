@@ -7,7 +7,6 @@ import { Screen, ScreenBody, AppBar, BottomActionBar } from "@/components/ui/scr
 import { Chip } from "@/components/ui/chip";
 import { Button } from "@/components/ui/button";
 import { LoadingRow } from "@/components/ui/spinner";
-import { goBack } from "@/components/ui/back-button";
 import { CATEGORY_WORDS, getBusiness, getService } from "@/lib/mock-data";
 import { formatTime, longDay, offPeakLabel, relativeDay, sameDay, slotsFor, upcomingDays } from "@/lib/slots";
 import { setDraft, setSlotGone, useAccount, useBookings, useHydrated, useNowMinute } from "@/lib/account";
@@ -66,7 +65,7 @@ export function PickTime({ serviceId }: { serviceId: string }) {
 
   return (
     <Screen>
-      <AppBar title={replaces ? "Pick a new time" : "Pick a time"} onBack={() => goBack(router, `/offer/${serviceId}`)} />
+      <AppBar title={replaces ? "Pick a new time" : "Pick a time"} onBack={() => router.push(`/offer/${serviceId}`)} />
       <ScreenBody>
         <p className="text-body-lg text-text-secondary">{words.ready(business.shortName)}</p>
 

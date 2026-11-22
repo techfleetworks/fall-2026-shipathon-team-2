@@ -34,6 +34,7 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
             <BackButton
               fallback="/deals"
+              exact
               className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-default/90 text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
             >
               <Icon name="chevron-left" />

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useFavorites, useHydrated, useNowMinute, useProfile } from "@/lib/account";
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { NavBar } from "@/components/ui/nav-bar";
@@ -9,10 +10,11 @@ import { OfferCard } from "@/components/ui/offer-card";
 import { BrowseHeader } from "@/components/browse/browse-header";
 import { NoResults } from "@/components/browse/no-results";
 import { ReminderBanner } from "@/components/booking/reminder-banner";
-import { activeFilterCount, browseOffers, seeAll, undoSeeAll, useBrowse, type BrowseOffer, type Tab } from "@/lib/browse";
+import { activeFilterCount, browseOffers, useBrowse, type BrowseOffer } from "@/lib/browse";
+import { getBusiness, plural, servicesAt } from "@/lib/mock-data";
 
-const TAB_LABELS: Record<Tab, string> = { foryou: "For you", all: "All", haircut: "Haircuts", laundry: "Laundry", care: "Clothing care" };
-import { getBusiness, plural, services, servicesAt } from "@/lib/mock-data";
+// How many offers to show before "See all" (the rest are one tap away).
+const PREVIEW_COUNT = 4;
 import { formatTime, placeOfferStatus, relativeDay, sameDay } from "@/lib/slots";
 
 // H1 · Deals. The main browse screen. Offers are the sample shops' services with
@@ -37,8 +39,18 @@ export default function DealsPage() {
 
   const clock = hydrated ? nowMs : 0;
   const shown = browseOffers(browse, profile?.needs ?? [], clock);
-  const narrowed = browse.tab !== "all" || browse.query.trim() !== "" || activeFilterCount(browse.filters) > 0;
-  const total = services.length;
+
+  // Show a short list first; "See all" reveals the rest in place. Changing the
+  // tab, search or filters collapses it back to the preview (reset during render).
+  const [expanded, setExpanded] = useState(false);
+  const browseKey = `${browse.tab}|${browse.query}|${JSON.stringify(browse.filters)}`;
+  const [lastKey, setLastKey] = useState(browseKey);
+  if (browseKey !== lastKey) {
+    setLastKey(browseKey);
+    setExpanded(false);
+  }
+  const visible = expanded ? shown : shown.slice(0, PREVIEW_COUNT);
+
   const heading =
     browse.query.trim() || activeFilterCount(browse.filters) > 0
       ? "Matching offers"
@@ -67,7 +79,7 @@ export default function DealsPage() {
             </p>
 
             <div className="mt-3 flex flex-col gap-3 px-5">
-              {shown.map((o) => (
+              {visible.map((o) => (
                 <OfferCard
                   key={o.service.id}
                   offer={{
@@ -88,28 +100,14 @@ export default function DealsPage() {
           </>
         )}
 
-        {narrowed && shown.length > 0 && shown.length < total && (
+        {shown.length > PREVIEW_COUNT && (
           <div className="px-5 pt-4">
             <button
               type="button"
-              onClick={seeAll}
+              onClick={() => setExpanded((v) => !v)}
               className="min-h-[48px] w-full rounded-full border border-border-control py-3 text-label-lg text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
             >
-              See all {total} offers →
-            </button>
-          </div>
-        )}
-        {browse.beforeSeeAll && (
-          <div className="px-5 pt-4">
-            <button
-              type="button"
-              onClick={undoSeeAll}
-              className="min-h-[48px] w-full rounded-full border border-border-control py-3 text-label-lg text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
-            >
-              ← Back to{" "}
-              {browse.beforeSeeAll.query || activeFilterCount(browse.beforeSeeAll.filters) > 0
-                ? "your search"
-                : TAB_LABELS[browse.beforeSeeAll.tab]}
+              {expanded ? "Show fewer" : `See all ${shown.length} offers →`}
             </button>
           </div>
         )}

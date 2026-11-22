@@ -39,7 +39,7 @@ export default function ConfirmPage() {
   if (!hydrated || nowMs === 0) {
     return (
       <Screen>
-        <AppBar title="Confirm booking" onBack={() => router.back()} />
+        <AppBar title="Confirm booking" onBack={() => router.push("/deals")} />
         <ScreenBody>
           <LoadingRow label="Loading your booking…" />
         </ScreenBody>
