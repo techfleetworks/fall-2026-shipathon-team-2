@@ -15,7 +15,7 @@ export default function AccountPage() {
 
         <ListGroup className="mt-3">
           <BookingLimitRow />
-          <ListRow icon="sliders" title="Settings" href="/account/settings" />
+          <ListRow icon="settings" title="Settings" href="/account/settings" />
         </ListGroup>
 
         <ListGroup className="mt-3">
