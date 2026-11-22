@@ -8,7 +8,7 @@ import { useBookings } from "@/lib/account";
 import { useBooking } from "@/components/booking/use-booking";
 import { ShopBadge } from "@/components/booking/shop-badge";
 import { FavoriteHeart } from "@/components/ui/favorite-heart";
-import { BookingLoading, BookingMissing } from "@/components/booking/booking-states";
+import { BookingLoading, BookingMissing, BookingNotCheckedIn } from "@/components/booking/booking-states";
 import { markNav } from "@/lib/nav-motion";
 
 // P5 · All done — "You saved $X", from the person's real kept visits.
@@ -18,6 +18,7 @@ export function SavedView({ bookingId }: { bookingId: string }) {
 
   if (data.state === "loading") return <BookingLoading title="All done" />;
   if (data.state === "missing") return <BookingMissing title="All done" />;
+  if (data.booking.status !== "kept") return <BookingNotCheckedIn title="All done" bookingId={data.booking.id} />;
 
   const { booking, business, now } = data;
   const saved = booking.regular - booking.paid;

@@ -15,12 +15,16 @@ export function FavoriteHeart({
   businessName,
   variant = "overlay",
   className,
+  onRemoved,
 }: {
   businessId: string;
   businessName: string;
   /** "overlay" = white circle on photos; "plain" = bare icon on cards; "text" = labelled pill button. */
   variant?: "overlay" | "plain" | "text";
   className?: string;
+  /** If set, removing calls this instead of showing the heart's own message
+   * (the Favorites list shows "Removed · Undo" itself, since the row goes away). */
+  onRemoved?: () => void;
 }) {
   const hydrated = useHydrated();
   const favorites = useFavorites();
@@ -36,6 +40,10 @@ export function FavoriteHeart({
     e.preventDefault();
     e.stopPropagation();
     const nowSaved = toggleFavorite(businessId);
+    if (!nowSaved && onRemoved) {
+      onRemoved();
+      return;
+    }
     setToast(nowSaved ? "Saved to Favorites" : "Removed from Favorites");
     startTimer();
   };
@@ -107,7 +115,7 @@ export function FavoriteHeart({
             <Link
               href="/favorites"
               onNavigate={markNav("tab")}
-              className="inline-flex min-h-[44px] items-center rounded-full px-3 text-label-lg text-accent-surface underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-surface"
+              className="inline-flex min-h-[48px] items-center rounded-full px-3 text-label-lg text-accent-surface underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-surface"
             >
               View
             </Link>

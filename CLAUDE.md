@@ -16,14 +16,22 @@ and mark the old one "Replaced by ADR-XXXX".
 Before building or changing **any** UI, read [`DESIGN.md`](DESIGN.md) and build to
 it. Do not invent colors, fonts, spacing, or component styles — use the system.
 
-- **Palette (Green & Purple):** brand green `#1C8057`, deep green `#155E40`,
-  light-green tint `#D7EBD2`, purple savings `#5D2E77`, warm cream canvas
-  `#F4F1E9`, white cards. Green = brand/positive/active; purple = savings.
-  Never swap those roles.
-- **Font:** one sans family — `-apple-system, BlinkMacSystemFont, "Inter",
-  system-ui, sans-serif` (SF Pro on Apple, Inter elsewhere). No serif, no mono.
-- **Tokens live in `src/app/globals.css`** as semantic CSS variables exposed via
-  `@theme inline` (e.g. `bg-primary`, `text-muted`, `bg-accent-soft`). Style
+- **Look & feel comes from the Sparetime Figma design system** —
+  see [ADR-0005](docs/adr/0005-sparetime-figma-design-system.md). DESIGN.md's old
+  green/purple palette and Inter font are **out of date**; use DESIGN.md for
+  product and UX rules only.
+- **Palette (from Figma):** primary violet `#63539c` (`action-primary`, primary
+  buttons/active), accent rose `#924750`, success green `#2d694a`
+  (`status-positive`), danger `#b12a2f`, neutral text `#1b1b1b`, light-grey canvas
+  `#e8e8e8`, white cards, plus service-category colours (haircut, laundry, care).
+- **Fonts:** **Bricolage Grotesque** (bold) for display & headlines
+  (`font-display`); **Plus Jakarta Sans** for titles, body, labels and buttons
+  (`font-sans`, the default). Both are loaded with `next/font` in
+  `src/app/layout.tsx`. Use the type-scale utilities (`text-display`,
+  `text-title-sm`, `text-body-md`, `text-label-lg`, …) rather than raw sizes.
+- **Tokens live in `src/app/globals.css`** in its `@theme` block, with role-based
+  names mirroring Figma (e.g. `bg-action-primary`, `text-text-primary`,
+  `bg-surface-card`, `bg-status-positive`, `border-border-default`). Style
   components with those utilities — don't hardcode hex in components.
 - **Tailwind v4 (CSS-first):** there is **no `tailwind.config.js`**. Add or change
   design tokens in `globals.css`'s `@theme` block, not a JS config.
@@ -41,4 +49,4 @@ it. Do not invent colors, fonts, spacing, or component styles — use the system
 
 - Never push to `main`. Branch → PR → one teammate review.
 - Run `npm run lint` and `npm run build` before opening a PR.
-- Keep the fake data in `src/lib/fake-data.ts` matching `docs/data-contract.md`.
+- Keep the sample data in `src/lib/mock-data.ts` matching `docs/data-contract-v2.md`.

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/icon";
@@ -33,8 +34,19 @@ export function DrawnMap({
   /** Size override (default h-72). */
   className?: string;
 }) {
+  // Map width in px, so the pin pop-up can be kept fully on screen.
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [mapW, setMapW] = useState(0);
+  useEffect(() => {
+    const el = mapRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setMapW(el.clientWidth));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <div className={cn("relative w-full overflow-hidden bg-surface-muted", className ?? "h-72")} aria-label="Map of nearby offers (illustrative)" role="group">
+    <div ref={mapRef} className={cn("relative w-full overflow-hidden bg-surface-muted", className ?? "h-72")} aria-label="Map of nearby offers (illustrative)" role="group">
       {/* Streets, park and freeway — decorative */}
       <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
         <path d="M58 60 Q70 52 82 62 L86 82 Q72 90 60 84 Z" className="fill-status-positive-surface" />
@@ -95,17 +107,23 @@ export function DrawnMap({
       {(() => {
         const sel = pins.find((p) => p.business.id === selected);
         if (!sel) return null;
-        const cx = Math.min(74, Math.max(26, sel.business.mapPos.x));
         const below = sel.business.mapPos.y < 40;
+        // The pop-up is 208px wide and centred on the pin; shift it so it stays
+        // 8px inside the map, and move its pointer back so it still hits the pin.
+        const POP = 208;
+        const pinPx = (sel.business.mapPos.x / 100) * mapW;
+        const shift = mapW ? Math.min(mapW - 8 - POP, Math.max(8, pinPx - POP / 2)) - (pinPx - POP / 2) : 0;
         return (
           <div
             style={{
-              left: `${cx}%`,
+              left: `${sel.business.mapPos.x}%`,
               top: `${sel.business.mapPos.y}%`,
-              transform: below ? "translate(-50%, 28px)" : "translate(-50%, calc(-100% - 28px))",
+              transform: below
+                ? `translate(calc(-50% + ${shift}px), 28px)`
+                : `translate(calc(-50% + ${shift}px), calc(-100% - 28px))`,
             }}
             className="absolute z-30 w-52"
-            role="dialog"
+            role="group"
             aria-label={`${sel.business.name} details`}
           >
             <div className="rounded-lg border border-border-default bg-surface-default p-3 shadow-e3">
@@ -116,7 +134,7 @@ export function DrawnMap({
               <Link
                 href={`/offer/${sel.serviceId}/time`}
                 onNavigate={markNav("forward")}
-                className="mt-2 inline-flex min-h-[40px] w-full items-center justify-center rounded-full bg-action-primary px-4 text-label-md text-on-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+                className="mt-2 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-action-primary px-4 text-label-md text-on-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
               >
                 See open times →
               </Link>
@@ -124,8 +142,9 @@ export function DrawnMap({
             {/* little pointer toward the pin */}
             <div
               aria-hidden="true"
+              style={{ left: `calc(50% - ${shift}px)` }}
               className={cn(
-                "absolute left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-border-default bg-surface-default",
+                "absolute h-3 w-3 -translate-x-1/2 rotate-45 border-border-default bg-surface-default",
                 below ? "-top-1.5 border-l border-t" : "-bottom-1.5 border-b border-r",
               )}
             />

@@ -23,5 +23,13 @@ export function go(router: ReturnType<typeof useRouter>, href: string, dir: NavD
 
 /** The direction of the navigation that just happened, if any (recent only). */
 export function currentNav(): NavDir | null {
-  return pending && Date.now() - pending.at < 1500 ? pending.dir : null;
+  const p = pending;
+  if (!p || Date.now() - p.at >= 1500) return null;
+  // Use it once: clear it right after this render, so a later browser-back
+  // doesn't replay it. (Cleared on the next tick, not now, so React's dev-mode
+  // double effect run still sees it.)
+  setTimeout(() => {
+    if (pending === p) pending = null;
+  }, 0);
+  return p.dir;
 }

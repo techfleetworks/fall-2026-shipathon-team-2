@@ -35,14 +35,17 @@ export function OfferCard({ offer }: { offer: Offer }) {
         <NavLink
           href={`/offer/${offer.id}`}
           dir="forward"
-          className="truncate text-title-sm text-text-primary after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-focus-ring"
+          className="line-clamp-2 text-title-sm text-text-primary after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-focus-ring"
         >
           {offer.title}
         </NavLink>
-        <p className="truncate text-body-sm text-text-secondary">
-          {offer.business} · ★ {offer.rating} · {offer.distanceMi} mi
+        {/* Shop on its own line; rating and distance on the next, so on narrow
+            phones nothing important is cut off. Title may use 2 lines. */}
+        <p className="truncate text-body-sm text-text-secondary">{offer.business}</p>
+        <p className="text-body-sm text-text-secondary">
+          ★ {offer.rating} · {offer.distanceMi} mi
         </p>
-        <div className="flex items-baseline gap-2">
+        <div className="flex flex-wrap items-baseline gap-x-2">
           <span className="text-title-md text-text-primary">${offer.price}</span>
           <span className="text-body-sm text-text-secondary line-through">reg ${offer.regular}</span>
           <span className="text-label-md text-status-positive">Save ${save}</span>

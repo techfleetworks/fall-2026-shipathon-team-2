@@ -12,7 +12,7 @@ import { Icon } from "@/components/ui/icon";
 import { NavBar } from "@/components/ui/nav-bar";
 import { CATEGORY_WORDS } from "@/lib/mock-data";
 import { formatRange, formatTime, longDay, relativeDay, sameDay, shortDay } from "@/lib/slots";
-import { cancelBooking, isLateToCancel, isMissed, setReschedule, useHistoryCounts, useProfile, type Booking } from "@/lib/account";
+import { cancelBooking, isLateToCancel, isMissed, useHistoryCounts, useProfile, type Booking } from "@/lib/account";
 import { RemindersSheet } from "@/components/onboarding/reminders-sheet";
 import { bookingLimit, type Business, type Service } from "@/lib/mock-data";
 import { InfoBox } from "@/components/ui/info-box";
@@ -221,8 +221,9 @@ export function BookingView({ bookingId }: { bookingId: string }) {
             type="button"
             className={linkCls}
             onClick={() => {
-              setReschedule(booking.id);
-              go(router, `/offer/${service.id}/time`, "forward");
+              // The reschedule lives in the address, so backing out (or going
+              // anywhere else) leaves no leftover "Pick a new time" state.
+              go(router, `/offer/${service.id}/time?reschedule=${booking.id}`, "forward");
             }}
           >
             <Icon name="calendar" size={18} /> Reschedule

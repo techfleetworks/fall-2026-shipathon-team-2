@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
@@ -9,12 +10,68 @@ import { FavoriteHeart } from "@/components/ui/favorite-heart";
 import { InfoBox } from "@/components/ui/info-box";
 import { getBusiness, servicesAt } from "@/lib/mock-data";
 import { placeOfferStatus } from "@/lib/slots";
-import { useFavorites, useHydrated, useNowMinute } from "@/lib/account";
+import { restoreFavorite, useFavorites, useHydrated, useNowMinute } from "@/lib/account";
 import { markNav } from "@/lib/nav-motion";
 
 // H4 · the person's saved places (on this device), newest first, each with its
 // live offer status. Empty until they tap a heart.
 export function FavoritesList() {
+  const favorites = useFavorites();
+  // Removing a place here makes its row disappear, so the list itself shows
+  // "Removed [place] · Undo" (8 s, kept while focused). Undo puts it back in the
+  // same spot. Focus moves to Undo so keyboard users don't lose their place.
+  const [removed, setRemoved] = useState<{ id: string; name: string; index: number } | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const undoRef = useRef<HTMLButtonElement>(null);
+  const hide = () => setRemoved(null);
+  const startTimer = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(hide, 8000);
+  };
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
+  }, []);
+  useEffect(() => {
+    if (removed) undoRef.current?.focus();
+  }, [removed]);
+
+  const onRemoved = (id: string, name: string) => {
+    setRemoved({ id, name, index: favorites.indexOf(id) });
+    startTimer();
+  };
+
+  return (
+    <>
+      <FavoritesBody onRemoved={onRemoved} />
+      {removed && (
+        <div
+          role="status"
+          onFocus={() => timer.current && clearTimeout(timer.current)}
+          onBlur={startTimer}
+          className="fixed inset-x-0 bottom-24 z-30 mx-auto flex w-[calc(100%-32px)] max-w-[398px] items-center justify-between gap-3 rounded-lg bg-text-primary px-4 py-2 text-body-md text-surface-default shadow-e3"
+        >
+          <span className="flex min-w-0 items-center gap-2">
+            <Icon name="heart" size={18} />
+            <span className="truncate">Removed {removed.name}</span>
+          </span>
+          <button
+            ref={undoRef}
+            type="button"
+            onClick={() => {
+              restoreFavorite(removed.id, removed.index);
+              hide();
+            }}
+            className="inline-flex min-h-[48px] shrink-0 items-center rounded-full px-3 text-label-lg text-accent-surface underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-surface"
+          >
+            Undo
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+function FavoritesBody({ onRemoved }: { onRemoved: (id: string, name: string) => void }) {
   const hydrated = useHydrated();
   const nowMs = useNowMinute();
   const favorites = useFavorites();
@@ -70,7 +127,13 @@ export function FavoritesList() {
                 <StatusBadge tone={status.open ? "positive" : "neutral"}>{status.text}</StatusBadge>
               </div>
             </div>
-            <FavoriteHeart businessId={b.id} businessName={b.name} variant="plain" className="relative z-10" />
+            <FavoriteHeart
+              businessId={b.id}
+              businessName={b.name}
+              variant="plain"
+              className="relative z-10"
+              onRemoved={() => onRemoved(b.id, b.name)}
+            />
           </li>
         );
       })}

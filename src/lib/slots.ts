@@ -48,7 +48,8 @@ export function slotsFor(service: Service, business: Business, day: Date, now: D
   if (!days.includes(day.getDay())) return [];
   const out: OpenSlot[] = [];
   for (let m = start * 60; m + service.minutes <= end * 60; m += service.minutes) {
-    const s = new Date(startOfDay(day).getTime() + m * 60_000);
+    // Build from calendar parts (not midnight + minutes) so daylight-saving days don't shift slots.
+    const s = new Date(day.getFullYear(), day.getMonth(), day.getDate(), Math.floor(m / 60), m % 60);
     if (s.getTime() < now.getTime() + MIN_LEAD_MINUTES * 60_000) continue;
     const key = `${service.id}|${s.getFullYear()}-${s.getMonth()}-${s.getDate()}|${m}`;
     out.push({
@@ -122,6 +123,7 @@ export function offPeakLabel(b: Business) {
   const { days, start, end } = b.offPeak;
   const range = formatHourRange(start, end);
   if (days.join() === "1,2,3,4,5") return `weekdays ${range}`;
+  if (days.length === 7) return `every day ${range}`;
   const sorted = [...days].sort();
   return `${WEEKDAY_SHORT[sorted[0]]}–${WEEKDAY_SHORT[sorted[sorted.length - 1]]} ${range}`;
 }

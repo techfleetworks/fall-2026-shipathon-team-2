@@ -22,7 +22,10 @@ export function PickTime({ serviceId }: { serviceId: string }) {
   const hydrated = useHydrated();
   const nowMs = useNowMinute();
   const bookings = useBookings();
-  const { reschedule, slotGone } = useAccount();
+  const { slotGone } = useAccount();
+  // Rescheduling only while the address says so (?reschedule=<booking id>), set
+  // by the booking's Reschedule button. Read after hydration.
+  const reschedule = hydrated ? new URLSearchParams(window.location.search).get("reschedule") : null;
   // Rescheduling only applies to the same service the booking was for.
   const replaces = bookings.find((b) => b.id === reschedule && b.serviceId === serviceId && b.status === "booked")?.id;
   const [dayIdx, setDayIdx] = useState<number | null>(null);

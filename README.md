@@ -77,9 +77,13 @@ Rules:
   verification, anywhere.
 - The app **never takes payment** and never stores card numbers.
 - A **trust ladder** limits how many bookings one person can hold: a new account
-  holds 1 at a time; after showing up for 2 bookings they can hold 2; after that
-  the limit opens up. Two total misses reset it to 1. (See
+  holds 1 at a time; after showing up for 2 bookings they can hold 2 at once;
+  after showing up for 4 there is no limit. **Two misses in total** (no-shows, or
+  cancelling less than 2 hours before) reset the limit to 1 and the ladder starts
+  over — people earn it back by showing up. (See
   [docs/screens-and-flows.md](docs/screens-and-flows.md).)
+- **Cancelling is free up to 2 hours before.** Cancelling later counts as a miss,
+  but the slot is freed for someone else right away.
 
 For the MVP, businesses and slots are **sample data** (fictional businesses,
 AI-generated pictures). Business-side screens for posting slots are not built.
@@ -94,19 +98,24 @@ person does is real; only the businesses are sample data.
 - **Sign-up** — the phone number and name you type (nothing is pre-filled), a
   6-digit code that is really checked, then your reason, timing, area and
   services. No texts are sent, so **you can use any US phone number** — the code
-  appears on screen. "Good morning, [your name]" on Deals.
+  appears on the next screen. "Good morning, [your name]" on Deals.
 - **Find** — every offer from 5 sample shops (9 offers), with **live open times**
   from each shop's off-peak hours. **Search**, service tabs, a **Filters** sheet
-  (day, time of day, distance, transit, price) and a **map view**.
+  (day, time of day, distance, transit, price) and a **map view** with a
+  slide-up offers panel.
 - **Book** — any shop and service: pick a real time, confirm, get a booking ID and
   code. The **trust-ladder limit** is enforced ("one booking at a time" for new
-  accounts). **Reschedule** and **cancel** (cancelling within 2 hours counts as a
-  miss).
-- **Show up** — "It's today" on the day, **Show code** at the counter, then
-  **You saved $X** and your monthly total.
+  accounts). **Reschedule** and **cancel** (cancelling less than 2 hours before
+  counts as a miss). Right after your **first** booking, Sparetime asks once
+  whether you want reminders (with optional booking texts and offer alerts).
+- **Show up** — "It's today" on the day, **Show code** at the counter (plus a
+  simple shop view where staff type your code), then **You saved $X**, your
+  monthly total and **Rate your visit**. **Spin City Laundry** has off-peak times
+  every day (9 am–9 pm), so the whole flow works on any day, weekends included.
 - **Your history** — **My bookings** (upcoming and past), **Favorites** (tap a
-  heart to save a place), and **Account** (your details, how bookings work,
-  settings, privacy, delete account, log out). A new account starts empty.
+  heart to save a place; removing one can be undone), and **Account** (your
+  details, how bookings work, settings, privacy, log out). **Delete account**
+  really erases your account on this phone. A new account starts empty.
 
 **Simulated, and why** (full details in [Notes for judges](docs/notes-for-judges.md))
 
@@ -115,12 +124,12 @@ person does is real; only the businesses are sample data.
 | **Sample businesses** | We haven't partnered with or spoken to any shops yet, so we couldn't present real information on a business's behalf. |
 | **Sign-up code shown on screen** (labelled *Demo*) | Real texts need a paid SMS provider and US carrier registration (days to weeks). No text is sent, so **any US number works** for the demo; the code is still really checked. |
 | **Drawn map** | The sample shops use real LA addresses; a real map would put pins on real buildings that may hold real businesses. |
-| **"Done" on Show code** stands in for the shop confirming the visit | The business side isn't built yet. |
+| **"Done" on Show code** stands in for the shop confirming the visit (on the day of the visit) | The business side isn't built yet. |
 | **Data saved on the device** (kept per phone number; **Log out** keeps your account and signing back in restores it, **Start fresh on this device** wipes it) | Supabase is set up but not yet connected to these screens. |
 
 **Try it:** Welcome → **Get started**, use any US-format phone number (no text is
-sent — the code appears on screen), book any shop, then tap **Done** on Show code
-to finish the visit. **Account → Log out** keeps your account (sign back in with
+sent — the code appears on the next screen), book **Spin City Laundry** for today
+(it has times every day), then tap **Done** on Show code to finish the visit. **Account → Log out** keeps your account (sign back in with
 the same number to restore it); **Start fresh on this device** wipes it.
 
 ## What we decided (and what's still open)
@@ -132,8 +141,9 @@ the same number to restore it); **Start fresh on this device** wipes it.
 - **Demo approach** (Nov 21): a working app with on-device data, an on-screen
   sign-up code and a drawn map, so every flow works without a paid SMS provider or
   real businesses. See [ADR-0006](docs/adr/0006-working-demo-on-device-data.md).
-- Reminders are **in-app only** for now; the business confirming a show-up is
-  stood in by **Done** on the Show code screen.
+- Reminders are **in-app only** for now (the optional "booking texts" choice is
+  saved, but no texts are sent yet); the business confirming a show-up is stood
+  in by **Done** on the Show code screen.
 - Open items still to settle: connecting these screens to Supabase (the backend
   fields behind the trust ladder), real SMS, and the business-side screens.
 

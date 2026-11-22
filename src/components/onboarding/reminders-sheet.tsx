@@ -4,7 +4,6 @@ import { useState } from "react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Switch, SwitchVisual } from "@/components/ui/switch";
-import { SparetimeLogo } from "@/components/brand/logo";
 import { updateProfile, useProfile } from "@/lib/account";
 
 // O5b · Booking reminders. Asked once, right after the first booking. "Turn on
@@ -44,18 +43,6 @@ export function RemindersSheet({ open, onDone }: { open: boolean; onDone: () => 
       <p className="mt-3 text-body-lg text-text-secondary">
         We&apos;ll send one notification an hour before your slot. No promotions unless you turn them on below.
       </p>
-
-      <div aria-hidden="true" className="mt-4 flex items-start gap-3 rounded-lg bg-surface-muted p-3">
-        <SparetimeLogo size={28} />
-        <div className="min-w-0 flex-1">
-          <p className="flex justify-between text-label-sm text-text-secondary">
-            <span>Sparetime</span>
-            <span>1 hour before</span>
-          </p>
-          <p className="text-title-sm text-text-primary">Your haircut is in 1 hour</p>
-          <p className="text-body-sm text-text-secondary">Example reminder</p>
-        </div>
-      </div>
 
       {/* Optional booking texts. The whole row is the switch. */}
       <button
