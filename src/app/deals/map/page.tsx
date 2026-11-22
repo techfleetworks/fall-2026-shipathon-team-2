@@ -14,6 +14,7 @@ import { browseOffers, useBrowse } from "@/lib/browse";
 import { useHydrated, useNowMinute, useProfile } from "@/lib/account";
 import { plural, savings } from "@/lib/mock-data";
 import { formatTime, relativeDay, sameDay } from "@/lib/slots";
+import { markNav } from "@/lib/nav-motion";
 
 // H1m · Deals (map). Drawn map on top (pins = shops with matching offers, price
 // shown, selected adds "Save $X"), matching offers below. Card → Offer (details
@@ -94,6 +95,7 @@ export default function DealsMapPage() {
                       <div className="p-3">
                         <Link
                           href={`/offer/${o.service.id}`}
+                          onNavigate={markNav("forward")}
                           className="text-title-sm text-text-primary after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-focus-ring"
                         >
                           {o.service.name}

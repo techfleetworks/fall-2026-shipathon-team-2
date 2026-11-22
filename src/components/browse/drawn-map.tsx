@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/icon";
 import type { Business } from "@/lib/mock-data";
+import { markNav } from "@/lib/nav-motion";
 
 // DRAWN demo map (Figma H1m). Deliberately not a real street map: the sample
 // shops use real LA addresses, and real map pins would land on real buildings
@@ -111,6 +112,7 @@ export function DrawnMap({
               </p>
               <Link
                 href={`/offer/${sel.serviceId}/time`}
+                onNavigate={markNav("forward")}
                 className="mt-2 inline-flex min-h-[40px] w-full items-center justify-center rounded-full bg-action-primary px-4 text-label-md text-on-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
               >
                 See open times →

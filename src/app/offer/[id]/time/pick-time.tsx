@@ -10,6 +10,7 @@ import { LoadingRow } from "@/components/ui/spinner";
 import { CATEGORY_WORDS, getBusiness, getService } from "@/lib/mock-data";
 import { formatTime, longDay, offPeakLabel, relativeDay, sameDay, slotsFor, upcomingDays } from "@/lib/slots";
 import { setDraft, setSlotGone, useAccount, useBookings, useHydrated, useNowMinute } from "@/lib/account";
+import { go } from "@/lib/nav-motion";
 
 // R5t · Pick a time. Real dates: today and the next two days, built from the
 // shop's off-peak hours. Nothing is pre-selected; Continue waits for a pick.
@@ -65,7 +66,7 @@ export function PickTime({ serviceId }: { serviceId: string }) {
 
   return (
     <Screen>
-      <AppBar title={replaces ? "Pick a new time" : "Pick a time"} onBack={() => router.push(`/offer/${serviceId}`)} />
+      <AppBar title={replaces ? "Pick a new time" : "Pick a time"} onBack={() => go(router, `/offer/${serviceId}`, "back")} />
       <ScreenBody>
         <p className="text-body-lg text-text-secondary">{words.ready(business.shortName)}</p>
 
@@ -185,7 +186,7 @@ export function PickTime({ serviceId }: { serviceId: string }) {
             if (!picked) return;
             setSlotGone(null);
             setDraft({ serviceId, startsAt: picked.start.toISOString(), endsAt: picked.end.toISOString(), replaces });
-            router.push("/confirm");
+            go(router, "/confirm", "forward");
           }}
         >
           Continue

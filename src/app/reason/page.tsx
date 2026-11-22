@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { RadioCard } from "@/components/ui/choice";
 import { updateProfile } from "@/lib/account";
 import { useRequirePhone } from "@/components/onboarding/use-require-phone";
+import { go } from "@/lib/nav-motion";
 
 // O3 · What brings you here. Step 3 of 5. One tap, no proof; nothing pre-picked.
 // Every answer leads to the same optional timing step.
@@ -24,14 +25,14 @@ export default function ReasonPage() {
   return (
     <StepShell
       step={3}
-      onBack={() => router.push("/phone")}
+      onBack={() => go(router, "/phone", "back")}
       action={
         <Button
           fullWidth
           disabled={!choice}
           onClick={() => {
             updateProfile({ reason: choice });
-            router.push("/timing");
+            go(router, "/timing", "forward");
           }}
         >
           Continue

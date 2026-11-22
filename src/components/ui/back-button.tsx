@@ -2,12 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { go } from "@/lib/nav-motion";
 
 // Goes back ONE step (to whatever screen the person came from). If the page was
 // opened directly (no in-app history), goes to `fallback` instead.
 export function goBack(router: ReturnType<typeof useRouter>, fallback: string) {
   if (window.history.length > 1) router.back();
-  else router.push(fallback);
+  else go(router, fallback, "back");
 }
 
 export function BackButton({
@@ -27,7 +28,7 @@ export function BackButton({
   children: ReactNode;
 }) {
   const router = useRouter();
-  const onClick = () => (exact ? router.push(fallback) : goBack(router, fallback));
+  const onClick = () => (exact ? go(router, fallback, "back") : goBack(router, fallback));
   return (
     <button type="button" aria-label={label} onClick={onClick} className={className}>
       {children}

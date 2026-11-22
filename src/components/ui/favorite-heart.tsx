@@ -5,6 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Icon } from "./icon";
 import { toggleFavorite, useFavorites, useHydrated } from "@/lib/account";
+import { markNav } from "@/lib/nav-motion";
 
 // Heart that saves a place to the person's Favorites (on this device). 48px hit
 // area; state is announced (aria-pressed) and shown by fill, not colour alone.
@@ -105,6 +106,7 @@ export function FavoriteHeart({
           {toast.startsWith("Saved") && (
             <Link
               href="/favorites"
+              onNavigate={markNav("tab")}
               className="inline-flex min-h-[44px] items-center rounded-full px-3 text-label-lg text-accent-surface underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-surface"
             >
               View

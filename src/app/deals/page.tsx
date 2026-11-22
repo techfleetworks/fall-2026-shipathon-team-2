@@ -16,6 +16,7 @@ import { getBusiness, plural, servicesAt } from "@/lib/mock-data";
 // How many offers to show before "See all" (the rest are one tap away).
 const PREVIEW_COUNT = 4;
 import { formatTime, placeOfferStatus, relativeDay, sameDay } from "@/lib/slots";
+import { markNav } from "@/lib/nav-motion";
 
 // H1 · Deals. The main browse screen. Offers are the sample shops' services with
 // live availability; search, the category tabs and the Filters sheet narrow them
@@ -118,6 +119,7 @@ export default function DealsPage() {
               <h2 className="text-title-sm text-text-heading">From your favorites</h2>
               <Link
                 href="/favorites"
+                onNavigate={markNav("tab")}
                 className="-mr-3 inline-flex min-h-[48px] items-center rounded-full px-3 text-body-sm text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
               >
                 See all<span className="sr-only"> favorites</span>
@@ -134,6 +136,7 @@ export default function DealsPage() {
                   <Link
                     key={b.id}
                     href={`/offer/${offers[0].id}`}
+                    onNavigate={markNav("forward")}
                     className="w-56 shrink-0 overflow-hidden rounded-lg border border-border-default hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}

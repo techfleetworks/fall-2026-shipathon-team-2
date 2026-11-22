@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Icon, type IconName } from "./icon";
+import { markNav } from "@/lib/nav-motion";
 
 // Bottom navigation: the four top-level destinations. Visible on top-level screens,
 // hidden inside flows. Active item is marked by a pill + bolder label (not colour
@@ -29,6 +30,7 @@ export function NavBar({ active, hide }: { active: NavKey; hide?: NavKey[] }) {
           <Link
             key={d.key}
             href={d.href}
+            onNavigate={markNav("tab")}
             aria-current={current ? "page" : undefined}
             className={cn(
               "flex min-h-[48px] min-w-[56px] flex-col items-center justify-center gap-0.5 rounded-full px-3 transition-colors",

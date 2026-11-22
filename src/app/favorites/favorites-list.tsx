@@ -10,6 +10,7 @@ import { InfoBox } from "@/components/ui/info-box";
 import { getBusiness, servicesAt } from "@/lib/mock-data";
 import { placeOfferStatus } from "@/lib/slots";
 import { useFavorites, useHydrated, useNowMinute } from "@/lib/account";
+import { markNav } from "@/lib/nav-motion";
 
 // H4 · the person's saved places (on this device), newest first, each with its
 // live offer status. Empty until they tap a heart.
@@ -56,6 +57,7 @@ export function FavoritesList() {
             <div className="min-w-0 flex-1">
               <Link
                 href={`/offer/${offers[0].id}`}
+                onNavigate={markNav("forward")}
                 className="text-title-sm text-text-primary after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-focus-ring"
               >
                 {b.name}

@@ -22,6 +22,7 @@ import {
   useHydrated,
   useNowMinute,
 } from "@/lib/account";
+import { go } from "@/lib/nav-motion";
 
 // R6 · Confirm booking (+ R6b one-booking-at-a-time). Shows the shop, service and
 // time the person picked. "Book slot" creates a real booking on this device.
@@ -39,7 +40,7 @@ export default function ConfirmPage() {
   if (!hydrated || nowMs === 0) {
     return (
       <Screen>
-        <AppBar title="Confirm booking" onBack={() => router.push("/deals")} />
+        <AppBar title="Confirm booking" onBack={() => go(router, "/deals", "back")} />
         <ScreenBody>
           <LoadingRow label="Loading your booking…" />
         </ScreenBody>
@@ -50,7 +51,7 @@ export default function ConfirmPage() {
   if (!draft || !service || !business) {
     return (
       <Screen>
-        <AppBar title="Confirm booking" onBack={() => router.push("/deals")} />
+        <AppBar title="Confirm booking" onBack={() => go(router, "/deals", "back")} />
         <ScreenBody>
           <p className="text-body-lg text-text-secondary">You haven&apos;t picked a time yet. Find an offer and choose a time to book.</p>
           <ButtonLink href="/deals" fullWidth className="mt-4">
@@ -88,7 +89,7 @@ export default function ConfirmPage() {
   // time with the "isn't available any more" banner and the nearest open time.
   const slotGoneBack = () => {
     setSlotGone({ serviceId: service.id, startsAt: draft.startsAt });
-    router.push(`/offer/${service.id}/time`);
+    go(router, `/offer/${service.id}/time`, "back");
   };
 
   const book = () => {
@@ -112,12 +113,12 @@ export default function ConfirmPage() {
       remind,
     });
     // `new=1` lets the Booked screen offer reminders once, right after booking.
-    router.push(`/booked/${b.id}?new=1`);
+    go(router, `/booked/${b.id}?new=1`, "forward");
   };
 
   return (
     <Screen>
-      <AppBar title="Confirm booking" onBack={() => router.push(`/offer/${service.id}/time`)} />
+      <AppBar title="Confirm booking" onBack={() => go(router, `/offer/${service.id}/time`, "back")} />
       <ScreenBody>
         {/* Summary */}
         <div className="overflow-hidden rounded-lg border border-border-default">

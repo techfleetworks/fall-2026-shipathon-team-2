@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { Icon } from "./icon";
 import { FavoriteHeart } from "./favorite-heart";
+import { NavLink } from "@/components/ui/nav-link";
 
 // Offer card for the Deals list: photo + discount badge, title, business · rating ·
 // distance, price (paid / regular / save), availability. The whole card opens the
@@ -32,12 +32,13 @@ export function OfferCard({ offer }: { offer: Offer }) {
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-        <Link
+        <NavLink
           href={`/offer/${offer.id}`}
+          dir="forward"
           className="truncate text-title-sm text-text-primary after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-focus-ring"
         >
           {offer.title}
-        </Link>
+        </NavLink>
         <p className="truncate text-body-sm text-text-secondary">
           {offer.business} · ★ {offer.rating} · {offer.distanceMi} mi
         </p>

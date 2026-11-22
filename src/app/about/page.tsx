@@ -10,6 +10,7 @@ import { Icon } from "@/components/ui/icon";
 import { updateProfile } from "@/lib/account";
 import { useRequirePhone } from "@/components/onboarding/use-require-phone";
 import { LocationSheet } from "@/components/onboarding/location-sheet";
+import { go } from "@/lib/nav-motion";
 
 // O5 · About you. Step 5 of 5 (last step). First name, area/ZIP, and what they
 // need (multi-select). All start empty; "Confirm & browse" opens the main app
@@ -37,7 +38,7 @@ export default function AboutPage() {
   return (
     <StepShell
       step={5}
-      onBack={() => router.push("/timing")}
+      onBack={() => go(router, "/timing", "back")}
       action={
         <div className="flex flex-col gap-2">
           {!ready && (
@@ -51,7 +52,7 @@ export default function AboutPage() {
             onClick={() => {
               updateProfile({ firstName: firstName.trim(), area: area.trim(), needs });
               // Reminders are asked after the first booking (not during sign-up).
-              router.push("/deals");
+              go(router, "/deals", "forward");
             }}
           >
             Confirm &amp; browse

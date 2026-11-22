@@ -8,6 +8,7 @@ import { Chip } from "@/components/ui/chip";
 import { TextField } from "@/components/ui/text-field";
 import { updateProfile } from "@/lib/account";
 import { useRequirePhone } from "@/components/onboarding/use-require-phone";
+import { go } from "@/lib/nav-motion";
 
 // O4 · When works. Step 4 of 5 · optional. Rough timing chips (nothing
 // pre-picked), plus an optional exact date. Everyone can skip.
@@ -22,7 +23,7 @@ export default function TimingPage() {
   return (
     <StepShell
       step={4}
-      onBack={() => router.push("/reason")}
+      onBack={() => go(router, "/reason", "back")}
       action={
         <div className="flex flex-col gap-1">
           <Button
@@ -30,7 +31,7 @@ export default function TimingPage() {
             disabled={!when && !date}
             onClick={() => {
               updateProfile({ timing: when, timingDate: date || null });
-              router.push("/about");
+              go(router, "/about", "forward");
             }}
           >
             Continue
@@ -40,7 +41,7 @@ export default function TimingPage() {
             fullWidth
             onClick={() => {
               updateProfile({ timing: null, timingDate: null });
-              router.push("/about");
+              go(router, "/about", "forward");
             }}
           >
             Skip for now

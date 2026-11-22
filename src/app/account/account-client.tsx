@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/icon";
 import { resetDevice, signOut, maskPhone, useProfile } from "@/lib/account";
+import { markNav } from "@/lib/nav-motion";
 
 // Profile card: the person's own first name and masked phone (from sign-up).
 export function ProfileCard() {
@@ -14,6 +15,7 @@ export function ProfileCard() {
   return (
     <Link
       href="/account/details"
+      onNavigate={markNav("forward")}
       className="mt-5 flex items-center gap-3 rounded-lg border border-border-default px-4 py-3 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
     >
       <span

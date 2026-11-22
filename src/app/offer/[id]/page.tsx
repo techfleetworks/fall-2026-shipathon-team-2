@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/ui/icon";
 import { CategoryBadge } from "@/components/ui/badge";
@@ -9,6 +8,8 @@ import { groupHours, offPeakLabel } from "@/lib/slots";
 import { Availability } from "./availability";
 import { FavoriteHeart } from "@/components/ui/favorite-heart";
 import { BackButton } from "@/components/ui/back-button";
+import { NavLink } from "@/components/ui/nav-link";
+import { PageMotion } from "@/components/ui/page-motion";
 
 // R5 · Offer detail. Everything comes from the (sample) shop's own data: its
 // description, hours, off-peak window, what's included and its other offers.
@@ -26,6 +27,7 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
 
   return (
     <div className="min-h-dvh w-full bg-bg-canvas">
+      <PageMotion>
       <div className="relative mx-auto flex min-h-dvh max-w-[430px] flex-col bg-surface-default pb-28">
         {/* Hero */}
         <div className="relative h-52 w-full overflow-hidden bg-surface-muted">
@@ -102,9 +104,10 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
               <h2 className="mt-6 text-title-md text-text-heading">More offers here</h2>
               <div className="mt-2 flex flex-col gap-2">
                 {moreOffers.map((m) => (
-                  <Link
+                  <NavLink
                     key={m.id}
                     href={`/offer/${m.id}`}
+                    dir="forward"
                     className="flex min-h-[56px] items-center justify-between rounded-lg border border-border-default px-4 py-3 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
                   >
                     <div>
@@ -116,7 +119,7 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
                       </p>
                     </div>
                     <Icon name="chevron-right" size={20} className="text-text-secondary" />
-                  </Link>
+                  </NavLink>
                 ))}
               </div>
             </>
@@ -133,6 +136,7 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
           </ButtonLink>
         </div>
       </div>
+      </PageMotion>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { formatRange, sameDay, shortDay } from "@/lib/slots";
 import { markKept, useOnline } from "@/lib/account";
 import { useBooking } from "@/components/booking/use-booking";
 import { BookingLoading, BookingMissing } from "@/components/booking/booking-states";
+import { go } from "@/lib/nav-motion";
 
 // P4 · Show code. The person shows this at the counter; staff scan the pattern or
 // type the 6 digits. DEMO: "Done" stands in for the shop confirming the visit
@@ -82,7 +83,7 @@ export function CodeView({ bookingId }: { bookingId: string }) {
             fullWidth
             onClick={() => {
               if (!done) markKept(booking.id);
-              router.push(`/saved/${booking.id}`);
+              go(router, `/saved/${booking.id}`, "forward");
             }}
           >
             Done

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { CheckboxRow } from "@/components/ui/choice";
 import { formatPhone, isValidUsPhone, phoneDigits, sendCode } from "@/lib/account";
+import { go } from "@/lib/nav-motion";
 
 // O1 · Phone — shared by "Create your account" (/phone) and "Sign in" (/signin).
 // Starts empty; formats as you type. Consent is never pre-ticked. "Send code"
@@ -26,13 +27,13 @@ export function PhoneStep({ mode }: { mode: "signup" | "signin" }) {
     setTouched(true);
     if (!valid || !agree) return;
     sendCode(formatPhone(digits));
-    router.push("/verify");
+    go(router, "/verify", "forward");
   };
 
   return (
     <StepShell
       step={1}
-      onBack={() => router.push("/welcome")}
+      onBack={() => go(router, "/welcome", "back")}
       action={
         <Button fullWidth disabled={!valid || !agree} onClick={submit}>
           Send code

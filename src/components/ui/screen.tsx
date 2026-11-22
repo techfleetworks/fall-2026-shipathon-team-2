@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { IconButton } from "./icon-button";
+import { usePageEnter } from "./page-motion";
 
 // Mobile app shell. Designed at 390px; works down to 375 and centers as a column
 // on wider viewports (canvas behind). Compose: <Screen><AppBar/><ScreenBody/>
@@ -49,7 +50,9 @@ export function AppBar({
 
 // Scrollable content region between the app bar and the bottom bar.
 export function ScreenBody({ children, className }: { children: ReactNode; className?: string }) {
-  return <main className={cn("flex-1 overflow-y-auto px-5 py-4", className)}>{children}</main>;
+  // Only the content moves on navigation; the top bar and bottom bar stay put.
+  const ref = usePageEnter<HTMLElement>();
+  return <main ref={ref} className={cn("flex-1 overflow-y-auto px-5 py-4", className)}>{children}</main>;
 }
 
 // Sticky bottom bar for the single primary action (Figma rule: one filled button
