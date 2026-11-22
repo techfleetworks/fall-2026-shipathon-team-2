@@ -1,35 +1,37 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { Suspense } from "react";
-import { AccountBar, AccountBarPlaceholder } from "@/components/account-bar";
+import { Bricolage_Grotesque, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { AppStoreProvider } from "@/lib/store";
 
-// One sans family for the whole app. On Apple devices the CSS stack prefers the
-// native system font (SF Pro); Inter is the look-alike webfont for everywhere else.
-// See DESIGN.md.
-const inter = Inter({
-  variable: "--font-body",
+// Sparetime type system (see globals.css / Figma):
+//   Bricolage Grotesque — display & headlines (Bold)
+//   Plus Jakarta Sans    — titles, body, labels, buttons
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
+  weight: ["700"],
+  display: "swap",
+});
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Plenty · Shipathon Team 2",
-    template: "%s · Plenty",
+    default: "Sparetime · Shipathon Team 2",
+    template: "%s · Sparetime",
   },
   description:
-    "Surplus groceries from small local stores for low-income families in LA County.",
+    "Discounted off-peak services from small local businesses for low-income individuals and families in LA County.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${bricolage.variable} ${jakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Suspense fallback={<AccountBarPlaceholder />}>
-          <AccountBar />
-        </Suspense>
         <AppStoreProvider>{children}</AppStoreProvider>
       </body>
     </html>

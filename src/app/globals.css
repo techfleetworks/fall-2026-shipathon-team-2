@@ -1,92 +1,191 @@
 @import "tailwindcss";
 
-/* Green & Purple theme (see DESIGN.md) */
+/* ============================================================
+   Sparetime design system — tokens from the Figma variables
+   (file: "Shipathon Team 2" → page "DS cleanup (working)").
+   Role-based names mirror the Figma CSS syntax one-to-one.
+   This REPLACES the old green/purple system in DESIGN.md
+   (DESIGN.md is out of date for look & feel — see ADR-0005).
+   No dark mode / no animation tokens: out of scope for v1.
+   ============================================================ */
 
-/* ---------------------------------------------------------------
-   Design tokens — "Green & Purple" marketplace (see DESIGN.md).
-   Semantic names stay stable; change values here to re-skin the app.
-   Brand hex confirmed by the team.
-   --------------------------------------------------------------- */
-:root {
-  --background: #f4f1e9;   /* warm cream canvas */
-  --surface: #ffffff;      /* cards (pop against the cream) */
-  --foreground: #1a1a1a;   /* ink */
-  --muted: #6b7280;        /* secondary ink */
-  --border: #e5e7eb;       /* card + chip borders */
+@theme {
+  /* ---- Tonal ramps (reference; roles below point at these) ---- */
+  --color-primary-0: #000000;
+  --color-primary-10: #151150;
+  --color-primary-20: #302668;
+  --color-primary-30: #4a3c82;
+  --color-primary-40: #63539c;
+  --color-primary-50: #7e6bb7;
+  --color-primary-60: #9985d3;
+  --color-primary-70: #b49ff0;
+  --color-primary-80: #cfbcff;
+  --color-primary-90: #e8defe;
+  --color-primary-95: #f3eefe;
+  --color-primary-99: #fdfcff;
+  --color-primary-100: #ffffff;
 
-  --primary: #1c8057;          /* brand green — CTAs, active tab/nav */
-  --primary-hover: #155e40;    /* deep green — hover/pressed, discount badge */
-  --primary-foreground: #ffffff;
-  --primary-soft: #d7ebd2;     /* light green tint — active nav pill, map, Free bg */
+  --color-secondary-30: #4b4263;
+  --color-secondary-40: #63597c;
+  --color-secondary-80: #cdc0e9;
+  --color-secondary-90: #e8defe;
 
-  --savings: #5d2e77;          /* purple — "Save $X", Filter, secondary accent */
-  --savings-soft: #efe9f3;
+  --color-accent-30: #772f3a;
+  --color-accent-40: #924750;
+  --color-accent-80: #feb3b8;
+  --color-accent-90: #fedadc;
 
-  --pickup: #1c8057;           /* pickup times / selected time slot (brand green) */
-  --pickup-foreground: #ffffff;
+  --color-destructive-20: #68010f;
+  --color-destructive-30: #92011a;
+  --color-destructive-40: #b12a2f;
+  --color-destructive-80: #ffb4ab;
+  --color-destructive-90: #ffdad6;
 
-  --accent: #1c8057;           /* "Free" tag text (green family) */
-  --accent-soft: #d7ebd2;      /* "Free" tag background (light green tint) */
+  --color-success-30: #115134;
+  --color-success-40: #2d694a;
+  --color-success-80: #95d4b0;
+  --color-success-90: #b0f1cb;
 
-  --price: #1a1a1a;            /* price text (bold) */
-  --price-soft: #f4efe6;       /* soft neutral price pill */
+  --color-neutral-10: #1b1b1b;
+  --color-neutral-30: #464646;
+  --color-neutral-40: #5e5e5e;
+  --color-neutral-50: #777777;
+  --color-neutral-60: #909090;
+  --color-neutral-80: #c7c7c7;
+  --color-neutral-90: #e3e3e3;
+  --color-neutral-95: #f0f0f0;
+  --color-neutral-99: #fafafa;
+  --color-neutral-100: #ffffff;
+
+  /* ---- Semantic roles (what components should use) ---- */
+  --color-bg-canvas: #e8e8e8;
+
+  --color-surface-default: #ffffff;
+  --color-surface-card: #ffffff;
+  --color-surface-subtle: #e8defe;
+  --color-surface-secondary: #e8defe;
+  --color-surface-muted: #f0f0f0;
+
+  --color-text-primary: #1b1b1b;
+  --color-text-heading: #1b1b1b;
+  --color-text-body: #1b1b1b;
+  --color-text-secondary: #474747;
+
+  --color-action-primary: #63539c;
+  --color-action-secondary: #63597c;
+  --color-on-action: #ffffff;
+  --color-on-tint-primary: #4a3c82;
+  --color-on-tint-secondary: #4b4263;
+
+  --color-accent-primary: #924750;
+  --color-accent-surface: #cfbcff;
+  --color-on-tint-accent: #772f3a;
+  --color-panel-subtle: #fedadc;
+
+  --color-danger-primary: #b12a2f;
+  --color-danger-surface: #ffdad6;
+  --color-on-tint-danger: #92011a;
+
+  --color-status-positive: #2d694a;
+  --color-status-positive-surface: #b0f1cb;
+  --color-on-tint-positive: #115134;
+
+  --color-border-default: #c6c6c6;
+  --color-border-control: #777777;
+
+  --color-focus-ring: #ae6068;
+  --color-disabled-text: #5e5e5e;
+  --color-disabled-bg: #f0f0f0;
+
+  /* Service categories (each with a soft surface) */
+  --color-category-haircut: #a8431a;
+  --color-category-haircut-surface: #ffe4d6;
+  --color-category-laundry: #1d5c9e;
+  --color-category-laundry-surface: #ddebfc;
+  --color-category-care: #7a5800;
+  --color-category-care-surface: #fdedbf;
+
+  --color-overlay-scrim: #00000052;
+
+  /* ---- Corner radius ---- */
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+
+  /* ---- Elevation (Plenty/Elevation 1–3 from Figma) ---- */
+  --shadow-e1: 0 1px 3px #1d192714, 0 2px 6px #1d19270f;
+  --shadow-e2: 0 6px 18px #1d19271f;
+  --shadow-e3: 0 -8px 24px #1d192724;
+
+  /* ---- Type scale (Bricolage Grotesque = display/headline; Plus Jakarta Sans = rest) ---- */
+  --text-display: 34px;
+  --text-display--line-height: 40px;
+  --text-display--font-weight: 700;
+  --text-headline-lg: 30px;
+  --text-headline-lg--line-height: 36px;
+  --text-headline-lg--font-weight: 700;
+  --text-headline-sm: 26px;
+  --text-headline-sm--line-height: 32px;
+  --text-headline-sm--font-weight: 700;
+  --text-title-lg: 22px;
+  --text-title-lg--line-height: 28px;
+  --text-title-lg--font-weight: 700;
+  --text-title-md: 20px;
+  --text-title-md--line-height: 26px;
+  --text-title-md--font-weight: 700;
+  --text-title-sm: 16px;
+  --text-title-sm--line-height: 22px;
+  --text-title-sm--font-weight: 600;
+  --text-body-lg: 15px;
+  --text-body-lg--line-height: 22px;
+  --text-body-md: 14px;
+  --text-body-md--line-height: 20px;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: 17px;
+  --text-label-lg: 15px;
+  --text-label-lg--line-height: 20px;
+  --text-label-lg--font-weight: 600;
+  --text-label-md: 13px;
+  --text-label-md--line-height: 18px;
+  --text-label-md--font-weight: 600;
+  --text-label-sm: 12px;
+  --text-label-sm--line-height: 16px;
+  --text-label-sm--font-weight: 600;
+
+  /* ---- Fonts (wired in layout.tsx via next/font) ---- */
+  --font-display: var(--font-bricolage), "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #14130f;
-    --surface: #1f1d18;
-    --foreground: #f3f1ea;
-    --muted: #a8a29a;
-    --border: #35322c;
-
-    --primary: #3fae7f;
-    --primary-hover: #52c08f;
-    --primary-foreground: #0b1f16;
-    --primary-soft: #1f3a2c;
-
-    --savings: #b794d6;
-    --savings-soft: #2e2440;
-
-    --pickup: #3fae7f;
-    --pickup-foreground: #0b1f16;
-
-    --accent: #9fd8ba;
-    --accent-soft: #1f3a2c;
-
-    --price: #f3f1ea;
-    --price-soft: #2a271f;
-  }
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-soft: var(--primary-soft);
-  --color-savings: var(--savings);
-  --color-savings-soft: var(--savings-soft);
-  --color-pickup: var(--pickup);
-  --color-pickup-foreground: var(--pickup-foreground);
-  --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
-  --color-price: var(--price);
-  --color-price-soft: var(--price-soft);
-
-  /* One sans family — SF Pro on Apple, Inter elsewhere (see DESIGN.md). */
-  --font-sans: -apple-system, BlinkMacSystemFont, var(--font-body), system-ui, sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, var(--font-body), system-ui, sans-serif;
-  --font-mono: -apple-system, BlinkMacSystemFont, var(--font-body), system-ui, sans-serif;
+html {
+  background: var(--color-bg-canvas);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, var(--font-body), system-ui, sans-serif;
-  font-size: 16px; /* min body size to prevent mobile zoom */
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 15px; /* Body Large baseline */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Display/headline text uses Bricolage Grotesque. Apply with the
+   `font-display` utility, or rely on these base element defaults. */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--color-text-heading);
+}
+
+/* Hide the scrollbar on horizontal chip carousels and sheet content while
+   keeping the content scrollable (swipe / wheel / keyboard still work). */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/old Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
