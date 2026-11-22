@@ -202,52 +202,7 @@ export const services: Service[] = [
   { id: "s5", businessId: "b5", name: "Shirt press (5 items)", regularPrice: 30, offPeakPrice: 9, includes: "press and hang, ready the next day", minutes: 60 },
 ];
 
-// keptCount matches pastBookings below (2 kept visits) so every screen agrees;
-// by the trust ladder that means 2 bookings at a time. (Replaced by real
-// history in step 3.)
-export const user: User = { keptCount: 2, missCount: 0 };
-
-// Past (kept) bookings this month, shown on My bookings (H2). Shop-side copy
-// (labels, dates) mirrors the Figma; prices match the services above.
-// (Replaced by real history in step 3.)
-export interface PastBooking {
-  id: string;
-  businessId: string;
-  serviceId: string;
-  label: string;
-  paid: number;
-  saved: number;
-  dateLabel: string;
-}
-
-export const pastBookings: PastBooking[] = [
-  { id: "pb1", businessId: "b4", serviceId: "s4", label: "Wash and fold", paid: 6, saved: 9, dateLabel: "Nov 18" },
-  { id: "pb2", businessId: "b5", serviceId: "s5", label: "Pressing", paid: 9, saved: 21, dateLabel: "Nov 12" },
-];
-
-export function monthSavings() {
-  return {
-    amount: pastBookings.reduce((sum, b) => sum + b.saved, 0),
-    bookings: pastBookings.length,
-  };
-}
-
 export const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
-
-// Saved places (H4 Favorites; also the Deals "From your favorites" row).
-// (Replaced by real favorites in step 3.)
-export interface Favorite {
-  businessId: string;
-  serviceId: string;
-  blurb: string;
-  offers: string;
-}
-
-export const favorites: Favorite[] = [
-  { businessId: "b1", serviceId: "s1", blurb: "Haircuts", offers: "3 offers today" },
-  { businessId: "b4", serviceId: "s4", blurb: "Wash and fold", offers: "1 offer today" },
-  { businessId: "b5", serviceId: "s5", blurb: "Dry cleaning and pressing", offers: "1 offer tomorrow" },
-];
 
 export const getBusiness = (id: string) => businesses.find((b) => b.id === id);
 export const getService = (id: string) => services.find((s) => s.id === id);

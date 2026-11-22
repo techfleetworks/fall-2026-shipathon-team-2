@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { Icon } from "./icon";
+import { FavoriteHeart } from "./favorite-heart";
 
-// Offer card for the Deals list: placeholder photo + discount badge, title,
-// business · rating · distance, price (paid / regular / save), availability.
+// Offer card for the Deals list: photo + discount badge, title, business · rating ·
+// distance, price (paid / regular / save), availability. The whole card opens the
+// offer (stretched link); the heart is a separate button that saves the place.
 export interface Offer {
   id: string;
+  businessId: string;
   title: string;
   business: string;
   rating: number;
@@ -19,23 +22,22 @@ export function OfferCard({ offer }: { offer: Offer }) {
   const save = offer.regular - offer.price;
   const pct = Math.round((save / offer.regular) * 100);
   return (
-    <Link
-      href={`/offer/${offer.id}`}
-      className="flex items-stretch gap-3 rounded-lg border border-border-default bg-surface-card p-3 transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
-    >
+    <div className="relative flex items-stretch gap-3 rounded-lg border border-border-default bg-surface-card p-3 transition-colors hover:bg-surface-muted">
       <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md bg-surface-muted">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={offer.photo} alt="" className="h-full w-full object-cover" />
         <span className="absolute bottom-1 left-1 rounded-xs bg-accent-primary px-1.5 py-0.5 text-label-sm text-on-action">
           {pct}% off
         </span>
-        <span className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-surface-default/90 text-text-secondary">
-          <Icon name="heart" size={16} />
-        </span>
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-        <p className="truncate text-title-sm text-text-primary">{offer.title}</p>
+        <Link
+          href={`/offer/${offer.id}`}
+          className="truncate text-title-sm text-text-primary after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-focus-ring"
+        >
+          {offer.title}
+        </Link>
         <p className="truncate text-body-sm text-text-secondary">
           {offer.business} · ★ {offer.rating} · {offer.distanceMi} mi
         </p>
@@ -47,7 +49,10 @@ export function OfferCard({ offer }: { offer: Offer }) {
         <p className="text-body-sm text-text-secondary">{offer.availability}</p>
       </div>
 
-      <Icon name="chevron-right" size={20} className="self-center text-text-secondary" />
-    </Link>
+      <div className="relative z-10 flex flex-col items-center justify-between">
+        <FavoriteHeart businessId={offer.businessId} businessName={offer.business} variant="plain" className="-mt-2 -mr-2" />
+        <Icon name="chevron-right" size={20} className="mb-2 text-text-secondary" />
+      </div>
+    </div>
   );
 }

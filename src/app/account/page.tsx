@@ -1,14 +1,11 @@
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { NavBar } from "@/components/ui/nav-bar";
 import { ListGroup, ListRow } from "@/components/ui/list-row";
-import { bookingLimit, user } from "@/lib/mock-data";
 import { LogOutButton, ProfileCard } from "./account-client";
+import { BookingLimitRow } from "./limit-client";
 
 // H3 · Account. Customer support has no screen yet, so it's marked "Soon".
 export default function AccountPage() {
-  const limit = bookingLimit(user);
-  const limitCopy = limit === "unlimited" ? "No limit" : `${limit} at a time for now`;
-
   return (
     <Screen>
       <ScreenBody className="pt-6">
@@ -17,7 +14,7 @@ export default function AccountPage() {
         <ProfileCard />
 
         <ListGroup className="mt-3">
-          <ListRow icon="ticket" title="Booking limit" sub={`${limitCopy} · how it works`} href="/account/how-bookings-work" />
+          <BookingLimitRow />
           <ListRow icon="sliders" title="Settings" href="/account/settings" />
         </ListGroup>
 

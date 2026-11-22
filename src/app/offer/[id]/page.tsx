@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { getService, getBusiness, servicesAt, savings, CATEGORY_LABEL } from "@/lib/mock-data";
 import { groupHours, offPeakLabel } from "@/lib/slots";
 import { Availability } from "./availability";
+import { FavoriteHeart } from "@/components/ui/favorite-heart";
 
 // R5 · Offer detail. Everything comes from the (sample) shop's own data: its
 // description, hours, off-peak window, what's included and its other offers.
@@ -37,6 +38,7 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
             >
               <Icon name="chevron-left" />
             </Link>
+            <FavoriteHeart businessId={business.id} businessName={business.name} />
           </div>
           <div
             className={`absolute -bottom-7 left-5 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-surface-default ${

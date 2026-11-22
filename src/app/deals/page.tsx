@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useGreeting, useHydrated, useNowMinute, useProfile } from "@/lib/account";
+import { useFavorites, useGreeting, useHydrated, useNowMinute, useProfile } from "@/lib/account";
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { NavBar } from "@/components/ui/nav-bar";
 import { IconButton } from "@/components/ui/icon-button";
@@ -10,8 +10,8 @@ import { Chip } from "@/components/ui/chip";
 import { Icon } from "@/components/ui/icon";
 import { InfoBox } from "@/components/ui/info-box";
 import { OfferCard, type Offer } from "@/components/ui/offer-card";
-import { NEED_TO_CATEGORY, services, getBusiness, plural, type Category } from "@/lib/mock-data";
-import { formatTime, nextAvailability, relativeDay } from "@/lib/slots";
+import { NEED_TO_CATEGORY, services, servicesAt, getBusiness, plural, type Category } from "@/lib/mock-data";
+import { formatTime, nextAvailability, placeOfferStatus, relativeDay } from "@/lib/slots";
 
 // H1 · Deals. The main browse screen. Offers are the sample shops' services;
 // availability is live from each shop's off-peak hours (needs the person's clock,
@@ -31,6 +31,7 @@ function buildOffers(nowMs: number): DealOffer[] {
           : "No open times soon";
       return {
         id: s.id,
+        businessId: b.id,
         title: s.name,
         business: b.name,
         rating: b.rating,
@@ -60,6 +61,7 @@ export default function DealsPage() {
   const greeting = useGreeting();
   const hydrated = useHydrated();
   const nowMs = useNowMinute();
+  const favorites = useFavorites();
   const offers = buildOffers(hydrated ? nowMs : 0);
   const activeCat = CHIPS.find((c) => c.key === chip)?.cat;
   const mine = (profile?.needs ?? []).map((n) => NEED_TO_CATEGORY[n]).filter(Boolean);
@@ -135,31 +137,45 @@ export default function DealsPage() {
           </button>
         </div>
 
-        <div className="mt-5 flex items-center justify-between px-5">
-          <h2 className="text-title-sm text-text-heading">From your favorites</h2>
-          <Link
-            href="/favorites"
-            className="-mr-3 inline-flex min-h-[48px] items-center rounded-full px-3 text-body-sm text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
-          >
-            See all<span className="sr-only"> favorites</span>
-          </Link>
-        </div>
-        <div className="mt-3 flex gap-3 overflow-x-auto px-5">
-          {[
-            { b: getBusiness("b1")!, sub: "3 offers today", price: "From $8" },
-            { b: getBusiness("b5")!, sub: "1 offer tomorrow", price: "$9 · Save $21" },
-          ].map((f) => (
-            <div key={f.b.id} className="w-56 shrink-0 overflow-hidden rounded-lg border border-border-default">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={f.b.photo} alt="" className="h-28 w-full object-cover" />
-              <div className="p-3">
-                <p className="truncate text-title-sm text-text-primary">{f.b.name}</p>
-                <p className="text-body-sm text-text-secondary">{f.sub}</p>
-                <p className="mt-1 text-label-md text-status-positive">{f.price}</p>
-              </div>
+        {hydrated && favorites.length > 0 && (
+          <>
+            <div className="mt-5 flex items-center justify-between px-5">
+              <h2 className="text-title-sm text-text-heading">From your favorites</h2>
+              <Link
+                href="/favorites"
+                className="-mr-3 inline-flex min-h-[48px] items-center rounded-full px-3 text-body-sm text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+              >
+                See all<span className="sr-only"> favorites</span>
+              </Link>
             </div>
-          ))}
-        </div>
+            <div className="mt-3 flex gap-3 overflow-x-auto px-5 pb-1">
+              {favorites.map((id) => {
+                const b = getBusiness(id);
+                if (!b) return null;
+                const offers = servicesAt(b.id);
+                const cheapest = Math.min(...offers.map((o) => o.offPeakPrice));
+                const status = nowMs ? placeOfferStatus(b, offers, new Date(nowMs)).text : "";
+                return (
+                  <Link
+                    key={b.id}
+                    href={`/offer/${offers[0].id}`}
+                    className="w-56 shrink-0 overflow-hidden rounded-lg border border-border-default hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={b.photo} alt="" className="h-28 w-full object-cover" />
+                    <div className="p-3">
+                      <p className="truncate text-title-sm text-text-primary">{b.name}</p>
+                      <p className="text-body-sm text-text-secondary">{status}</p>
+                      <p className="mt-1 text-label-md text-status-positive">
+                        {offers.length > 1 ? `From $${cheapest}` : `$${cheapest} · Save $${offers[0].regularPrice - cheapest}`}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         <div className="px-5 py-5">
           <InfoBox tone="subtle">

@@ -69,6 +69,19 @@ export function nextAvailability(service: Service, business: Business, now: Date
   return null;
 }
 
+/** Favorites status for a place: "3 offers today" / "1 offer tomorrow" / "2 offers on Mon 23". */
+export function placeOfferStatus(business: Business, services: Service[], now: Date) {
+  for (const day of upcomingDays(now)) {
+    const n = services.filter((s) => slotsFor(s, business, day, now).some((x) => !x.taken)).length;
+    if (n) {
+      const when = relativeDay(day, now);
+      const label = when === "Today" ? "today" : when === "Tomorrow" ? "tomorrow" : `on ${when}`;
+      return { open: true, text: `${n} offer${n === 1 ? "" : "s"} ${label}` };
+    }
+  }
+  return { open: false, text: "No open times soon" };
+}
+
 // ---- Formatting -------------------------------------------------------------
 
 /** 13.5 → "1:30 pm"; whole hours drop ":00" only when `short`. */

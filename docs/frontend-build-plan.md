@@ -303,4 +303,14 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   My bookings Upcoming is real; Past/favorites are still sample until step 3. Deals:
   live availability, sorted soonest, "For you" = sign-up services, real count. Fixed
   swapped Spin City / Prime Press photos from the Figma export.
+- 2026-11-21 — **Empty history (step 3).** Removed all sample user history (past bookings,
+  favorites, kept/miss counts) from `mock-data.ts`; only businesses are sample now. New
+  accounts start empty and fill from real use: My bookings Upcoming/Past + "saved this
+  month" come from the device's bookings; booking limit (Account, How bookings work,
+  Confirm) from real kept/missed visits. Favorites: real hearts (offer page photo, Deals
+  cards) save a place, with a "Saved to Favorites · View" message (8 s, pauses on
+  hover/focus); Favorites tab lists saved places newest first with live offer status
+  ("3 offers on Mon 23"); empty state when none; Deals "From your favorites" row shows
+  real favorites and hides when empty. Offer cards restructured so the heart is its own
+  button (no button inside a link).
 - _(add each screen as it lands)_

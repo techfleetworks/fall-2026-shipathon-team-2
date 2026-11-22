@@ -63,10 +63,12 @@ interface AccountState {
   bookings: Booking[];
   /** Booking id being rescheduled (set by "Reschedule", used by Pick a time). */
   reschedule: string | null;
+  /** Saved places (business ids), most recently saved first. */
+  favorites: string[];
 }
 
 const KEY = "sparetime.account.v1";
-const EMPTY: AccountState = { profile: null, pending: null, draft: null, bookings: [], reschedule: null };
+const EMPTY: AccountState = { profile: null, pending: null, draft: null, bookings: [], reschedule: null, favorites: [] };
 const BLANK_PROFILE: Omit<Profile, "phone"> = {
   firstName: "",
   area: "",
@@ -197,7 +199,14 @@ export function verifyCode(input: string): boolean {
   const samePerson = !!s.profile && s.profile.phone === s.pending.phone;
   const profile = samePerson ? s.profile! : { ...BLANK_PROFILE, phone: s.pending.phone };
   // A different phone number is a different person: start their history fresh.
-  save({ ...s, profile, pending: null, bookings: samePerson ? s.bookings : [], draft: samePerson ? s.draft : null });
+  save({
+    ...s,
+    profile,
+    pending: null,
+    bookings: samePerson ? s.bookings : [],
+    favorites: samePerson ? s.favorites : [],
+    draft: samePerson ? s.draft : null,
+  });
   return true;
 }
 
@@ -237,6 +246,13 @@ export function historyCounts(bookings: Booking[], nowMs: number) {
     keptCount: bookings.filter((b) => b.status === "kept").length,
     missCount: bookings.filter((b) => (b.status === "cancelled" && b.lateCancel) || isMissed(b, nowMs)).length,
   };
+}
+
+/** Kept / missed counts from the person's real bookings (both 0 until loaded). */
+export function useHistoryCounts() {
+  const bookings = useBookings();
+  const nowMs = useNowMinute();
+  return historyCounts(bookings, nowMs);
 }
 
 export function setDraft(draft: Draft) {
@@ -286,6 +302,18 @@ export function markKept(id: string) {
 }
 
 export const isLateToCancel = (b: Booking, nowMs: number) => new Date(b.startsAt).getTime() - nowMs < LATE_CANCEL_MS;
+
+// ---- Favorites --------------------------------------------------------------
+
+export const useFavorites = () => useAccount().favorites;
+
+/** Saves or un-saves a place. Returns true if it is now saved. */
+export function toggleFavorite(businessId: string): boolean {
+  const s = load();
+  const saved = s.favorites.includes(businessId);
+  save({ ...s, favorites: saved ? s.favorites.filter((id) => id !== businessId) : [businessId, ...s.favorites] });
+  return !saved;
+}
 
 // ---- Phone helpers ----------------------------------------------------------
 

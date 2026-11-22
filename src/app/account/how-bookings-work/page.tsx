@@ -1,7 +1,7 @@
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { PageHeader } from "@/components/ui/page-header";
 import { NavBar } from "@/components/ui/nav-bar";
-import { limitStatus, user } from "@/lib/mock-data";
+import { LimitStatusPanel } from "../limit-client";
 
 // H3b · How bookings work — the trust ladder in plain language, plus your status.
 const STEPS = [
@@ -17,7 +17,6 @@ const STEPS = [
 ];
 
 export default function HowBookingsWorkPage() {
-  const status = limitStatus(user);
   return (
     <Screen>
       <PageHeader title="How bookings work" backHref="/account" />
@@ -43,11 +42,7 @@ export default function HowBookingsWorkPage() {
           ))}
         </ol>
 
-        <section aria-label="Your status" className="mt-5 rounded-lg bg-surface-muted p-4">
-          <p className="text-label-md text-text-secondary">Your status</p>
-          <p className="mt-1 text-title-lg font-bold text-text-primary">{status.headline}</p>
-          <p className="mt-1 text-body-md text-text-secondary">{status.detail}</p>
-        </section>
+        <LimitStatusPanel />
       </ScreenBody>
       <NavBar active="account" />
     </Screen>
