@@ -210,14 +210,18 @@ create policy "businesses readable" on public.businesses
 create policy "services readable" on public.services
   for select to authenticated using (true);
 
--- Slots: future slots with seats left, plus any slot the user has booked
--- (so their booking code still shows on the day).
+-- Slots: only before they start. Before the start, a slot shows if it has seats
+-- left, or if the person has booked it. Once a slot has started, nobody sees it.
+-- The person's booking and code stay visible through the bookings policy.
 create policy "open slots readable" on public.slots
   for select to authenticated using (
-    (starts_at > now() and seats_left > 0)
-    or exists (
-      select 1 from public.bookings b
-      where b.slot_id = slots.id and b.user_id = auth.uid()
+    starts_at > now()
+    and (
+      seats_left > 0
+      or exists (
+        select 1 from public.bookings b
+        where b.slot_id = slots.id and b.user_id = auth.uid()
+      )
     )
   );
 
@@ -330,9 +334,9 @@ begin
 end;
 $$;
 
--- The user cancels their own booking. Seats come back only if it's 2+ hours
--- before the start. A later cancel is kept as a miss and the seats stay taken.
--- Returns 'cancelled' (on time) or 'late' (counts as a miss).
+-- The user cancels their own booking. The seat always goes back to the slot, so
+-- the shop can still fill it. A cancel less than 2 hours before the start still
+-- counts as a miss (see trust_counts). Returns 'cancelled' (on time) or 'late'.
 create or replace function public.cancel_booking(p_booking_id uuid)
 returns text
 language plpgsql
@@ -363,8 +367,10 @@ begin
 
   update public.bookings set status = 'cancelled', cancelled_at = now() where id = p_booking_id;
 
+  -- The seat goes back right away, even for a late cancel.
+  update public.slots set seats_left = seats_left + v_booking.seats where id = v_booking.slot_id;
+
   if now() <= v_starts - interval '2 hours' then
-    update public.slots set seats_left = seats_left + v_booking.seats where id = v_booking.slot_id;
     return 'cancelled';
   end if;
   return 'late';
