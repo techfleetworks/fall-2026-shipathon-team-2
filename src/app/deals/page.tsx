@@ -1,141 +1,103 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useFavorites, useGreeting, useHydrated, useNowMinute, useProfile } from "@/lib/account";
+import { useFavorites, useHydrated, useNowMinute, useProfile } from "@/lib/account";
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { NavBar } from "@/components/ui/nav-bar";
-import { IconButton } from "@/components/ui/icon-button";
-import { Chip } from "@/components/ui/chip";
-import { Icon } from "@/components/ui/icon";
 import { InfoBox } from "@/components/ui/info-box";
-import { OfferCard, type Offer } from "@/components/ui/offer-card";
-import { NEED_TO_CATEGORY, services, servicesAt, getBusiness, plural, type Category } from "@/lib/mock-data";
-import { formatTime, nextAvailability, placeOfferStatus, relativeDay } from "@/lib/slots";
+import { OfferCard } from "@/components/ui/offer-card";
+import { BrowseHeader } from "@/components/browse/browse-header";
+import { NoResults } from "@/components/browse/no-results";
+import { activeFilterCount, browseOffers, clearAll, setTab, useBrowse, type BrowseOffer } from "@/lib/browse";
+import { getBusiness, plural, services, servicesAt } from "@/lib/mock-data";
+import { formatTime, placeOfferStatus, relativeDay, sameDay } from "@/lib/slots";
 
-// H1 · Deals. The main browse screen. Offers are the sample shops' services;
-// availability is live from each shop's off-peak hours (needs the person's clock,
-// so it's computed after load). "For you" shows the services picked at sign-up.
-type DealOffer = Offer & { category: Category; soonest: number };
+// H1 · Deals. The main browse screen. Offers are the sample shops' services with
+// live availability; search, the category tabs and the Filters sheet narrow them
+// (shared with Deals → Map). "For you" shows the services picked at sign-up.
 
-function buildOffers(nowMs: number): DealOffer[] {
+function availabilityText(o: BrowseOffer, nowMs: number) {
+  if (!nowMs) return "Checking open times…";
+  if (!o.matching.length) return "No open times soon";
   const now = new Date(nowMs);
-  return services
-    .map((s) => {
-      const b = getBusiness(s.businessId)!;
-      const next = nowMs ? nextAvailability(s, b, now) : null;
-      const availability = !nowMs
-        ? "Checking open times…"
-        : next
-          ? `${relativeDay(next.day, now)} · from ${formatTime(next.free[0].start, true)} · ${next.free.length} left`
-          : "No open times soon";
-      return {
-        id: s.id,
-        businessId: b.id,
-        title: s.name,
-        business: b.name,
-        rating: b.rating,
-        distanceMi: b.distanceMi,
-        price: s.offPeakPrice,
-        regular: s.regularPrice,
-        availability,
-        photo: b.photo,
-        category: b.category,
-        soonest: next ? next.free[0].start.getTime() : Number.MAX_SAFE_INTEGER,
-      };
-    })
-    .sort((a, b) => a.soonest - b.soonest);
+  const first = o.matching[0].start;
+  const sameDayCount = o.matching.filter((s) => sameDay(s.start, first)).length;
+  return `${relativeDay(first, now)} · from ${formatTime(first, true)} · ${sameDayCount} left`;
 }
 
-const CHIPS: { key: string; label: string; cat?: Category }[] = [
-  { key: "foryou", label: "For you" },
-  { key: "all", label: "All" },
-  { key: "haircut", label: "Haircuts", cat: "haircut" },
-  { key: "laundry", label: "Laundry", cat: "laundry" },
-  { key: "care", label: "Clothing care", cat: "care" },
-];
-
 export default function DealsPage() {
-  const [chip, setChip] = useState("foryou");
   const profile = useProfile();
-  const greeting = useGreeting();
   const hydrated = useHydrated();
   const nowMs = useNowMinute();
   const favorites = useFavorites();
-  const offers = buildOffers(hydrated ? nowMs : 0);
-  const activeCat = CHIPS.find((c) => c.key === chip)?.cat;
-  const mine = (profile?.needs ?? []).map((n) => NEED_TO_CATEGORY[n]).filter(Boolean);
-  const shown = activeCat
-    ? offers.filter((o) => o.category === activeCat)
-    : chip === "foryou" && mine.length
-      ? offers.filter((o) => mine.includes(o.category))
-      : offers;
+  const browse = useBrowse();
+
+  const clock = hydrated ? nowMs : 0;
+  const shown = browseOffers(browse, profile?.needs ?? [], clock);
+  const narrowed = browse.tab !== "all" || browse.query.trim() !== "" || activeFilterCount(browse.filters) > 0;
+  const total = services.length;
+  const heading =
+    browse.query.trim() || activeFilterCount(browse.filters) > 0
+      ? "Matching offers"
+      : browse.tab === "foryou"
+        ? "For you, next few days"
+        : "All offers";
 
   return (
     <Screen>
       <ScreenBody className="px-0 py-0">
-        <div className="flex items-center justify-between px-5 pt-4">
-          <p className="text-title-md text-text-heading">
-            {greeting}
-            {profile?.firstName ? `, ${profile.firstName}` : ""}
-          </p>
-          <IconButton icon="sliders" label="Settings" />
-        </div>
+        <BrowseHeader mode="list" resultCount={shown.length} />
 
-        <div className="mt-2 flex items-center justify-between px-5">
-          <h1 className="text-headline-sm text-text-heading">Deals near you</h1>
-          <button className="inline-flex h-9 items-center gap-1 rounded-full border border-action-primary px-3 text-label-md text-action-primary">
-            <Icon name="map-pin" size={16} /> Map
-          </button>
-        </div>
+        {shown.length === 0 ? (
+          <NoResults />
+        ) : (
+          <>
+            <div className="mt-4 flex items-center justify-between px-5">
+              <h2 className="text-title-sm text-text-heading">{heading}</h2>
+              <span className="text-body-sm text-text-secondary" aria-live="polite">
+                {plural(shown.length, "offer")}
+              </span>
+            </div>
+            <p className="mt-1 px-5 text-body-sm text-text-secondary">
+              Full-length appointments, just at quieter hours. Rated by people who booked.
+            </p>
 
-        <div className="mt-3 flex items-center gap-2 px-5">
-          <div className="flex h-12 flex-1 items-center gap-2 rounded-full bg-surface-muted px-4">
-            <Icon name="search" size={20} className="text-text-secondary" />
-            <input
-              placeholder="Search offers or places"
-              aria-label="Search offers or places"
-              className="w-full bg-transparent text-body-md text-text-primary outline-none placeholder:text-text-secondary"
-            />
+            <div className="mt-3 flex flex-col gap-3 px-5">
+              {shown.map((o) => (
+                <OfferCard
+                  key={o.service.id}
+                  offer={{
+                    id: o.service.id,
+                    businessId: o.business.id,
+                    title: o.service.name,
+                    business: o.business.name,
+                    rating: o.business.rating,
+                    distanceMi: o.business.distanceMi,
+                    price: o.service.offPeakPrice,
+                    regular: o.service.regularPrice,
+                    availability: availabilityText(o, clock),
+                    photo: o.business.photo,
+                  }}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {narrowed && shown.length > 0 && shown.length < total && (
+          <div className="px-5 pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                clearAll();
+                setTab("all");
+              }}
+              className="min-h-[48px] w-full rounded-full border border-border-control py-3 text-label-lg text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+            >
+              See all {total} offers →
+            </button>
           </div>
-          <button
-            aria-label="Filters, 1 active"
-            className="relative flex h-12 w-12 items-center justify-center rounded-full bg-action-primary text-on-action"
-          >
-            <Icon name="sliders" size={20} />
-            <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent-primary text-label-sm text-on-action">
-              1
-            </span>
-          </button>
-        </div>
-
-        <div className="mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
-          {CHIPS.map((c) => (
-            <Chip key={c.key} as="tab" selected={chip === c.key} onClick={() => setChip(c.key)}>
-              {c.label}
-            </Chip>
-          ))}
-        </div>
-
-        <div className="mt-4 flex items-center justify-between px-5">
-          <h2 className="text-title-sm text-text-heading">For you today &amp; tomorrow</h2>
-          <span className="text-body-sm text-text-secondary">{plural(shown.length, "offer")}</span>
-        </div>
-        <p className="mt-1 px-5 text-body-sm text-text-secondary">
-          Full-length appointments, just at quieter hours. Rated by people who booked.
-        </p>
-
-        <div className="mt-3 flex flex-col gap-3 px-5">
-          {shown.map((o) => (
-            <OfferCard key={o.id} offer={o} />
-          ))}
-        </div>
-
-        <div className="px-5 pt-4">
-          <button className="w-full rounded-full border border-border-control py-3 text-label-lg text-text-primary">
-            See all 9 offers →
-          </button>
-        </div>
+        )}
 
         {hydrated && favorites.length > 0 && (
           <>
@@ -154,7 +116,7 @@ export default function DealsPage() {
                 if (!b) return null;
                 const offers = servicesAt(b.id);
                 const cheapest = Math.min(...offers.map((o) => o.offPeakPrice));
-                const status = nowMs ? placeOfferStatus(b, offers, new Date(nowMs)).text : "";
+                const status = clock ? placeOfferStatus(b, offers, new Date(clock)).text : "";
                 return (
                   <Link
                     key={b.id}
@@ -179,8 +141,8 @@ export default function DealsPage() {
 
         <div className="px-5 py-5">
           <InfoBox tone="subtle">
-            <span className="font-bold text-on-tint-primary">Own a local shop?</span> List your slow hours on
-            Sparetime. <span className="font-bold text-action-primary underline">Learn more</span>
+            <span className="font-bold text-on-tint-primary">Own a local shop?</span> Business sign-up for listing your slow
+            hours is coming soon. The shops shown here are samples.
           </InfoBox>
         </div>
       </ScreenBody>

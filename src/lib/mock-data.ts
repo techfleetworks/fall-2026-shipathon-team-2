@@ -52,6 +52,10 @@ export interface Business {
   offPeak: { days: number[]; start: number; end: number };
   /** One-line description for Favorites cards. */
   blurb: string;
+  /** Transit nearby, for the "Near public transit" filter. */
+  transitModes: ("metro" | "bus")[];
+  /** Position on the DRAWN demo map (percent from left/top) — not real coordinates. */
+  mapPos: { x: number; y: number };
 }
 
 export interface Service {
@@ -118,6 +122,8 @@ export const businesses: Business[] = [
     hours: [null, [10, 19], [10, 19], [10, 19], [10, 19], [10, 19], [9, 17]],
     offPeak: { days: WEEKDAYS, start: 13, end: 17 },
     blurb: "Haircuts",
+    transitModes: ["metro", "bus"],
+    mapPos: { x: 34, y: 38 },
   },
   {
     id: "b2",
@@ -135,6 +141,8 @@ export const businesses: Business[] = [
     hours: [null, null, [10, 19], [10, 19], [10, 19], [10, 19], [10, 18]],
     offPeak: { days: [2, 3, 4, 5], start: 13, end: 16 },
     blurb: "Cuts and styling",
+    transitModes: ["metro", "bus"],
+    mapPos: { x: 66, y: 26 },
   },
   {
     id: "b3",
@@ -151,6 +159,8 @@ export const businesses: Business[] = [
     hours: [null, [9, 18], [9, 18], [9, 18], [9, 18], [9, 18], [9, 18]],
     offPeak: { days: WEEKDAYS, start: 15, end: 17 },
     blurb: "Haircuts",
+    transitModes: ["metro"],
+    mapPos: { x: 58, y: 78 },
   },
   {
     id: "b4",
@@ -168,6 +178,8 @@ export const businesses: Business[] = [
     hours: [[7, 22], [7, 22], [7, 22], [7, 22], [7, 22], [7, 22], [7, 22]],
     offPeak: { days: WEEKDAYS, start: 10, end: 14 },
     blurb: "Wash and fold",
+    transitModes: ["metro", "bus"],
+    mapPos: { x: 20, y: 22 },
   },
   {
     id: "b5",
@@ -185,6 +197,8 @@ export const businesses: Business[] = [
     hours: [null, [8, 18], [8, 18], [8, 18], [8, 18], [8, 18], [8, 15]],
     offPeak: { days: WEEKDAYS, start: 11, end: 14 },
     blurb: "Dry cleaning and pressing",
+    transitModes: ["metro"],
+    mapPos: { x: 84, y: 52 },
   },
 ];
 

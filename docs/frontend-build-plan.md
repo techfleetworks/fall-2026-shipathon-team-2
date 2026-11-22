@@ -176,9 +176,9 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 
 ### Browse & book
 - ☑ H1 · Deals — `825:4273` → `/deals`
-- ☐ H1m · Deals (map) — `825:5340` → `/deals/map`
-- ☐ H1e · No results — `825:5781` (empty state of /deals)
-- ☐ R3 · Filters — `825:4357` (sheet on /deals)
+- ☑ H1m · Deals (map) — `825:5340` → `/deals/map`
+- ☑ H1e · No results — `825:5781` (empty state of /deals)
+- ☑ R3 · Filters — `825:4357` (sheet on /deals)
 - ☑ R5 · Offer — `825:4489` → `/offer/[id]`
 - ☑ R5t · Pick a time — `825:4594` → `/offer/[id]/time`
 - ☐ R5x · Slot just taken — `825:5832` (error on pick/confirm)
@@ -313,4 +313,12 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   ("3 offers on Mon 23"); empty state when none; Deals "From your favorites" row shows
   real favorites and hides when empty. Offer cards restructured so the heart is its own
   button (no button inside a link).
+- 2026-11-21 — **Deals: search, filters, drawn map (step 4).** Shared browse state
+  (`src/lib/browse.ts`) for list + map: search (service/shop/area/category), tabs and the R3
+  Filters sheet (day, time of day, distance, transit, price; live "Show N offers", real
+  badge, Clear all). H1e No results. H1m at `/deals/map` is a **drawn** map (pins at
+  illustrative positions, not real coordinates — sample shops use real addresses), with
+  selected pin "Save $X" and "See open times" shortcut. Deals cleanup: real counts, "See
+  all N offers" only when narrowed, settings icon → Settings, dead "Learn more" replaced by
+  an honest note. Started `docs/notes-for-judges.md`.
 - _(add each screen as it lands)_

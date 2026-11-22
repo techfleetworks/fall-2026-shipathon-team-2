@@ -33,8 +33,8 @@ export function addDays(d: Date, n: number) {
 
 export const sameDay = (a: Date, b: Date) => startOfDay(a).getTime() === startOfDay(b).getTime();
 
-/** Today, tomorrow and the day after (midnight of each). */
-export const upcomingDays = (now: Date) => Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(startOfDay(now), i));
+/** Today, tomorrow and the day after (midnight of each); `n` days if given. */
+export const upcomingDays = (now: Date, n = DAYS_AHEAD) => Array.from({ length: n }, (_, i) => addDays(startOfDay(now), i));
 
 function hash(s: string) {
   let h = 2166136261;
