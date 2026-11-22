@@ -70,8 +70,12 @@ export interface Service {
 }
 
 export interface User {
+  /** Show-ups since the last reset. */
   keptCount: number;
+  /** Misses since the last reset (2 resets the ladder). */
   missCount: number;
+  /** True if 2 misses have ever reset the ladder. */
+  resetByMisses?: boolean;
 }
 
 export function bookingLimit(user: Pick<User, "keptCount" | "missCount">): number | "unlimited" {
@@ -82,11 +86,14 @@ export function bookingLimit(user: Pick<User, "keptCount" | "missCount">): numbe
 }
 
 // Plain-language status for "How bookings work" (H3b), following the trust ladder.
-export function limitStatus(u: Pick<User, "keptCount" | "missCount">): { headline: string; detail: string } {
+export function limitStatus(u: Pick<User, "keptCount" | "missCount" | "resetByMisses">): { headline: string; detail: string } {
   const limit = bookingLimit(u);
-  const kept = `You've shown up for ${u.keptCount} booking${u.keptCount === 1 ? "" : "s"}.`;
+  const kept = `You've shown up for ${u.keptCount} booking${u.keptCount === 1 ? "" : "s"}${u.resetByMisses ? " since your limit reset" : ""}.`;
   if (u.missCount >= 2) {
     return { headline: "1 booking at a time", detail: "Two missed bookings reset your limit to one at a time. Show up to book more." };
+  }
+  if (u.resetByMisses && u.keptCount === 0) {
+    return { headline: "1 booking at a time", detail: "Two missed bookings reset your limit to one at a time. Show up for 2 bookings and you can hold 2 again." };
   }
   if (limit === "unlimited") return { headline: "No limit", detail: `${kept} Keep showing up to keep it.` };
   if (limit === 2) {
@@ -176,7 +183,8 @@ export const businesses: Business[] = [
       "A full-service laundromat. Drop off your laundry in a quiet hour and they wash, dry and fold it, ready to pick up the same evening.",
     transit: "2 min walk from Westlake/MacArthur Park station",
     hours: [[7, 22], [7, 22], [7, 22], [7, 22], [7, 22], [7, 22], [7, 22]],
-    offPeak: { days: WEEKDAYS, start: 10, end: 14 },
+    // Every day, so the full demo (same-day booking, shop check-in) works on weekends too.
+    offPeak: { days: [0, 1, 2, 3, 4, 5, 6], start: 10, end: 14 },
     blurb: "Wash and fold",
     transitModes: ["metro", "bus"],
     mapPos: { x: 20, y: 22 },

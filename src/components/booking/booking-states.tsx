@@ -32,3 +32,22 @@ export function BookingMissing({ title }: { title: string }) {
     </Screen>
   );
 }
+
+// For "All done" and "Rate your visit" opened before the visit was checked in
+// (e.g. from a direct link): don't claim a visit or payment that didn't happen.
+export function BookingNotCheckedIn({ title, bookingId }: { title: string; bookingId: string }) {
+  return (
+    <Screen>
+      <PageHeader title={title} backHref={`/booked/${bookingId}`} />
+      <ScreenBody className="pt-2">
+        <p className="text-body-lg text-text-secondary">
+          This visit hasn&apos;t been checked in yet. Once the shop confirms it, you can see your savings and rate it here.
+        </p>
+        <ButtonLink href={`/booked/${bookingId}`} fullWidth className="mt-4">
+          See my booking
+        </ButtonLink>
+      </ScreenBody>
+      <NavBar active="bookings" />
+    </Screen>
+  );
+}

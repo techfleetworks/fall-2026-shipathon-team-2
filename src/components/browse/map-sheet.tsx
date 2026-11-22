@@ -91,6 +91,11 @@ export function MapSheet({
   const move = (e: React.PointerEvent) => {
     const s = g.current;
     if ((!s.pending && !s.active) || e.pointerId !== s.id) return;
+    // Mouse released somewhere we didn't hear about: stop, don't drag with no button held.
+    if (e.pointerType === "mouse" && e.buttons === 0) {
+      s.pending = false;
+      if (!s.active) return;
+    }
     const dy = e.clientY - s.startY;
     if (s.pending && Math.abs(dy) > 6) {
       s.pending = false;
@@ -134,6 +139,9 @@ export function MapSheet({
       setStop((x) => (x === 2 ? 0 : 2));
     }
     s.pending = false;
+    // Only a swipe on the LIST needs to block the click that follows it; a
+    // handle gesture mustn't swallow the next Enter/click on a card.
+    if (s.fromHandle) s.moved = false;
   };
 
   const cancel = () => {
@@ -141,10 +149,13 @@ export function MapSheet({
     if (s.active) apply(offsetFor(stop), true);
     s.active = false;
     s.pending = false;
+    s.moved = false;
     setDragging(false);
   };
 
-  const label = stop === 2 ? "Show less of the list" : "Show more of the list";
+  // The spoken name starts with the visible text ("9 offers nearby"), so voice
+  // control users can say what they see; the action follows.
+  const hint = stop === 2 ? "Show less of the list" : "Show more of the list";
 
   return (
     <div
@@ -157,7 +168,6 @@ export function MapSheet({
     >
       <button
         type="button"
-        aria-label={label}
         aria-expanded={stop === 2}
         onPointerDown={(e) => begin(e, true)}
         onPointerMove={move}
@@ -174,7 +184,10 @@ export function MapSheet({
         className="flex w-full shrink-0 cursor-grab touch-none flex-col items-center rounded-t-xl pt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring active:cursor-grabbing"
       >
         <span aria-hidden="true" className="h-1 w-8 rounded-full bg-border-control" />
-        <span className="flex min-h-[48px] w-full items-center px-5 text-left text-title-md text-text-heading">{title}</span>
+        <span className="flex min-h-[48px] w-full items-center px-5 text-left text-title-md text-text-heading">
+          {title}
+          <span className="sr-only">. {hint}</span>
+        </span>
       </button>
       <div
         ref={listRef}

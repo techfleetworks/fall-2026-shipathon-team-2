@@ -45,7 +45,14 @@ export function TextField({ label, helper, error, trailing, className, ...props 
         {hasError ? <Icon name="alert" size={22} className="shrink-0 text-danger-primary" /> : trailing}
       </div>
       {(error || helper) && (
-        <p id={helpId} className={cn("text-body-sm", hasError ? "text-danger-primary" : "text-text-secondary")}>
+        // An error is a new element with role="alert" so screen readers announce
+        // it as soon as it appears (e.g. a wrong code after tapping Continue).
+        <p
+          key={hasError ? "error" : "helper"}
+          id={helpId}
+          role={hasError ? "alert" : undefined}
+          className={cn("text-body-sm", hasError ? "text-danger-primary" : "text-text-secondary")}
+        >
           {error || helper}
         </p>
       )}

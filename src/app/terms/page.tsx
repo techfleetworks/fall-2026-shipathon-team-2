@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 // docs/privacy-and-retention.md (the approved draft).
 
 function H2({ children }: { children: React.ReactNode }) {
-  return <h2 className="mt-8 text-xl font-bold tracking-tight">{children}</h2>;
+  return <h2 className="mt-8 text-title-lg text-text-heading">{children}</h2>;
 }
 
 export default function TermsPage() {
@@ -21,7 +21,7 @@ export default function TermsPage() {
       <BackButton
         fallback="/"
         label="Back"
-        className="inline-flex min-h-[48px] items-center gap-1 text-sm text-text-secondary transition-colors hover:text-action-primary"
+        className="inline-flex min-h-[48px] items-center gap-1 text-body-md text-text-secondary transition-colors hover:text-action-primary"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="m15 18-6-6 6-6" />
@@ -29,22 +29,22 @@ export default function TermsPage() {
         Back
       </BackButton>
 
-      <h1 className="mt-4 text-2xl font-bold tracking-tight">Terms of Service</h1>
-      <p className="mt-1 text-sm text-text-secondary">Draft · last updated Nov 20, 2026</p>
+      <h1 className="mt-4 text-headline-lg text-text-heading">Terms of Service</h1>
+      <p className="mt-1 text-body-md text-text-secondary">Draft · last updated Nov 22, 2026</p>
 
-      <div className="mt-4 rounded-2xl border border-border-default bg-surface-default p-4 text-sm text-text-secondary shadow-e1">
+      <div className="mt-4 rounded-lg border border-border-default bg-surface-default p-4 text-body-md text-text-secondary shadow-e1">
         This is a placeholder for the demo and is <strong>not legal advice</strong>.
         A qualified person must review it before any real launch.
       </div>
 
-      <p className="mt-6 text-[15px] leading-relaxed">
+      <p className="mt-6 text-body-lg">
         Sparetime connects you with discounted off-peak time slots for everyday
         services from small local businesses. By using Sparetime, you agree to the
         points below.
       </p>
 
       <H2>Using Sparetime</H2>
-      <ul className="mt-2 flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed">
+      <ul className="mt-2 flex list-disc flex-col gap-2 pl-5 text-body-lg">
         <li>You must be <strong>18 or older</strong> to use Sparetime.</li>
         <li>You pay the business <strong>directly, in cash</strong> — Sparetime does not process payments and never stores card numbers.</li>
         <li>Businesses, not Sparetime, provide and are responsible for the services.</li>
@@ -53,32 +53,33 @@ export default function TermsPage() {
       </ul>
 
       <H2>Booking limits (the trust ladder)</H2>
-      <ul className="mt-2 flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed">
+      <ul className="mt-2 flex list-disc flex-col gap-2 pl-5 text-body-lg">
         <li>A new account can hold <strong>1</strong> active booking at a time.</li>
         <li>After you have <strong>shown up for 2 bookings</strong>, you can hold <strong>2</strong> at a time.</li>
-        <li>After that, the limit opens up fully.</li>
-        <li><strong>Two missed bookings</strong> reset your limit back to 1.</li>
+        <li>After you have <strong>shown up for 4 bookings</strong>, there is <strong>no limit</strong>: book as many as you like.</li>
+        <li><strong>Two missed bookings in total</strong> reset your limit to 1. Show up again to earn it back.</li>
       </ul>
 
       <H2>Cancellation</H2>
-      <p className="mt-2 text-[15px] leading-relaxed">
+      <p className="mt-2 text-body-lg">
         You can cancel up to <strong>2 hours before</strong> your booking time.
-        Cancelling later, or not showing up, counts as a <strong>miss</strong>.
+        Cancelling later, or not showing up, counts as a <strong>miss</strong>. A
+        late cancellation still frees the slot for someone else right away.
       </p>
 
       <H2>Governing law</H2>
-      <p className="mt-2 text-[15px] leading-relaxed">
+      <p className="mt-2 text-body-lg">
         These terms follow <strong>California</strong> law.
       </p>
 
       <H2>About Sparetime</H2>
-      <p className="mt-2 text-[15px] leading-relaxed">
+      <p className="mt-2 text-body-lg">
         Sparetime is a <strong>planned public benefit corporation</strong> (not yet
         filed). Legal entity name and address:{" "}
         <span className="text-text-secondary">to be added</span>.
       </p>
 
-      <p className="mt-8 text-sm text-text-secondary">
+      <p className="mt-8 text-body-md text-text-secondary">
         See also our{" "}
         <Link href="/privacy" replace className="font-semibold text-action-primary underline">Privacy Policy</Link>.
       </p>

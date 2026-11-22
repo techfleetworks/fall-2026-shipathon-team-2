@@ -8,7 +8,7 @@ import { SwitchVisual } from "@/components/ui/switch";
 import { InfoBox } from "@/components/ui/info-box";
 import { Icon } from "@/components/ui/icon";
 import { LoadingRow } from "@/components/ui/spinner";
-import { CATEGORY_WORDS, bookingLimit, getBusiness, getService, savings } from "@/lib/mock-data";
+import { CATEGORY_WORDS, bookingLimit, getBusiness, getService, limitStatus, savings } from "@/lib/mock-data";
 import { closesAt, formatRange, formatTime, longDay, relativeDay, sameDay, shortDay, slotsFor } from "@/lib/slots";
 import {
   cancelBooking,
@@ -89,7 +89,7 @@ export default function ConfirmPage() {
   // time with the "isn't available any more" banner and the nearest open time.
   const slotGoneBack = () => {
     setSlotGone({ serviceId: service.id, startsAt: draft.startsAt });
-    go(router, `/offer/${service.id}/time`, "back");
+    go(router, `/offer/${service.id}/time${draft.replaces ? `?reschedule=${draft.replaces}` : ""}`, "back");
   };
 
   const book = () => {
@@ -118,7 +118,7 @@ export default function ConfirmPage() {
 
   return (
     <Screen>
-      <AppBar title="Confirm booking" onBack={() => go(router, `/offer/${service.id}/time`, "back")} />
+      <AppBar title="Confirm booking" onBack={() => go(router, `/offer/${service.id}/time${draft.replaces ? `?reschedule=${draft.replaces}` : ""}`, "back")} />
       <ScreenBody>
         {/* Summary */}
         <div className="overflow-hidden rounded-lg border border-border-default">
@@ -215,7 +215,7 @@ export default function ConfirmPage() {
               You already have {active.length === 1 ? `a ${CATEGORY_WORDS[existingBusiness.category].booking}` : `${active.length} bookings`} —{" "}
               {existingService.name} at {existingBusiness.shortName},{" "}
               {relativeDay(new Date(existing.startsAt), now).toLowerCase() === "today" ? "today" : longDay(new Date(existing.startsAt))} at{" "}
-              {formatTime(new Date(existing.startsAt))}. Show up for 2 bookings and you can hold 2 at once.
+              {formatTime(new Date(existing.startsAt))}. {limitStatus(counts).detail}
             </p>
           </div>
         ) : (

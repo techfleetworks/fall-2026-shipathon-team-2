@@ -10,7 +10,7 @@ import { CATEGORY_WORDS } from "@/lib/mock-data";
 import { formatTime, relativeDay } from "@/lib/slots";
 import { rateBooking } from "@/lib/account";
 import { useBooking } from "@/components/booking/use-booking";
-import { BookingLoading, BookingMissing } from "@/components/booking/booking-states";
+import { BookingLoading, BookingMissing, BookingNotCheckedIn } from "@/components/booking/booking-states";
 import { ShopBadge } from "@/components/booking/shop-badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { NavBar } from "@/components/ui/nav-bar";
@@ -37,6 +37,7 @@ export function RateView({ bookingId }: { bookingId: string }) {
 
   if (data.state === "loading") return <BookingLoading title="Rate your visit" />;
   if (data.state === "missing") return <BookingMissing title="Rate your visit" />;
+  if (data.booking.status !== "kept") return <BookingNotCheckedIn title="Rate your visit" bookingId={data.booking.id} />;
 
   const { booking, business, now } = data;
   const start = new Date(booking.startsAt);

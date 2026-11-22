@@ -10,6 +10,9 @@ import { IconButton } from "./icon-button";
 // `onClose` means "the person dismissed it" (Esc, tapping outside, or X). It is
 // NOT called when the parent closes the sheet itself after a button choice, so a
 // choice like "Turn on reminders" is never overwritten by a dismiss handler.
+// How many sheets are open right now (for the page scroll lock).
+let openSheets = 0;
+
 export function BottomSheet({
   open,
   onClose,
@@ -39,13 +42,13 @@ export function BottomSheet({
 
   // Freeze the page behind while the sheet is open, so it can't scroll or
   // bounce under it on iPhone.
+  // Counted, so two sheets open at once can't leave the page frozen.
   useEffect(() => {
     if (!open) return;
     const html = document.documentElement;
-    const prev = html.style.overflow;
-    html.style.overflow = "hidden";
+    if (openSheets++ === 0) html.style.overflow = "hidden";
     return () => {
-      html.style.overflow = prev;
+      if (--openSheets === 0) html.style.overflow = "";
     };
   }, [open]);
 

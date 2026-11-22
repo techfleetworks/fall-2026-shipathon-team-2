@@ -1,7 +1,7 @@
 "use client";
 
-import { Switch } from "@/components/ui/switch";
-import { ListGroup, ListRow } from "@/components/ui/list-row";
+import { SwitchVisual } from "@/components/ui/switch";
+import { ListGroup } from "@/components/ui/list-row";
 import { updateProfile, useHydrated, useProfile, type Profile } from "@/lib/account";
 
 // Notification toggles take effect immediately (no Save) and are saved to the
@@ -41,16 +41,26 @@ export function NotificationSettings() {
   return (
     <>
       <ListGroup>
-        {ITEMS.map((i) => (
-          <ListRow
-            key={i.key}
-            title={i.title}
-            sub={i.sub}
-            trailing={
-              <Switch label={i.title} checked={hydrated ? value(i.key, i.fallback) : i.fallback} onChange={(next) => change(i.key, next)} />
-            }
-          />
-        ))}
+        {/* Each whole row is the switch: a big, easy tap target. */}
+        {ITEMS.map((i) => {
+          const on = hydrated ? value(i.key, i.fallback) : i.fallback;
+          return (
+            <button
+              key={i.key}
+              type="button"
+              role="switch"
+              aria-checked={on}
+              onClick={() => change(i.key, !on)}
+              className="flex min-h-[56px] w-full items-center gap-3 px-4 py-3 text-left hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-title-sm text-text-primary">{i.title}</span>
+                <span className="block text-body-sm text-text-secondary">{i.sub}</span>
+              </span>
+              <SwitchVisual checked={on} />
+            </button>
+          );
+        })}
       </ListGroup>
       {blocked && (
         <p role="status" className="mt-2 px-1 text-body-sm text-text-secondary">

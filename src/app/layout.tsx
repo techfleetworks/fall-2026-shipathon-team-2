@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { AppStoreProvider } from "@/lib/store";
 
 // Sparetime type system (see globals.css / Figma):
 //   Bricolage Grotesque — display & headlines (Bold)
@@ -32,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${bricolage.variable} ${jakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <AppStoreProvider>{children}</AppStoreProvider>
+        {children}
       </body>
     </html>
   );

@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { NavBar } from "@/components/ui/nav-bar";
 import { ListGroup, ListRow } from "@/components/ui/list-row";
 import { NotificationSettings } from "./notification-settings";
+import { ProfileRows } from "./profile-rows";
 
 // H3s · Settings. Area, search preferences, language and accessibility have no
 // screen yet, so they're marked "Soon" for the LA County pilot.
@@ -11,10 +12,7 @@ export default function SettingsPage() {
     <Screen>
       <PageHeader title="Settings" backHref="/account" />
       <ScreenBody className="pt-2">
-        <ListGroup>
-          <ListRow icon="map-pin" title="Area" sub="Where we look for offers" value="Downtown LA" soon />
-          <ListRow icon="sliders" title="Search preferences" sub="Service, time of day, travel" value="2 set" soon />
-        </ListGroup>
+        <ProfileRows />
 
         <ListGroup className="mt-3">
           <ListRow icon="globe" title="Language" value="English" soon />

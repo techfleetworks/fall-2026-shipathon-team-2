@@ -39,10 +39,10 @@ export default function ReasonPage() {
         </Button>
       }
     >
-      <h1 className="text-headline-lg text-text-heading">What brings you here?</h1>
+      <h1 id="reason-title" className="text-headline-lg text-text-heading">What brings you here?</h1>
       <p className="mt-2 text-body-lg text-text-secondary">Pick one. We&rsquo;ll use it to sort your offers.</p>
 
-      <div role="radiogroup" className="mt-6 flex flex-col gap-3">
+      <div role="radiogroup" aria-labelledby="reason-title" className="mt-6 flex flex-col gap-3">
         {OPTIONS.map((o) => (
           <RadioCard
             key={o.key}

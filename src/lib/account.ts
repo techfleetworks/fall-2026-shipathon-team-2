@@ -290,13 +290,35 @@ export function signOut() {
 }
 
 /**
+ * Delete account: erase this person's account on this device (bookings,
+ * favorites, settings) and sign them out. Other people's accounts saved in this
+ * browser are untouched. Can't be undone.
+ */
+let deletedAt = 0;
+
+/** True for a few seconds after Delete account, so Welcome can confirm it. */
+export const justDeletedAccount = () => typeof window !== "undefined" && Date.now() - deletedAt < 5000;
+
+export function deleteAccount() {
+  deletedAt = Date.now();
+  const s = load();
+  try {
+    if (s.profile?.phone) localStorage.removeItem(personKey(s.profile.phone));
+  } catch {
+    /* ignore */
+  }
+  save(EMPTY);
+}
+
+/**
  * Start fresh on a shared demo device: forget every account saved in this
  * browser. Can't be undone — use it to hand a demo phone to the next person.
  */
 export function resetDevice() {
   try {
     Object.keys(localStorage)
-      .filter((k) => k.startsWith("sparetime."))
+      // Also clears data an older version of the app left behind ("plenty.*").
+      .filter((k) => k.startsWith("sparetime.") || k.startsWith("plenty."))
       .forEach((k) => localStorage.removeItem(k));
   } catch {
     /* ignore */
@@ -316,12 +338,33 @@ export const isMissed = (b: Booking, nowMs: number) => b.status === "booked" && 
 /** Booked and not over yet. */
 export const isActive = (b: Booking, nowMs: number) => b.status === "booked" && new Date(b.endsAt).getTime() >= nowMs;
 
-/** Trust-ladder counts from the person's real history. */
+/**
+ * Trust-ladder counts from the person's real history, in time order. Rules
+ * (final, Nov 22): 1 booking at first; 2 after 2 show-ups; no limit after 4.
+ * Two misses in total (no-shows or late cancels) reset the limit to 1 and the
+ * ladder starts over: show-ups count again from 0, so people earn it back.
+ * keptCount / missCount are counted since the last reset.
+ */
 export function historyCounts(bookings: Booking[], nowMs: number) {
-  return {
-    keptCount: bookings.filter((b) => b.status === "kept").length,
-    missCount: bookings.filter((b) => (b.status === "cancelled" && b.lateCancel) || isMissed(b, nowMs)).length,
-  };
+  const events = bookings
+    .map((b) => ({
+      at: new Date(b.startsAt).getTime(),
+      kind: b.status === "kept" ? "kept" : (b.status === "cancelled" && b.lateCancel) || isMissed(b, nowMs) ? "miss" : null,
+    }))
+    .filter((e) => e.kind)
+    .sort((a, b) => a.at - b.at);
+  let keptCount = 0;
+  let missCount = 0;
+  let resetByMisses = false;
+  for (const e of events) {
+    if (e.kind === "kept") keptCount++;
+    else if (++missCount >= 2) {
+      keptCount = 0;
+      missCount = 0;
+      resetByMisses = true;
+    }
+  }
+  return { keptCount, missCount, resetByMisses };
 }
 
 /** Kept / missed counts from the person's real bookings (both 0 until loaded). */
@@ -433,6 +476,15 @@ export function toggleFavorite(businessId: string): boolean {
   const saved = s.favorites.includes(businessId);
   save({ ...s, favorites: saved ? s.favorites.filter((id) => id !== businessId) : [businessId, ...s.favorites] });
   return !saved;
+}
+
+/** Puts a removed favorite back where it was (Undo on the Favorites tab). */
+export function restoreFavorite(businessId: string, index: number) {
+  const s = load();
+  if (s.favorites.includes(businessId)) return;
+  const next = [...s.favorites];
+  next.splice(Math.min(index, next.length), 0, businessId);
+  save({ ...s, favorites: next });
 }
 
 // ---- Phone helpers ----------------------------------------------------------
