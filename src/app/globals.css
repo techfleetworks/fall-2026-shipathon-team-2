@@ -180,11 +180,23 @@ h1, h2, h3 {
   color: var(--color-text-heading);
 }
 
+/* iPhone Safari zooms the whole page in when you tap a text box whose text is
+   under 16px, and it stays zoomed. Keep typed text at 16px so that never
+   happens. (We don't block zoom with maximum-scale: people must be able to
+   pinch-zoom.) Unlayered, so it wins over the text-body-* utilities. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea,
+select {
+  font-size: 16px;
+}
+
 /* Hide the scrollbar on horizontal chip carousels and sheet content while
    keeping the content scrollable (swipe / wheel / keyboard still work). */
 .no-scrollbar {
   -ms-overflow-style: none; /* IE/old Edge */
   scrollbar-width: none; /* Firefox */
+  /* iPhone: when this area hits its end, don't rubber-band the page behind it. */
+  overscroll-behavior: contain;
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome/Safari */

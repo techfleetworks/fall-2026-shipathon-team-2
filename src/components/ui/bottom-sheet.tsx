@@ -37,6 +37,18 @@ export function BottomSheet({
     if (!open && d.open) d.close();
   }, [open]);
 
+  // Freeze the page behind while the sheet is open, so it can't scroll or
+  // bounce under it on iPhone.
+  useEffect(() => {
+    if (!open) return;
+    const html = document.documentElement;
+    const prev = html.style.overflow;
+    html.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = prev;
+    };
+  }, [open]);
+
   return (
     <dialog
       ref={ref}
