@@ -31,12 +31,19 @@ export function BottomSheet({
   footer?: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const titleId = useId();
 
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
-    if (open && !d.open) d.showModal();
+    if (open && !d.open) {
+      d.showModal();
+      // Start on the title, not the first button: screen readers read the title
+      // first, keyboard users Tab to the buttons, and no button shows a focus
+      // ring on phones just because the sheet opened.
+      titleRef.current?.focus({ preventScroll: true });
+    }
     if (!open && d.open) d.close();
   }, [open]);
 
@@ -68,7 +75,7 @@ export function BottomSheet({
         <div aria-hidden="true" className="mx-auto mb-4 h-1 w-8 rounded-full bg-border-control" />
         <div className="flex items-center gap-1">
           {showClose && <IconButton icon="x" label="Close" onClick={onClose} className="-ml-3" />}
-          <h2 id={titleId} className="text-title-lg font-bold text-text-heading">
+          <h2 ref={titleRef} id={titleId} tabIndex={-1} className="text-title-lg font-bold text-text-heading focus:outline-none">
             {title}
           </h2>
         </div>

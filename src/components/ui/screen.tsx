@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { IconButton } from "./icon-button";
 import { usePageEnter } from "./page-motion";
@@ -57,10 +57,35 @@ export function ScreenBody({ children, className }: { children: ReactNode; class
 
 // Sticky bottom bar for the single primary action (Figma rule: one filled button
 // per screen, full width, above the bottom inset).
+// True while someone is typing in a text box on a touch phone (the on-screen
+// keyboard is up). The bottom action bar steps aside then, so it doesn't ride up
+// on top of the keyboard and cover the form; it comes back when they're done.
+function useTypingOnPhone() {
+  const [typing, setTyping] = useState(false);
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: coarse)").matches) return;
+    const isTextBox = (el: Element | null) =>
+      el instanceof HTMLTextAreaElement ||
+      (el instanceof HTMLInputElement && !["checkbox", "radio", "range", "button", "submit"].includes(el.type));
+    const update = () => setTyping(isTextBox(document.activeElement));
+    // On focusout, wait a tick: focus may be moving to another text box.
+    const onOut = () => setTimeout(update, 0);
+    document.addEventListener("focusin", update);
+    document.addEventListener("focusout", onOut);
+    return () => {
+      document.removeEventListener("focusin", update);
+      document.removeEventListener("focusout", onOut);
+    };
+  }, []);
+  return typing;
+}
+
 export function BottomActionBar({ children, className }: { children: ReactNode; className?: string }) {
+  const typing = useTypingOnPhone();
   return (
     <div
       className={cn(
+        typing && "hidden",
         "sticky bottom-0 z-10 border-t border-border-default bg-surface-default px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))]",
         className,
       )}
