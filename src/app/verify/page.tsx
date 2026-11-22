@@ -16,6 +16,7 @@ import {
   useNowSeconds,
   verifyCode,
 } from "@/lib/account";
+import { go } from "@/lib/nav-motion";
 
 // O2 · Code (+ O2e wrong code). Step 2 of 5. DEMO: the code is generated in the
 // app and shown in a "text message" banner instead of being texted (real SMS
@@ -36,12 +37,12 @@ export default function VerifyPage() {
       setError("That code didn’t match. Try again or get a new one.");
       return;
     }
-    router.push(isSignedUp() ? "/deals" : "/reason");
+    go(router, isSignedUp() ? "/deals" : "/reason", "forward");
   };
 
   if (hydrated && !pending) {
     return (
-      <StepShell step={2} onBack={() => router.push("/phone")} action={<ButtonLink href="/phone" fullWidth>Enter your phone number</ButtonLink>}>
+      <StepShell step={2} onBack={() => go(router, "/phone", "back")} action={<ButtonLink href="/phone" fullWidth>Enter your phone number</ButtonLink>}>
         <h1 className="text-headline-lg text-text-heading">Enter the code</h1>
         <p className="mt-2 text-body-lg text-text-secondary">
           There&apos;s no code waiting. Enter your phone number and we&apos;ll send one.
@@ -52,7 +53,8 @@ export default function VerifyPage() {
 
   return (
     <StepShell
-      step={2}
+      // Signing in is 2 screens, so no sign-up progress bar there.
+      step={pending?.signin ? undefined : 2}
       onBack={() => router.back()}
       action={
         <Button fullWidth disabled={code.length !== 6} onClick={submit}>
@@ -115,7 +117,7 @@ export default function VerifyPage() {
           disabled={!hydrated || secondsLeft > 0}
           onClick={() => {
             if (!pending) return;
-            sendCode(pending.phone);
+            sendCode(pending.phone, { signin: pending.signin, bookingTexts: pending.bookingTexts });
             setCode("");
             setError(undefined);
           }}

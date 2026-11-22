@@ -10,13 +10,16 @@ import { FavoriteHeart } from "@/components/ui/favorite-heart";
 import { BrowseHeader } from "@/components/browse/browse-header";
 import { NoResults } from "@/components/browse/no-results";
 import { DrawnMap, type MapPin } from "@/components/browse/drawn-map";
+import { MapSheet } from "@/components/browse/map-sheet";
 import { browseOffers, useBrowse } from "@/lib/browse";
 import { useHydrated, useNowMinute, useProfile } from "@/lib/account";
 import { plural, savings } from "@/lib/mock-data";
 import { formatTime, relativeDay, sameDay } from "@/lib/slots";
+import { markNav } from "@/lib/nav-motion";
 
-// H1m · Deals (map). Drawn map on top (pins = shops with matching offers, price
-// shown, selected adds "Save $X"), matching offers below. Card → Offer (details
+// H1m · Deals (map). The drawn map fills the screen and stays still (pins = shops
+// with matching offers, price shown, selected adds "Save $X"); matching offers
+// are in a slide-up panel over it (MapSheet). Card → Offer (details
 // first); "See open times" → Pick a time (shortcut). Same search, tabs and
 // filters as the list.
 export default function DealsMapPage() {
@@ -49,24 +52,22 @@ export default function DealsMapPage() {
   };
 
   return (
-    <Screen>
-      <ScreenBody className="px-0 py-0">
+    <Screen className="h-dvh overflow-hidden">
+      <ScreenBody className="flex min-h-0 flex-col px-0 py-0 overflow-hidden!">
         <BrowseHeader mode="map" resultCount={shown.length} />
 
-        <div className="mt-3">
-          <DrawnMap pins={pins} selected={sel} onSelect={select} area={profile?.area} />
-        </div>
+        <div className="relative mt-3 min-h-0 flex-1">
+          <DrawnMap pins={pins} selected={sel} onSelect={select} area={profile?.area} className="h-full" />
 
-        <div className="-mt-4 relative rounded-t-xl bg-surface-default pt-2 shadow-e3">
-          <div aria-hidden="true" className="mx-auto h-1 w-8 rounded-full bg-border-control" />
+          <MapSheet coverSelector={`[role="tablist"][aria-label="Service"]`} title={shown.length === 0 ? "No offers nearby" : `${plural(shown.length, "offer")} nearby`}>
+          <p className="sr-only" aria-live="polite">
+            {plural(shown.length, "offer")} nearby
+          </p>
           {shown.length === 0 ? (
             <NoResults />
           ) : (
             <>
-              <h2 className="px-5 pt-3 text-title-md text-text-heading" aria-live="polite">
-                {plural(shown.length, "offer")} nearby
-              </h2>
-              <ul className="mt-3 flex flex-col gap-3 px-5 pb-5">
+              <ul className="flex flex-col gap-3 px-5 pt-1 pb-5">
                 {list.map((o) => {
                   const first = o.matching[0]?.start;
                   const now = new Date(clock);
@@ -94,6 +95,7 @@ export default function DealsMapPage() {
                       <div className="p-3">
                         <Link
                           href={`/offer/${o.service.id}`}
+                          onNavigate={markNav("forward")}
                           className="text-title-sm text-text-primary after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-focus-ring"
                         >
                           {o.service.name}
@@ -128,6 +130,7 @@ export default function DealsMapPage() {
               </ul>
             </>
           )}
+          </MapSheet>
         </div>
       </ScreenBody>
       <NavBar active="deals" />

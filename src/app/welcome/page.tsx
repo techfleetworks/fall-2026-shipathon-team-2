@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { SparetimeLogo, BRAND_GRADIENT } from "@/components/brand/logo";
+import { go } from "@/lib/nav-motion";
+import { PageMotion } from "@/components/ui/page-motion";
 
 // O0 · Welcome. Leads with the everyday benefit. Get started / Sign in both begin
 // the phone + one-time-code flow.
@@ -10,6 +12,7 @@ export default function Welcome() {
   const router = useRouter();
   return (
     <div className="min-h-dvh w-full bg-bg-canvas">
+      <PageMotion>
       <div className="relative mx-auto flex min-h-dvh max-w-[430px] flex-col">
         <div
           className="flex flex-1 flex-col items-center justify-center px-8 text-center"
@@ -26,11 +29,12 @@ export default function Welcome() {
             Free to book. You pay in cash at the shop. Sign up with your phone number.
           </p>
           <div className="mt-5 flex flex-col gap-3">
-            <Button fullWidth onClick={() => router.push("/phone")}>Get started</Button>
-            <Button variant="outlined" fullWidth onClick={() => router.push("/signin")}>Sign in</Button>
+            <Button fullWidth onClick={() => go(router, "/phone", "forward")}>Get started</Button>
+            <Button variant="outlined" fullWidth onClick={() => go(router, "/signin", "forward")}>Sign in</Button>
           </div>
         </div>
       </div>
+      </PageMotion>
     </div>
   );
 }

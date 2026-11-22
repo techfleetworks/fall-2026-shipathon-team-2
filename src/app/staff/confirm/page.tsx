@@ -12,6 +12,7 @@ import { Icon } from "@/components/ui/icon";
 import { getBusiness, getService } from "@/lib/mock-data";
 import { formatRange } from "@/lib/slots";
 import { findBookingByPin, getAccount, markKept, type Booking } from "@/lib/account";
+import { markNav } from "@/lib/nav-motion";
 
 // Business confirms (shop view) — NOT IN FIGMA YET; built from the design
 // system so the show-up flow can be completed honestly in the demo. Staff type
@@ -79,6 +80,7 @@ export default function StaffConfirmPage() {
           </Button>
           <Link
             href={`/saved/${confirmed.id}`}
+            onNavigate={markNav("forward")}
             className="inline-flex min-h-[48px] items-center rounded-full px-4 text-label-lg text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
           >
             Back to the customer&apos;s app

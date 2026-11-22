@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/icon";
 import type { Business } from "@/lib/mock-data";
+import { markNav } from "@/lib/nav-motion";
 
 // DRAWN demo map (Figma H1m). Deliberately not a real street map: the sample
 // shops use real LA addresses, and real map pins would land on real buildings
@@ -23,14 +24,17 @@ export function DrawnMap({
   selected,
   onSelect,
   area,
+  className,
 }: {
   pins: MapPin[];
   selected: string | null;
   onSelect: (businessId: string) => void;
   area?: string;
+  /** Size override (default h-72). */
+  className?: string;
 }) {
   return (
-    <div className="relative h-72 w-full overflow-hidden bg-surface-muted" aria-label="Map of nearby offers (illustrative)" role="group">
+    <div className={cn("relative w-full overflow-hidden bg-surface-muted", className ?? "h-72")} aria-label="Map of nearby offers (illustrative)" role="group">
       {/* Streets, park and freeway — decorative */}
       <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
         <path d="M58 60 Q70 52 82 62 L86 82 Q72 90 60 84 Z" className="fill-status-positive-surface" />
@@ -111,6 +115,7 @@ export function DrawnMap({
               </p>
               <Link
                 href={`/offer/${sel.serviceId}/time`}
+                onNavigate={markNav("forward")}
                 className="mt-2 inline-flex min-h-[40px] w-full items-center justify-center rounded-full bg-action-primary px-4 text-label-md text-on-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
               >
                 See open times →

@@ -9,6 +9,7 @@ import { useBooking } from "@/components/booking/use-booking";
 import { ShopBadge } from "@/components/booking/shop-badge";
 import { FavoriteHeart } from "@/components/ui/favorite-heart";
 import { BookingLoading, BookingMissing } from "@/components/booking/booking-states";
+import { markNav } from "@/lib/nav-motion";
 
 // P5 · All done — "You saved $X", from the person's real kept visits.
 export function SavedView({ bookingId }: { bookingId: string }) {
@@ -72,6 +73,7 @@ export function SavedView({ bookingId }: { bookingId: string }) {
         )}
         <Link
           href="/bookings"
+          onNavigate={markNav("tab")}
           className="inline-flex min-h-[48px] items-center rounded-full px-4 text-label-lg text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
         >
           See my bookings

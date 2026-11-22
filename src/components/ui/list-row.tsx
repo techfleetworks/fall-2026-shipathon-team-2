@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Icon, type IconName } from "./icon";
+import { NavLink } from "@/components/ui/nav-link";
 
 // Grouped list rows (Figma Account / Settings / Privacy). A row is a link when it
 // has `href`; otherwise it is informational, or marked "Soon" when its screen
@@ -47,12 +47,13 @@ export function ListRow({
   );
   const cls = "flex min-h-[56px] w-full items-center gap-3 px-4 py-3 text-left";
   return href ? (
-    <Link
+    <NavLink
       href={href}
+      dir="forward"
       className={cn(cls, "hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring")}
     >
       {body}
-    </Link>
+    </NavLink>
   ) : (
     <div className={cls}>{body}</div>
   );

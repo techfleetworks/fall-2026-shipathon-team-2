@@ -20,6 +20,7 @@ import { FavoriteHeart } from "@/components/ui/favorite-heart";
 import Link from "next/link";
 import { useBooking } from "./use-booking";
 import { BookingLoading, BookingMissing } from "./booking-states";
+import { markNav, go } from "@/lib/nav-motion";
 
 // P1 "Your booking" and P3 "It's today" (shown automatically on the day), plus
 // P1c cancel sheet and the cancelled / missed / done states. Everything comes from
@@ -112,6 +113,7 @@ export function BookingView({ bookingId }: { bookingId: string }) {
             </ButtonLink>
             <Link
               href="/account/how-bookings-work"
+              onNavigate={markNav("forward")}
               className="inline-flex min-h-[48px] items-center rounded-full px-4 text-label-lg text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
             >
               How bookings work
@@ -168,7 +170,10 @@ export function BookingView({ bookingId }: { bookingId: string }) {
       <ScreenBody className="pt-0">
         {!isToday && remindAt.getTime() > nowMs && (
           <p className="mb-4 text-body-lg text-text-secondary">
-            You&apos;re all set. We&apos;ll remind you {dayWord} at {formatTime(remindAt)}.
+            {/* Only promise a reminder if this booking and the person's settings both want one. */}
+            {booking.remind !== false && profile?.reminders !== false
+              ? <>You&apos;re all set. We&apos;ll remind you {dayWord} at {formatTime(remindAt)}.</>
+              : <>You&apos;re all set.</>}
           </p>
         )}
 
@@ -217,7 +222,7 @@ export function BookingView({ bookingId }: { bookingId: string }) {
             className={linkCls}
             onClick={() => {
               setReschedule(booking.id);
-              router.push(`/offer/${service.id}/time`);
+              go(router, `/offer/${service.id}/time`, "forward");
             }}
           >
             <Icon name="calendar" size={18} /> Reschedule
@@ -232,6 +237,7 @@ export function BookingView({ bookingId }: { bookingId: string }) {
         <p className="mt-1 text-center">
           <Link
             href="/demo/reminder"
+            onNavigate={markNav("forward")}
             className="inline-flex min-h-[48px] items-center rounded-full px-4 text-body-sm text-text-secondary underline underline-offset-2 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
           >
             Demo: see the reminder on a phone&apos;s lock screen

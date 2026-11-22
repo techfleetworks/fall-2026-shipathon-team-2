@@ -3,15 +3,19 @@
 import { useState } from "react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Switch, SwitchVisual } from "@/components/ui/switch";
 import { SparetimeLogo } from "@/components/brand/logo";
-import { updateProfile } from "@/lib/account";
+import { updateProfile, useProfile } from "@/lib/account";
 
-// O5b · Booking reminders. Asked once, after About you. "Turn on reminders"
-// also asks the browser for permission to show notifications; the in-app
-// reminder card works either way. Offer alerts stay off unless switched on.
+// O5b · Booking reminders. Asked once, right after the first booking. "Turn on
+// reminders" also asks the browser for permission to show notifications; the
+// in-app reminder card works either way. Booking texts and offer alerts are
+// optional and stay off unless switched on (both changeable in Settings). This
+// is where booking texts are offered — the phone screens only send the code.
 export function RemindersSheet({ open, onDone }: { open: boolean; onDone: () => void }) {
   const [offers, setOffers] = useState(false);
+  const [texts, setTexts] = useState(false);
+  const profile = useProfile();
   const [busy, setBusy] = useState(false);
 
   const turnOn = async () => {
@@ -23,7 +27,7 @@ export function RemindersSheet({ open, onDone }: { open: boolean; onDone: () => 
     } catch {
       /* permission prompt not available: in-app reminders still work */
     }
-    updateProfile({ reminders: true, offerAlerts: offers });
+    updateProfile({ reminders: true, offerAlerts: offers, bookingTexts: texts });
     setBusy(false);
     onDone();
   };
@@ -32,7 +36,7 @@ export function RemindersSheet({ open, onDone }: { open: boolean; onDone: () => 
     <BottomSheet
       open={open}
       onClose={() => {
-        updateProfile({ reminders: false, offerAlerts: false });
+        updateProfile({ reminders: false, offerAlerts: false, bookingTexts: false });
         onDone();
       }}
       title="Get a reminder before each booking?"
@@ -53,6 +57,28 @@ export function RemindersSheet({ open, onDone }: { open: boolean; onDone: () => 
         </div>
       </div>
 
+      {/* Optional booking texts. The whole row is the switch. */}
+      <button
+        type="button"
+        role="switch"
+        aria-checked={texts}
+        onClick={() => setTexts((v) => !v)}
+        className="mt-3 flex min-h-[56px] w-full items-center gap-3 rounded-lg border border-border-default p-4 text-left hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+      >
+        <span className="flex-1">
+          <span className="block text-title-sm text-text-primary">Also send booking texts</span>
+          <span className="block text-body-sm text-text-secondary">
+            Confirmations and reminders{profile?.phone ? ` to ${profile.phone}` : ""} · optional
+          </span>
+        </span>
+        <SwitchVisual checked={texts} />
+      </button>
+      {texts && (
+        <p className="mt-2 px-1 text-body-sm text-text-secondary">
+          Message frequency varies. Message and data rates may apply. Reply STOP to opt out.
+        </p>
+      )}
+
       <div className="mt-3 flex items-center gap-3 rounded-lg border border-border-default p-4">
         <div className="flex-1">
           <p className="text-title-sm text-text-primary">Also tell me about new offers</p>
@@ -68,7 +94,7 @@ export function RemindersSheet({ open, onDone }: { open: boolean; onDone: () => 
         <Button
           variant="text"
           onClick={() => {
-            updateProfile({ reminders: false, offerAlerts: false });
+            updateProfile({ reminders: false, offerAlerts: false, bookingTexts: false });
             onDone();
           }}
         >

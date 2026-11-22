@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { useGreeting, useProfile } from "@/lib/account";
 import { activeFilterCount, setQuery, setTab, useBrowse, type Tab } from "@/lib/browse";
 import { FiltersSheet } from "./filters-sheet";
+import { markNav } from "@/lib/nav-motion";
 
 // Shared top of Deals (H1) and Deals → Map (H1m): greeting + settings, title +
 // Map/List switch, search, filters (with a real badge) and category tabs.
@@ -27,11 +28,19 @@ export function BrowseHeader({ mode, resultCount }: { mode: "list" | "map"; resu
 
   return (
     <>
-      <div className="px-5 pt-4">
+      <div className="flex items-center justify-between px-5 pt-4">
         <p className="text-title-md text-text-heading">
           {greeting}
           {profile?.firstName ? `, ${profile.firstName}` : ""}
         </p>
+        <Link
+          href="/account/settings?from=/deals"
+          onNavigate={markNav("forward")}
+          aria-label="Settings"
+          className="-mr-3 inline-flex h-12 w-12 items-center justify-center rounded-full text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+        >
+          <Icon name="settings" />
+        </Link>
       </div>
 
       <div className="mt-2 flex items-center justify-between px-5">
@@ -49,12 +58,12 @@ export function BrowseHeader({ mode, resultCount }: { mode: "list" | "map"; resu
       <div className="mt-3 flex items-center gap-2 px-5">
         <label className="flex h-12 flex-1 items-center gap-2 rounded-full bg-surface-muted px-4 focus-within:ring-2 focus-within:ring-focus-ring">
           <Icon name="search" size={20} className="text-text-secondary" />
-          <span className="sr-only">Search offers or places</span>
+          <span className="sr-only">Search deals or shops</span>
           <input
             type="search"
             value={browse.query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search offers or places"
+            placeholder="Search deals or shops"
             className="w-full bg-transparent text-body-md text-text-primary outline-none placeholder:text-text-secondary"
           />
         </label>

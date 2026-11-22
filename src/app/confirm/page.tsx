@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Screen, ScreenBody, AppBar, BottomActionBar } from "@/components/ui/screen";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { SwitchVisual } from "@/components/ui/switch";
 import { InfoBox } from "@/components/ui/info-box";
 import { Icon } from "@/components/ui/icon";
 import { LoadingRow } from "@/components/ui/spinner";
@@ -22,6 +22,7 @@ import {
   useHydrated,
   useNowMinute,
 } from "@/lib/account";
+import { go } from "@/lib/nav-motion";
 
 // R6 · Confirm booking (+ R6b one-booking-at-a-time). Shows the shop, service and
 // time the person picked. "Book slot" creates a real booking on this device.
@@ -39,7 +40,7 @@ export default function ConfirmPage() {
   if (!hydrated || nowMs === 0) {
     return (
       <Screen>
-        <AppBar title="Confirm booking" onBack={() => router.push("/deals")} />
+        <AppBar title="Confirm booking" onBack={() => go(router, "/deals", "back")} />
         <ScreenBody>
           <LoadingRow label="Loading your booking…" />
         </ScreenBody>
@@ -50,7 +51,7 @@ export default function ConfirmPage() {
   if (!draft || !service || !business) {
     return (
       <Screen>
-        <AppBar title="Confirm booking" onBack={() => router.push("/deals")} />
+        <AppBar title="Confirm booking" onBack={() => go(router, "/deals", "back")} />
         <ScreenBody>
           <p className="text-body-lg text-text-secondary">You haven&apos;t picked a time yet. Find an offer and choose a time to book.</p>
           <ButtonLink href="/deals" fullWidth className="mt-4">
@@ -88,7 +89,7 @@ export default function ConfirmPage() {
   // time with the "isn't available any more" banner and the nearest open time.
   const slotGoneBack = () => {
     setSlotGone({ serviceId: service.id, startsAt: draft.startsAt });
-    router.push(`/offer/${service.id}/time`);
+    go(router, `/offer/${service.id}/time`, "back");
   };
 
   const book = () => {
@@ -112,12 +113,12 @@ export default function ConfirmPage() {
       remind,
     });
     // `new=1` lets the Booked screen offer reminders once, right after booking.
-    router.push(`/booked/${b.id}?new=1`);
+    go(router, `/booked/${b.id}?new=1`, "forward");
   };
 
   return (
     <Screen>
-      <AppBar title="Confirm booking" onBack={() => router.push(`/offer/${service.id}/time`)} />
+      <AppBar title="Confirm booking" onBack={() => go(router, `/offer/${service.id}/time`, "back")} />
       <ScreenBody>
         {/* Summary */}
         <div className="overflow-hidden rounded-lg border border-border-default">
@@ -158,14 +159,23 @@ export default function ConfirmPage() {
 
         {/* Options */}
         <div className="mt-4 overflow-hidden rounded-lg border border-border-default">
-          <div className="flex items-center gap-3 p-4">
+          {/* The whole row is the switch, so it's easy to hit. */}
+          <button
+            type="button"
+            role="switch"
+            aria-checked={remind}
+            onClick={() => setRemind(!remind)}
+            className="flex min-h-[56px] w-full items-center gap-3 p-4 text-left hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring"
+          >
             <Icon name="clock" size={22} className="text-text-secondary" />
-            <div className="flex-1">
-              <p className="text-title-sm text-text-primary">Remind me 1 hour before</p>
-              <p className="text-body-sm text-text-secondary">At {formatTime(remindAt)}, in the app</p>
-            </div>
-            <Switch label="Remind me 1 hour before" checked={remind} onChange={setRemind} />
-          </div>
+            <span className="flex-1">
+              <span className="block text-title-sm text-text-primary">Remind me 1 hour before</span>
+              <span className="block text-body-sm text-text-secondary">
+                {remind ? `At ${formatTime(remindAt)}, in the app` : "Off · no reminder for this booking"}
+              </span>
+            </span>
+            <SwitchVisual checked={remind} />
+          </button>
           <div className="flex w-full items-center gap-3 border-t border-border-default p-4">
             <Icon name="map-pin" size={22} className="text-text-secondary" />
             <div className="flex-1">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Spinner } from "./spinner";
+import { markNav } from "@/lib/nav-motion";
 
 type Variant = "filled" | "tonal" | "outlined" | "text" | "destructive";
 
@@ -69,15 +70,18 @@ export function ButtonLink({
   fullWidth,
   children,
   className,
+  direction = "forward",
 }: {
   href: string;
   variant?: Variant;
   fullWidth?: boolean;
   children: ReactNode;
   className?: string;
+  /** Page animation: "forward" (default) or "back". */
+  direction?: "forward" | "back";
 }) {
   return (
-    <Link href={href} className={cn(base, variants[variant], fullWidth && "w-full", className)}>
+    <Link href={href} onNavigate={markNav(direction)} className={cn(base, variants[variant], fullWidth && "w-full", className)}>
       {children}
     </Link>
   );

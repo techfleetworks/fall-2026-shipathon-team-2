@@ -6,6 +6,7 @@ import { SparetimeLogo } from "@/components/brand/logo";
 import { CATEGORY_WORDS, getBusiness } from "@/lib/mock-data";
 import { formatTime } from "@/lib/slots";
 import { isActive, markNotified, useBookings, useHydrated, useNowMinute, useProfile } from "@/lib/account";
+import { markNav } from "@/lib/nav-motion";
 
 // P2 · Reminder. One hour before a booking (when "Remind me" was on), an in-app
 // notification card appears at the top of Deals and My bookings. If the person
@@ -57,6 +58,7 @@ export function ReminderBanner() {
     <div className="mx-5 mt-3">
     <Link
       href={`/booked/${due.id}`}
+      onNavigate={markNav("forward")}
       className="flex items-start gap-3 rounded-lg border border-border-default bg-surface-default p-3 shadow-e2 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
     >
       <SparetimeLogo size={28} />

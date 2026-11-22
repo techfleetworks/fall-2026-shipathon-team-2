@@ -8,6 +8,7 @@ import { LoadingRow } from "@/components/ui/spinner";
 import { getBusiness, getService } from "@/lib/mock-data";
 import { formatTime, relativeDay, sameDay } from "@/lib/slots";
 import { isActive, useBookings, useHydrated, useNowMinute } from "@/lib/account";
+import { markNav } from "@/lib/nav-motion";
 
 // H2 Upcoming: the person's real active bookings (on this device), soonest
 // first. Figma's empty state shows when there are none.
@@ -49,6 +50,7 @@ export function UpcomingList() {
           <li key={b.id}>
             <Link
               href={`/booked/${b.id}`}
+              onNavigate={markNav("forward")}
               className="flex items-center gap-3 rounded-lg border border-border-default p-4 transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
             >
               <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-surface-muted">
