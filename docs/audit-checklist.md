@@ -7,22 +7,27 @@ at the bottom).
 
 ## Before you start
 
-### Run the app
+### Open the app (easiest — just a link)
 
-1. Open a terminal in the project folder
-   (`C:\Users\osogr\source\repos\fall-2026-shipathon-team-2`).
-2. Start it:
+Open this link on your phone or computer — no install, no login:
 
-   ```powershell
-   npm run dev
-   ```
+**https://fall-2026-shipathon-team-2-git-sparetime-frontend-vt-projects2.vercel.app**
 
-3. Open **http://localhost:3000** in your browser.
-4. Make the window **phone-size**: open DevTools (F12) → the phone/tablet icon
-   (top-left of DevTools) → set the width to **375 px**. This is how people will use it.
+On a computer, make the window **phone-size** to see it as people will: open DevTools
+(F12) → the phone/tablet icon (top-left of DevTools) → set the width to **375 px**. On a
+phone it's already the right size.
 
-> Prefer the live version instead? Ask Vichea for the Vercel "Live demo" link in the
-> README. Everything below works the same there.
+> **⚠️ Which link to use — please read.** Use **the link above** (the `...-git-sparetime-frontend-...`
+> one). This is the **preview** of the work we're reviewing, and it's kept up to date.
+> **Do _not_** use the "Live demo" link in the README (`fall-2026-shipathon-team-2.vercel.app`)
+> for this review — that one is the older published version and doesn't have these changes
+> yet (it'll be updated once this is merged). If the link above ever asks you to log in or
+> shows an error, tell Vichea.
+
+### Run it locally instead (optional, only if you have the code)
+
+1. Open a terminal in the project folder and run `npm run dev`.
+2. Open **http://localhost:3000**, and set the window to **375 px** as above.
 
 ### Start clean
 
