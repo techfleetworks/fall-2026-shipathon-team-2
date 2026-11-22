@@ -29,8 +29,8 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
     <div className="min-h-dvh w-full bg-bg-canvas">
       <PageMotion>
       <div className="relative mx-auto flex min-h-dvh max-w-[430px] flex-col bg-surface-default pb-28">
-        {/* Hero */}
-        <div className="relative h-52 w-full overflow-hidden bg-surface-muted">
+        {/* Hero. Not overflow-hidden: the shop logo circle hangs below it. */}
+        <div className="relative h-52 w-full bg-surface-muted">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={business.photo} alt={business.name} className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
@@ -50,7 +50,7 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
           >
             {business.logo ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={business.logo} alt={`${business.name} logo`} className="w-12" />
+              <img src={business.logo} alt={`${business.name} logo`} className="w-10" />
             ) : (
               <Icon name={business.category === "haircut" ? "scissors" : "shirt"} className="text-action-primary" />
             )}
