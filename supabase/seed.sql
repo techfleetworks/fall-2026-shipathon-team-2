@@ -47,8 +47,8 @@ with rules (business_name, service_name, offpeak_dollars, seats, days, start_hou
   ('Studio 7 Salon',        'Wash, cut and style',     18, 1, '{2,3,4,5}'::int[],   13, 16),
   ('Studio 7 Salon',        'Blowout',                 14, 1, '{2,3,4,5}'::int[],   13, 16),
   ('Main St Barbers',       'Classic cut',             10, 1, '{1,2,3,4,5}'::int[], 15, 17),
-  ('Spin City Laundry',     'Wash and fold, 15 lb',     6, 3, '{1,2,3,4,5}'::int[], 10, 14),
-  ('Spin City Laundry',     'Wash and fold, 25 lb',    10, 3, '{1,2,3,4,5}'::int[], 10, 14),
+  ('Spin City Laundry',     'Wash and fold, 15 lb',     6, 3, '{0,1,2,3,4,5,6}'::int[], 9, 21),
+  ('Spin City Laundry',     'Wash and fold, 25 lb',    10, 3, '{0,1,2,3,4,5,6}'::int[], 9, 21),
   ('Prime Press',           'Shirt press (5 items)',    9, 1, '{1,2,3,4,5}'::int[], 11, 14)
 ),
 days as (
@@ -70,4 +70,7 @@ join public.businesses b on b.name = r.business_name
 join public.services s on s.business_id = b.id and s.name = r.service_name
 cross join days d
 cross join lateral generate_series(0, ((r.end_hour - r.start_hour) * 60 / s.duration_minutes) - 1) as k(n)
-where extract(dow from d.day)::int = any (r.days);
+where extract(dow from d.day)::int = any (r.days)
+  -- skip slots that have already started today
+  and ((d.day + make_time(r.start_hour, 0, 0)) + k.n * make_interval(mins => s.duration_minutes))
+      at time zone 'America/Los_Angeles' > now();
