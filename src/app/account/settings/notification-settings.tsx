@@ -7,8 +7,9 @@ import { updateProfile, useHydrated, useProfile, type Profile } from "@/lib/acco
 // Notification toggles take effect immediately (no Save) and are saved to the
 // person's account — the same choices as the reminders sheet after sign-up.
 // Turning booking reminders on also asks the browser for permission.
-const ITEMS: { key: "reminders" | "offerAlerts" | "favoriteAlerts"; title: string; sub: string; fallback: boolean }[] = [
+const ITEMS: { key: "reminders" | "bookingTexts" | "offerAlerts" | "favoriteAlerts"; title: string; sub: string; fallback: boolean }[] = [
   { key: "reminders", title: "Booking reminders", sub: "1 hour before your booking", fallback: true },
+  { key: "bookingTexts", title: "Booking texts", sub: "Confirmations and reminders by text", fallback: false },
   { key: "offerAlerts", title: "Offer alerts", sub: "New offers near you, up to 1 a day", fallback: false },
   { key: "favoriteAlerts", title: "Favorites", sub: "When a saved place posts an offer", fallback: false },
 ];

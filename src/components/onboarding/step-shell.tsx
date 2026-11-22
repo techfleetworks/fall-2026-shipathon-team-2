@@ -13,7 +13,8 @@ export function StepShell({
   action,
   children,
 }: {
-  step: number;
+  /** Sign-up step (shows the progress bar); omit outside sign-up, e.g. sign-in. */
+  step?: number;
   onBack: () => void;
   action: ReactNode;
   children: ReactNode;
@@ -23,7 +24,7 @@ export function StepShell({
       <div className="sticky top-0 z-10 bg-surface-default px-2 pt-2 pb-1">
         <div className="flex items-center gap-1">
           <IconButton icon="chevron-left" label="Go back" onClick={onBack} />
-          <StepBar step={step} />
+          {step ? <StepBar step={step} /> : null}
         </div>
       </div>
       <ScreenBody className="pt-2">{children}</ScreenBody>

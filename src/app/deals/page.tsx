@@ -108,7 +108,7 @@ export default function DealsPage() {
               onClick={() => setExpanded((v) => !v)}
               className="min-h-[48px] w-full rounded-full border border-border-control py-3 text-label-lg text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
             >
-              {expanded ? "Show fewer" : `See all ${shown.length} offers →`}
+              {expanded ? "Show less" : `See all ${shown.length} offers →`}
             </button>
           </div>
         )}

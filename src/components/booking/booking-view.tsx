@@ -170,7 +170,10 @@ export function BookingView({ bookingId }: { bookingId: string }) {
       <ScreenBody className="pt-0">
         {!isToday && remindAt.getTime() > nowMs && (
           <p className="mb-4 text-body-lg text-text-secondary">
-            You&apos;re all set. We&apos;ll remind you {dayWord} at {formatTime(remindAt)}.
+            {/* Only promise a reminder if this booking and the person's settings both want one. */}
+            {booking.remind !== false && profile?.reminders !== false
+              ? <>You&apos;re all set. We&apos;ll remind you {dayWord} at {formatTime(remindAt)}.</>
+              : <>You&apos;re all set.</>}
           </p>
         )}
 

@@ -13,6 +13,7 @@ import { useBooking } from "@/components/booking/use-booking";
 import { BookingLoading, BookingMissing } from "@/components/booking/booking-states";
 import { ShopBadge } from "@/components/booking/shop-badge";
 import { PageHeader } from "@/components/ui/page-header";
+import { NavBar } from "@/components/ui/nav-bar";
 
 // P6 · Rate your visit. 1–5 stars (nothing pre-selected) plus optional "What
 // went well?" chips; saved to the visit on this device. Figma notes the chip row
@@ -81,12 +82,12 @@ export function RateView({ bookingId }: { bookingId: string }) {
           <p className="mt-2 text-body-lg text-text-secondary">
             You gave {booking.rating.stars} out of 5. Ratings help other people find good shops.
           </p>
-        </ScreenBody>
-        <BottomActionBar className="border-t-0!">
-          <ButtonLink href="/deals" fullWidth>
+          <ButtonLink href="/deals" fullWidth className="mt-8">
             Find another deal
           </ButtonLink>
-        </BottomActionBar>
+        </ScreenBody>
+        {/* Keep the bottom tabs so people can go anywhere next. */}
+        <NavBar active="bookings" />
       </Screen>
     );
   }
@@ -122,7 +123,7 @@ export function RateView({ bookingId }: { bookingId: string }) {
               <Icon
                 name={n <= stars ? "star-filled" : "star"}
                 size={32}
-                className={cn(n <= stars ? "text-action-primary" : "text-border-control")}
+                className={cn(n <= stars ? "text-on-tint-primary" : "text-border-control")}
               />
             </button>
           ))}

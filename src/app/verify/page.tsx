@@ -53,7 +53,8 @@ export default function VerifyPage() {
 
   return (
     <StepShell
-      step={2}
+      // Signing in is 2 screens, so no sign-up progress bar there.
+      step={pending?.signin ? undefined : 2}
       onBack={() => router.back()}
       action={
         <Button fullWidth disabled={code.length !== 6} onClick={submit}>
@@ -116,7 +117,7 @@ export default function VerifyPage() {
           disabled={!hydrated || secondsLeft > 0}
           onClick={() => {
             if (!pending) return;
-            sendCode(pending.phone);
+            sendCode(pending.phone, { signin: pending.signin, bookingTexts: pending.bookingTexts });
             setCode("");
             setError(undefined);
           }}

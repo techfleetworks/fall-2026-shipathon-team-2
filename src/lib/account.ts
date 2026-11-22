@@ -23,12 +23,18 @@ export interface Profile {
   reminders?: boolean | null;
   offerAlerts?: boolean;
   favoriteAlerts?: boolean;
+  /** Booking texts opt-in from sign-up (optional; changeable in Settings). */
+  bookingTexts?: boolean;
 }
 
 interface PendingCode {
   phone: string;
   code: string;
   sentAt: number; // ms since epoch
+  /** Sign-up only: did they opt in to booking texts? */
+  bookingTexts?: boolean;
+  /** True when this code is for signing in (not sign-up). */
+  signin?: boolean;
 }
 
 /** A time the person picked but hasn't booked yet (Pick a time → Confirm). */
@@ -235,8 +241,8 @@ function randomCode() {
 }
 
 /** Creates a new 6-digit code for this phone number (replaces any earlier one). */
-export function sendCode(phone: string) {
-  save({ ...load(), pending: { phone, code: randomCode(), sentAt: Date.now() } });
+export function sendCode(phone: string, opts: { signin?: boolean; bookingTexts?: boolean } = {}) {
+  save({ ...load(), pending: { phone, code: randomCode(), sentAt: Date.now(), ...opts } });
 }
 
 /**
@@ -257,7 +263,7 @@ export function verifyCode(input: string): boolean {
   const saved = loadPerson(phone);
   save({
     ...s,
-    profile: saved?.profile ?? { ...BLANK_PROFILE, phone },
+    profile: saved?.profile ?? { ...BLANK_PROFILE, phone, bookingTexts: s.pending.bookingTexts ?? false },
     bookings: saved?.bookings ?? [],
     favorites: saved?.favorites ?? [],
     pending: null,
