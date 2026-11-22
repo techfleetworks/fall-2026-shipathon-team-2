@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Screen, ScreenBody, BottomActionBar } from "@/components/ui/screen";
 import { PageHeader } from "@/components/ui/page-header";
@@ -8,7 +9,7 @@ import { QrCode } from "@/components/ui/qr-code";
 import { InfoBox } from "@/components/ui/info-box";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { formatRange, sameDay, shortDay } from "@/lib/slots";
-import { markKept } from "@/lib/account";
+import { markKept, useOnline } from "@/lib/account";
 import { useBooking } from "@/components/booking/use-booking";
 import { BookingLoading, BookingMissing } from "@/components/booking/booking-states";
 
@@ -18,6 +19,7 @@ import { BookingLoading, BookingMissing } from "@/components/booking/booking-sta
 export function CodeView({ bookingId }: { bookingId: string }) {
   const router = useRouter();
   const data = useBooking(bookingId);
+  const online = useOnline();
 
   if (data.state === "loading") return <BookingLoading title="Show at the counter" />;
   if (data.state === "missing") return <BookingMissing title="Show at the counter" />;
@@ -33,6 +35,12 @@ export function CodeView({ bookingId }: { bookingId: string }) {
     <Screen>
       <PageHeader title="Show at the counter" backHref={`/booked/${booking.id}`} />
       <ScreenBody className="flex flex-col gap-3 pt-2">
+        {/* P4o · Offline: the code is saved on the phone, so it still works. */}
+        {!online && (
+          <p role="status" className="rounded-lg bg-surface-muted px-4 py-3 text-title-sm text-text-primary">
+            You&apos;re offline. Your code still works.
+          </p>
+        )}
         <section
           aria-label="Your check-in code"
           className="flex flex-col items-center rounded-lg border border-border-default bg-surface-card px-4 pt-6 pb-5 shadow-e1"
@@ -56,7 +64,11 @@ export function CodeView({ bookingId }: { bookingId: string }) {
         <InfoBox>Pay ${booking.paid} in cash at the counter.</InfoBox>
         {!done && !cancelled && (
           <p className="px-1 text-body-sm text-text-secondary">
-            Demo: tapping Done stands in for the shop confirming your visit.
+            Demo: tapping Done stands in for the shop confirming your visit, or{" "}
+            <Link href="/staff/confirm" className="text-action-primary underline underline-offset-2">
+              open the shop&apos;s view
+            </Link>{" "}
+            and type the code.
           </p>
         )}
       </ScreenBody>

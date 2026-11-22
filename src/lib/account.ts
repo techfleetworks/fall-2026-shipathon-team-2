@@ -19,6 +19,10 @@ export interface Profile {
   reason: string | null;
   timing: string | null;
   timingDate: string | null; // yyyy-mm-dd, optional
+  /** Notification choices (O5b sheet; Settings switches). null = not asked yet. */
+  reminders?: boolean | null;
+  offerAlerts?: boolean;
+  favoriteAlerts?: boolean;
 }
 
 interface PendingCode {
@@ -54,6 +58,12 @@ export interface Booking {
   lateCancel?: boolean;
   createdAt: string;
   keptAt?: string;
+  /** "Remind me 1 hour before" (Confirm switch). */
+  remind?: boolean;
+  /** A browser notification was already shown for this booking. */
+  notified?: boolean;
+  /** P6 rating after the visit. */
+  rating?: { stars: number; tags: string[]; at: string };
 }
 
 interface AccountState {
@@ -65,10 +75,20 @@ interface AccountState {
   reschedule: string | null;
   /** Saved places (business ids), most recently saved first. */
   favorites: string[];
+  /** R5x: the time the person picked stopped being available (`at` = when noticed). */
+  slotGone: { serviceId: string; startsAt: string; at?: number } | null;
 }
 
 const KEY = "sparetime.account.v1";
-const EMPTY: AccountState = { profile: null, pending: null, draft: null, bookings: [], reschedule: null, favorites: [] };
+const EMPTY: AccountState = {
+  profile: null,
+  pending: null,
+  draft: null,
+  bookings: [],
+  reschedule: null,
+  favorites: [],
+  slotGone: null,
+};
 const BLANK_PROFILE: Omit<Profile, "phone"> = {
   firstName: "",
   area: "",
@@ -270,7 +290,9 @@ function randomDigits(n: number) {
 }
 
 /** Turns the draft into a real booking. Limits are checked by the caller. */
-export function createBooking(input: Omit<Booking, "id" | "ref" | "pin" | "status" | "createdAt">): Booking {
+export function createBooking(
+  input: Omit<Booking, "id" | "ref" | "pin" | "status" | "createdAt" | "notified" | "rating">,
+): Booking {
   const booking: Booking = {
     ...input,
     id: `bk${Date.now().toString(36)}${randomDigits(3)}`,
@@ -299,6 +321,48 @@ export function cancelBooking(id: string) {
 /** Demo stand-in for "Business confirms": marks the visit as kept. */
 export function markKept(id: string) {
   patchBooking(id, { status: "kept", keptAt: new Date().toISOString() });
+}
+
+export function rateBooking(id: string, stars: number, tags: string[]) {
+  patchBooking(id, { rating: { stars, tags, at: new Date().toISOString() } });
+}
+
+export function markNotified(id: string) {
+  patchBooking(id, { notified: true });
+}
+
+/**
+ * Shop view (demo): find TODAY's open booking with this 6-digit code — not one
+ * that already ended (missed) or is on another day. Note: a real version must
+ * check the code on the server and limit wrong attempts.
+ */
+export function findBookingByPin(pin: string) {
+  const now = new Date();
+  return load().bookings.find((b) => {
+    if (b.pin !== pin || !isActive(b, now.getTime())) return false;
+    const s = new Date(b.startsAt);
+    return s.getFullYear() === now.getFullYear() && s.getMonth() === now.getMonth() && s.getDate() === now.getDate();
+  });
+}
+
+export function setSlotGone(v: AccountState["slotGone"]) {
+  save({ ...load(), slotGone: v ? { ...v, at: Date.now() } : null });
+}
+
+/** True while the browser reports a network connection (P4o). */
+export function useOnline() {
+  return useSyncExternalStore(
+    (onChange) => {
+      window.addEventListener("online", onChange);
+      window.addEventListener("offline", onChange);
+      return () => {
+        window.removeEventListener("online", onChange);
+        window.removeEventListener("offline", onChange);
+      };
+    },
+    () => navigator.onLine,
+    () => true,
+  );
 }
 
 export const isLateToCancel = (b: Booking, nowMs: number) => new Date(b.startsAt).getTime() - nowMs < LATE_CANCEL_MS;

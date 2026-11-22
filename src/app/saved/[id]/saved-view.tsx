@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { Screen, ScreenBody, BottomActionBar } from "@/components/ui/screen";
 import { ButtonLink } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
 import { CATEGORY_WORDS, plural } from "@/lib/mock-data";
 import { useBookings } from "@/lib/account";
 import { useBooking } from "@/components/booking/use-booking";
+import { ShopBadge } from "@/components/booking/shop-badge";
+import { FavoriteHeart } from "@/components/ui/favorite-heart";
 import { BookingLoading, BookingMissing } from "@/components/booking/booking-states";
 
 // P5 · All done — "You saved $X", from the person's real kept visits.
@@ -34,29 +35,13 @@ export function SavedView({ bookingId }: { bookingId: string }) {
       <ScreenBody className="pt-6">
         <h1 className="text-headline-lg text-text-heading">All done</h1>
 
-        <div className="relative mx-auto mt-4 flex h-40 w-40 items-center justify-center rounded-full bg-status-positive-surface">
-          {/* Shop badge. Fresh Cuts' Figma logo export is lettering only, so the
-              round badge and scissors mark are drawn behind it; other shops use
-              their photo. */}
-          {business.logo ? (
-            <div className="flex h-32 w-32 flex-col items-center justify-center gap-1 overflow-hidden rounded-full bg-status-positive text-on-action">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={business.logo} alt="" className="w-24" />
-              <Icon name="scissors" size={32} />
-            </div>
-          ) : (
-            <div className="h-32 w-32 overflow-hidden rounded-full bg-surface-muted">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={business.photo} alt="" className="h-full w-full object-cover" />
-            </div>
-          )}
-          <span className="absolute right-1 bottom-2 flex h-12 w-12 items-center justify-center rounded-full border-4 border-surface-default bg-status-positive text-on-action">
-            <Icon name="check" size={20} title="Visit confirmed" />
-          </span>
-        </div>
+        <ShopBadge business={business} check />
 
         <p className="mt-6 text-headline-sm text-text-heading">Thanks for coming to {business.shortName}.</p>
         <p className="mt-3 text-body-lg text-text-secondary">Paid ${booking.paid} at the counter.</p>
+        <div className="mt-3">
+          <FavoriteHeart businessId={business.id} businessName={business.shortName} variant="text" />
+        </div>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div className="rounded-lg border border-border-default p-4">
@@ -80,6 +65,11 @@ export function SavedView({ bookingId }: { bookingId: string }) {
         <ButtonLink href="/deals" fullWidth>
           Find another deal
         </ButtonLink>
+        {!booking.rating && (
+          <ButtonLink href={`/rate/${booking.id}`} variant="outlined" fullWidth className="text-action-primary!">
+            Rate your visit
+          </ButtonLink>
+        )}
         <Link
           href="/bookings"
           className="inline-flex min-h-[48px] items-center rounded-full px-4 text-label-lg text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"

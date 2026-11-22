@@ -17,7 +17,7 @@ export default function SettingsPage() {
         </ListGroup>
 
         <ListGroup className="mt-3">
-          <ListRow icon="globe" title="Language" value="English" />
+          <ListRow icon="globe" title="Language" value="English" soon />
           <ListRow icon="accessibility" title="Accessibility" sub="Text size follows your phone settings" />
         </ListGroup>
 

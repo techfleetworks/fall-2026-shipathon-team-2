@@ -8,7 +8,10 @@ import { InfoBox } from "@/components/ui/info-box";
 import { OfferCard } from "@/components/ui/offer-card";
 import { BrowseHeader } from "@/components/browse/browse-header";
 import { NoResults } from "@/components/browse/no-results";
-import { activeFilterCount, browseOffers, clearAll, setTab, useBrowse, type BrowseOffer } from "@/lib/browse";
+import { ReminderBanner } from "@/components/booking/reminder-banner";
+import { activeFilterCount, browseOffers, seeAll, undoSeeAll, useBrowse, type BrowseOffer, type Tab } from "@/lib/browse";
+
+const TAB_LABELS: Record<Tab, string> = { foryou: "For you", all: "All", haircut: "Haircuts", laundry: "Laundry", care: "Clothing care" };
 import { getBusiness, plural, services, servicesAt } from "@/lib/mock-data";
 import { formatTime, placeOfferStatus, relativeDay, sameDay } from "@/lib/slots";
 
@@ -47,6 +50,7 @@ export default function DealsPage() {
     <Screen>
       <ScreenBody className="px-0 py-0">
         <BrowseHeader mode="list" resultCount={shown.length} />
+        <ReminderBanner />
 
         {shown.length === 0 ? (
           <NoResults />
@@ -88,13 +92,24 @@ export default function DealsPage() {
           <div className="px-5 pt-4">
             <button
               type="button"
-              onClick={() => {
-                clearAll();
-                setTab("all");
-              }}
+              onClick={seeAll}
               className="min-h-[48px] w-full rounded-full border border-border-control py-3 text-label-lg text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
             >
               See all {total} offers →
+            </button>
+          </div>
+        )}
+        {browse.beforeSeeAll && (
+          <div className="px-5 pt-4">
+            <button
+              type="button"
+              onClick={undoSeeAll}
+              className="min-h-[48px] w-full rounded-full border border-border-control py-3 text-label-lg text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+            >
+              ← Back to{" "}
+              {browse.beforeSeeAll.query || activeFilterCount(browse.beforeSeeAll.filters) > 0
+                ? "your search"
+                : TAB_LABELS[browse.beforeSeeAll.tab]}
             </button>
           </div>
         )}

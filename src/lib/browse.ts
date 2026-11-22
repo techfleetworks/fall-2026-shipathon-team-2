@@ -31,9 +31,11 @@ interface BrowseState {
   query: string;
   tab: Tab;
   filters: Filters;
+  /** What the person was looking at before "See all", so they can go back. */
+  beforeSeeAll?: { query: string; tab: Tab; filters: Filters } | null;
 }
 
-let state: BrowseState = { query: "", tab: "foryou", filters: DEFAULT_FILTERS };
+let state: BrowseState = { query: "", tab: "foryou", filters: DEFAULT_FILTERS, beforeSeeAll: null };
 const listeners = new Set<() => void>();
 const set = (patch: Partial<BrowseState>) => {
   state = { ...state, ...patch };
@@ -51,11 +53,26 @@ export function useBrowse() {
   );
 }
 
-export const setQuery = (query: string) => set({ query });
-export const setTab = (tab: Tab) => set({ tab });
-export const setFilters = (patch: Partial<Filters>) => set({ filters: { ...state.filters, ...patch } });
-export const clearFilters = () => set({ filters: DEFAULT_FILTERS });
-export const clearAll = () => set({ filters: DEFAULT_FILTERS, query: "" });
+// Any manual change forgets the "before See all" snapshot.
+export const setQuery = (query: string) => set({ query, beforeSeeAll: null });
+export const setTab = (tab: Tab) => set({ tab, beforeSeeAll: null });
+export const setFilters = (patch: Partial<Filters>) => set({ filters: { ...state.filters, ...patch }, beforeSeeAll: null });
+export const clearFilters = () => set({ filters: DEFAULT_FILTERS, beforeSeeAll: null });
+export const clearAll = () => set({ filters: DEFAULT_FILTERS, query: "", beforeSeeAll: null });
+
+/** "See all N offers": show everything, remembering the current view. */
+export const seeAll = () =>
+  set({
+    beforeSeeAll: { query: state.query, tab: state.tab, filters: state.filters },
+    query: "",
+    tab: "all",
+    filters: DEFAULT_FILTERS,
+  });
+
+/** "Back to …": restore the view from before "See all". */
+export const undoSeeAll = () => {
+  if (state.beforeSeeAll) set({ ...state.beforeSeeAll, beforeSeeAll: null });
+};
 
 /** How many filter rows differ from the defaults (the badge on the Filters button). */
 export const activeFilterCount = (f: Filters) =>

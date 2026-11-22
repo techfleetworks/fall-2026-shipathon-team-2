@@ -17,8 +17,8 @@ export function FavoriteHeart({
 }: {
   businessId: string;
   businessName: string;
-  /** "overlay" = white circle for use on photos; "plain" = bare icon on cards. */
-  variant?: "overlay" | "plain";
+  /** "overlay" = white circle on photos; "plain" = bare icon on cards; "text" = labelled pill button. */
+  variant?: "overlay" | "plain" | "text";
   className?: string;
 }) {
   const hydrated = useHydrated();
@@ -50,26 +50,44 @@ export function FavoriteHeart({
 
   return (
     <>
-      <button
-        type="button"
-        aria-pressed={saved}
-        aria-label={`Save ${businessName} to favorites`}
-        onClick={onClick}
-        className={cn(
-          "inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring",
-          className,
-        )}
-      >
-        <span
+      {variant === "text" ? (
+        <button
+          type="button"
+          aria-pressed={saved}
+          onClick={onClick}
           className={cn(
-            "flex items-center justify-center rounded-full",
-            variant === "overlay" ? "h-9 w-9 bg-surface-default/90 shadow-e1" : "h-10 w-10 hover:bg-surface-muted",
-            saved ? "text-action-primary" : "text-text-secondary",
+            "inline-flex min-h-[48px] items-center gap-2 rounded-full border px-4 text-label-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring",
+            saved
+              ? "border-action-primary bg-surface-subtle text-on-tint-primary"
+              : "border-border-control text-text-primary hover:bg-surface-muted",
+            className,
           )}
         >
-          <Icon name={saved ? "heart-filled" : "heart"} size={20} />
-        </span>
-      </button>
+          <Icon name={saved ? "heart-filled" : "heart"} size={18} className={saved ? "text-action-primary" : undefined} />
+          {saved ? `${businessName} is in your favorites` : `Save ${businessName} to favorites`}
+        </button>
+      ) : (
+        <button
+          type="button"
+          aria-pressed={saved}
+          aria-label={`Save ${businessName} to favorites`}
+          onClick={onClick}
+          className={cn(
+            "inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring",
+            className,
+          )}
+        >
+          <span
+            className={cn(
+              "flex items-center justify-center rounded-full",
+              variant === "overlay" ? "h-9 w-9 bg-surface-default/90 shadow-e1" : "h-10 w-10 hover:bg-surface-muted",
+              saved ? "text-action-primary" : "text-text-secondary",
+            )}
+          >
+            <Icon name={saved ? "heart-filled" : "heart"} size={20} />
+          </span>
+        </button>
+      )}
 
       {toast && (
         <div

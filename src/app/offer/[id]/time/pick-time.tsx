@@ -7,9 +7,10 @@ import { Screen, ScreenBody, AppBar, BottomActionBar } from "@/components/ui/scr
 import { Chip } from "@/components/ui/chip";
 import { Button } from "@/components/ui/button";
 import { LoadingRow } from "@/components/ui/spinner";
+import { goBack } from "@/components/ui/back-button";
 import { CATEGORY_WORDS, getBusiness, getService } from "@/lib/mock-data";
 import { formatTime, longDay, offPeakLabel, relativeDay, sameDay, slotsFor, upcomingDays } from "@/lib/slots";
-import { setDraft, useAccount, useBookings, useHydrated, useNowMinute } from "@/lib/account";
+import { setDraft, setSlotGone, useAccount, useBookings, useHydrated, useNowMinute } from "@/lib/account";
 
 // R5t · Pick a time. Real dates: today and the next two days, built from the
 // shop's off-peak hours. Nothing is pre-selected; Continue waits for a pick.
@@ -21,7 +22,7 @@ export function PickTime({ serviceId }: { serviceId: string }) {
   const hydrated = useHydrated();
   const nowMs = useNowMinute();
   const bookings = useBookings();
-  const { reschedule } = useAccount();
+  const { reschedule, slotGone } = useAccount();
   // Rescheduling only applies to the same service the booking was for.
   const replaces = bookings.find((b) => b.id === reschedule && b.serviceId === serviceId && b.status === "booked")?.id;
   const [dayIdx, setDayIdx] = useState<number | null>(null);
@@ -35,17 +36,58 @@ export function PickTime({ serviceId }: { serviceId: string }) {
   const days = ready ? upcomingDays(now) : [];
   const daySlots = days.map((d) => slotsFor(service, business, d, now, mine));
   const firstOpen = daySlots.findIndex((s) => s.some((x) => !x.taken));
-  const selected = dayIdx ?? (firstOpen >= 0 ? firstOpen : 0);
+
+  // R5x · The time picked earlier stopped being available: suggest the nearest
+  // open time (same day first) and pre-select it.
+  // Only fresh notices count (10 min), so leaving and coming back later doesn't
+  // show an old apology.
+  const fresh = slotGone && slotGone.serviceId === serviceId && nowMs - (slotGone.at ?? 0) < 10 * 60_000;
+  const gone = fresh && slotGone ? new Date(slotGone.startsAt) : null;
+  const goneStarted = gone ? gone.getTime() <= nowMs : false;
+  let alt: { day: number; start: number } | null = null;
+  if (gone && ready) {
+    // Same day as the gone time first, then the other days in order.
+    const order = [...daySlots.keys()].sort((a, b) => Number(!sameDay(days[a], gone)) - Number(!sameDay(days[b], gone)));
+    for (const i of order) {
+      const free = daySlots[i].find((x) => !x.taken && x.start.getTime() >= gone.getTime()) ?? daySlots[i].find((x) => !x.taken);
+      if (free) {
+        alt = { day: i, start: free.start.getTime() };
+        break;
+      }
+    }
+  }
+
+  const selected = dayIdx ?? alt?.day ?? (firstOpen >= 0 ? firstOpen : 0);
   const slotsToday = daySlots[selected] ?? [];
-  const picked = slotsToday.find((s) => s.start.getTime() === pick);
+  const effectivePick = pick ?? (dayIdx === null ? alt?.start ?? null : null);
+  const picked = slotsToday.find((s) => s.start.getTime() === effectivePick);
   const pickedDay = days[selected];
   const dayWord = pickedDay ? (sameDay(pickedDay, now) ? "today" : relativeDay(pickedDay, now) === "Tomorrow" ? "tomorrow" : longDay(pickedDay)) : "";
 
   return (
     <Screen>
-      <AppBar title={replaces ? "Pick a new time" : "Pick a time"} onBack={() => router.push(`/offer/${serviceId}`)} />
+      <AppBar title={replaces ? "Pick a new time" : "Pick a time"} onBack={() => goBack(router, `/offer/${serviceId}`)} />
       <ScreenBody>
         <p className="text-body-lg text-text-secondary">{words.ready(business.shortName)}</p>
+
+        {ready && gone && (
+          <div role="alert" className="mt-4 rounded-lg bg-danger-surface px-4 py-3 text-on-tint-danger">
+            <p className="text-title-sm">Sorry, {formatTime(gone)} isn&apos;t available any more</p>
+            <p className="mt-0.5 text-body-md">
+              {goneStarted ? "That time has already started." : "It's no longer open for booking."}{" "}
+              {alt
+                ? `${formatTime(new Date(alt.start))}${
+                    sameDay(new Date(alt.start), gone)
+                      ? ""
+                      : (() => {
+                          const d = relativeDay(new Date(alt.start), now);
+                          return d === "Today" || d === "Tomorrow" ? ` ${d.toLowerCase()}` : ` on ${d}`;
+                        })()
+                  } is still open, at the same $${service.offPeakPrice} deal.`
+                : "Try another day."}
+            </p>
+          </div>
+        )}
 
         {!ready ? (
           <div className="mt-4">
@@ -99,21 +141,21 @@ export function PickTime({ serviceId }: { serviceId: string }) {
                       key={t}
                       type="button"
                       role="radio"
-                      aria-checked={pick === t}
+                      aria-checked={effectivePick === t}
                       onClick={() => setPick(t)}
                       className={cn(
                         "flex items-center justify-between rounded-lg border px-4 py-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring",
-                        pick === t ? "border-action-primary ring-1 ring-action-primary" : "border-border-default hover:bg-surface-muted",
+                        effectivePick === t ? "border-action-primary ring-1 ring-action-primary" : "border-border-default hover:bg-surface-muted",
                       )}
                     >
                       <span className="flex items-center gap-3">
                         <span
                           className={cn(
                             "flex h-6 w-6 items-center justify-center rounded-full border-2",
-                            pick === t ? "border-action-primary" : "border-border-control",
+                            effectivePick === t ? "border-action-primary" : "border-border-control",
                           )}
                         >
-                          {pick === t && <span className="h-3 w-3 rounded-full bg-action-primary" />}
+                          {effectivePick === t && <span className="h-3 w-3 rounded-full bg-action-primary" />}
                         </span>
                         <span className="text-body-lg text-text-primary">{formatTime(s.start)}</span>
                       </span>
@@ -142,6 +184,7 @@ export function PickTime({ serviceId }: { serviceId: string }) {
           disabled={!picked}
           onClick={() => {
             if (!picked) return;
+            setSlotGone(null);
             setDraft({ serviceId, startsAt: picked.start.toISOString(), endsAt: picked.end.toISOString(), replaces });
             router.push("/confirm");
           }}

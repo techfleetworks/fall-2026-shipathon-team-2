@@ -12,8 +12,11 @@ import { Icon } from "@/components/ui/icon";
 import { NavBar } from "@/components/ui/nav-bar";
 import { CATEGORY_WORDS } from "@/lib/mock-data";
 import { formatRange, formatTime, longDay, relativeDay, sameDay, shortDay } from "@/lib/slots";
-import { cancelBooking, isLateToCancel, isMissed, setReschedule, type Booking } from "@/lib/account";
-import type { Business, Service } from "@/lib/mock-data";
+import { cancelBooking, isLateToCancel, isMissed, setReschedule, useHistoryCounts, type Booking } from "@/lib/account";
+import { bookingLimit, type Business, type Service } from "@/lib/mock-data";
+import { InfoBox } from "@/components/ui/info-box";
+import { FavoriteHeart } from "@/components/ui/favorite-heart";
+import Link from "next/link";
 import { useBooking } from "./use-booking";
 import { BookingLoading, BookingMissing } from "./booking-states";
 
@@ -54,6 +57,7 @@ const linkCls =
 export function BookingView({ bookingId }: { bookingId: string }) {
   const router = useRouter();
   const data = useBooking(bookingId);
+  const counts = useHistoryCounts();
   const [sheetOpen, setSheetOpen] = useState(false);
 
   if (data.state === "loading") return <BookingLoading title="Your booking" />;
@@ -68,8 +72,54 @@ export function BookingView({ bookingId }: { bookingId: string }) {
   const missed = isMissed(booking, nowMs);
   const late = isLateToCancel(booking, nowMs);
 
-  // Finished states: cancelled, missed, done.
-  if (booking.status !== "booked" || missed) {
+  // P3m · Missed booking (no confirmation by the end of the slot).
+  if (missed) {
+    const limit = bookingLimit(counts);
+    const second = counts.missCount >= 2;
+    return (
+      <Screen>
+        <PageHeader title="Your booking" backHref="/bookings" />
+        <ScreenBody className="pt-0">
+          <BookingTicket
+            bookingRef={booking.ref}
+            total={booking.paid}
+            business={business}
+            service={service}
+            when=""
+            status={{ tone: "missed", label: "Missed", icon: "x", headline: `You missed your ${startTime} slot` }}
+            details={[
+              ["When", `${isToday ? "Today" : shortDay(start)}, ${formatRange(start, end)}`],
+              null,
+              ["Charged", "Nothing"],
+              ["Booking limit", limit === "unlimited" ? "No limit" : `${limit} at a time`],
+            ]}
+          />
+          <InfoBox className="mt-4">
+            {second
+              ? "There's no fee. You've now missed 2 or more bookings, so your limit is back to one at a time. Show up to book more."
+              : "There's no fee, and your limit stays the same. A second missed booking resets it to one at a time."}
+          </InfoBox>
+        </ScreenBody>
+        <div className="sticky bottom-0 z-10 bg-surface-default">
+          <div className="flex flex-col items-center gap-1 px-5 pt-3 pb-2">
+            <ButtonLink href={`/offer/${service.id}/time`} fullWidth>
+              Find another time
+            </ButtonLink>
+            <Link
+              href="/account/how-bookings-work"
+              className="inline-flex min-h-[48px] items-center rounded-full px-4 text-label-lg text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+            >
+              How bookings work
+            </Link>
+          </div>
+          <NavBar active="bookings" />
+        </div>
+      </Screen>
+    );
+  }
+
+  // Finished states: cancelled, done.
+  if (booking.status !== "booked") {
     const kept = booking.status === "kept";
     return (
       <Screen>
@@ -171,6 +221,17 @@ export function BookingView({ bookingId }: { bookingId: string }) {
             <Icon name="x" size={18} /> Cancel booking
           </button>
         </div>
+        <div className="mt-2 flex justify-center">
+          <FavoriteHeart businessId={business.id} businessName={business.shortName} variant="text" />
+        </div>
+        <p className="mt-1 text-center">
+          <Link
+            href="/demo/reminder"
+            className="inline-flex min-h-[48px] items-center rounded-full px-4 text-body-sm text-text-secondary underline underline-offset-2 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+          >
+            Demo: see the reminder on a phone&apos;s lock screen
+          </Link>
+        </p>
       </ScreenBody>
 
       <div className="sticky bottom-0 z-10 bg-surface-default">

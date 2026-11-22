@@ -9,6 +9,8 @@ import { Chip } from "@/components/ui/chip";
 import { Icon } from "@/components/ui/icon";
 import { updateProfile } from "@/lib/account";
 import { useRequirePhone } from "@/components/onboarding/use-require-phone";
+import { RemindersSheet } from "@/components/onboarding/reminders-sheet";
+import { LocationSheet } from "@/components/onboarding/location-sheet";
 
 // O5 · About you. Step 5 of 5 (last step). First name, area/ZIP, and what they
 // need (multi-select). All start empty; "Confirm & browse" opens the main app
@@ -21,6 +23,8 @@ export default function AboutPage() {
   const [firstName, setFirstName] = useState(profile?.firstName ?? "");
   const [area, setArea] = useState(profile?.area ?? "");
   const [needs, setNeeds] = useState<string[]>(profile?.needs ?? []);
+  const [remindersOpen, setRemindersOpen] = useState(false);
+  const [locationOpen, setLocationOpen] = useState(false);
 
   const toggle = (n: string) =>
     setNeeds((prev) => (prev.includes(n) ? prev.filter((x) => x !== n) : [...prev, n]));
@@ -48,7 +52,9 @@ export default function AboutPage() {
             disabled={!ready}
             onClick={() => {
               updateProfile({ firstName: firstName.trim(), area: area.trim(), needs });
-              router.push("/deals");
+              // O5b: ask about reminders once; afterwards it lives in Settings.
+              if (profile?.reminders === undefined || profile?.reminders === null) setRemindersOpen(true);
+              else router.push("/deals");
             }}
           >
             Confirm &amp; browse
@@ -76,7 +82,16 @@ export default function AboutPage() {
           onChange={(e) => setArea(e.target.value)}
           placeholder="Neighborhood or ZIP code"
           autoComplete="postal-code"
-          trailing={<Icon name="map-pin" size={22} className="text-action-primary" />}
+          trailing={
+            <button
+              type="button"
+              onClick={() => setLocationOpen(true)}
+              aria-label="Use my location"
+              className="-mr-3 inline-flex h-12 w-12 items-center justify-center rounded-full text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+            >
+              <Icon name="map-pin" size={22} />
+            </button>
+          }
           helper="Type a neighborhood or ZIP code. We serve a set list of LA County neighborhoods."
         />
       </div>
@@ -89,7 +104,20 @@ export default function AboutPage() {
           </Chip>
         ))}
       </div>
-      <p className="mt-2 text-body-sm text-text-secondary">We&rsquo;ll show these first. You can still browse everything.</p>
+      <p className="mt-2 text-body-sm text-text-secondary">
+        <span className="font-bold text-text-primary">Laundry</span> is wash &amp; fold.{" "}
+        <span className="font-bold text-text-primary">Clothing care</span> is pressing &amp; dry cleaning.
+      </p>
+      <p className="mt-1 text-body-sm text-text-secondary">We&rsquo;ll show these first. You can still browse everything.</p>
+
+      <LocationSheet open={locationOpen} onClose={() => setLocationOpen(false)} onArea={setArea} />
+      <RemindersSheet
+        open={remindersOpen}
+        onDone={() => {
+          setRemindersOpen(false);
+          router.push("/deals");
+        }}
+      />
     </StepShell>
   );
 }

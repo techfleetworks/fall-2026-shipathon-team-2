@@ -28,7 +28,9 @@ export type IconName =
   | "lock"
   | "globe"
   | "accessibility"
-  | "shield";
+  | "shield"
+  | "star"
+  | "star-filled";
 
 const PATHS: Record<IconName, { d: string; fill?: boolean }[]> = {
   "chevron-left": [{ d: "M15 18l-6-6 6-6" }],
@@ -55,6 +57,8 @@ const PATHS: Record<IconName, { d: string; fill?: boolean }[]> = {
   globe: [{ d: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" }, { d: "M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" }],
   accessibility: [{ d: "M12 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" }, { d: "M5 8.5l7 1.5 7-1.5M12 10v4.5M12 14.5L8.5 21M12 14.5l3.5 6.5" }],
   shield: [{ d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" }, { d: "M9 12l2 2 4-4" }],
+  star: [{ d: "M12 2.5l2.94 5.96 6.56.95-4.75 4.63 1.12 6.54L12 17.5l-5.87 3.08 1.12-6.54L2.5 9.41l6.56-.95L12 2.5z" }],
+  "star-filled": [{ d: "M12 2.5l2.94 5.96 6.56.95-4.75 4.63 1.12 6.54L12 17.5l-5.87 3.08 1.12-6.54L2.5 9.41l6.56-.95L12 2.5z", fill: true }],
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {

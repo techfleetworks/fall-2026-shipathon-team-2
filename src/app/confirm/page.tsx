@@ -9,7 +9,7 @@ import { InfoBox } from "@/components/ui/info-box";
 import { Icon } from "@/components/ui/icon";
 import { LoadingRow } from "@/components/ui/spinner";
 import { CATEGORY_WORDS, bookingLimit, getBusiness, getService, savings } from "@/lib/mock-data";
-import { closesAt, formatRange, formatTime, longDay, relativeDay, sameDay, shortDay } from "@/lib/slots";
+import { closesAt, formatRange, formatTime, longDay, relativeDay, sameDay, shortDay, slotsFor } from "@/lib/slots";
 import {
   cancelBooking,
   createBooking,
@@ -17,6 +17,7 @@ import {
   isActive,
   isLateToCancel,
   isSignedUp,
+  setSlotGone,
   useAccount,
   useHydrated,
   useNowMinute,
@@ -83,7 +84,23 @@ export default function ConfirmPage() {
   const cancelBy = new Date(start.getTime() - 2 * 60 * 60_000);
   const closes = closesAt(business, start);
 
+  // R5x: the picked time is gone (started, or no longer open) → back to Pick a
+  // time with the "isn't available any more" banner and the nearest open time.
+  const slotGoneBack = () => {
+    setSlotGone({ serviceId: service.id, startsAt: draft.startsAt });
+    router.push(`/offer/${service.id}/time`);
+  };
+
   const book = () => {
+    const mine = new Set(
+      account.bookings
+        .filter((b) => b.serviceId === service.id && b.status === "booked" && b.id !== replaced?.id)
+        .map((b) => new Date(b.startsAt).getTime()),
+    );
+    const stillOpen = slotsFor(service, business, start, new Date(), mine).some(
+      (s) => s.start.getTime() === start.getTime() && !s.taken,
+    );
+    if (!stillOpen) return slotGoneBack();
     if (replaced) cancelBooking(replaced.id);
     const b = createBooking({
       serviceId: service.id,
@@ -92,6 +109,7 @@ export default function ConfirmPage() {
       endsAt: draft.endsAt,
       paid: service.offPeakPrice,
       regular: service.regularPrice,
+      remind,
     });
     router.push(`/booked/${b.id}`);
   };
@@ -202,9 +220,9 @@ export default function ConfirmPage() {
           You save ${save} · pay ${service.offPeakPrice} cash at the shop
         </p>
         {passed ? (
-          <ButtonLink href={`/offer/${service.id}/time`} fullWidth>
+          <Button fullWidth onClick={slotGoneBack}>
             Pick another time
-          </ButtonLink>
+          </Button>
         ) : !signedUp ? (
           <ButtonLink href="/welcome" fullWidth>
             Create an account to book

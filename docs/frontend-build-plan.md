@@ -168,11 +168,11 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☑ O2 · Code — `825:4128` → `/verify`
 - ☑ O2e · Wrong code — `825:5747` (branch of /verify)
 - ☑ O3 · What brings you here — `825:4159` → `/reason`
-- ☐ O3c · Tell us in your words — `825:5097` → `/reason/custom`
+- ☐ O3c · Tell us in your words — `825:5097` → `/reason/custom` — **saved for later (team decision, Nov 21)**
 - ☑ O4 · When works — `825:4199` → `/timing`
 - ☑ O5 · About you — `825:4237` → `/about`
-- ☐ O5b · Booking reminders — `825:5519` (branch of /about)
-- ☐ O5l · Use your location — `825:5591` (branch of /about)
+- ☑ O5b · Booking reminders — `825:5519` (branch of /about)
+- ☑ O5l · Use your location — `825:5591` (branch of /about)
 
 ### Browse & book
 - ☑ H1 · Deals — `825:4273` → `/deals`
@@ -181,20 +181,20 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☑ R3 · Filters — `825:4357` (sheet on /deals)
 - ☑ R5 · Offer — `825:4489` → `/offer/[id]`
 - ☑ R5t · Pick a time — `825:4594` → `/offer/[id]/time`
-- ☐ R5x · Slot just taken — `825:5832` (error on pick/confirm)
+- ☑ R5x · Slot just taken — `825:5832` (error on pick/confirm)
 - ☑ R6 · Confirm — `825:4638` → `/confirm`
 - ☑ R6b · One booking at a time — `825:4700` (limit-reached state)
 
 ### After booking
 - ☑ P1 · Booked — `825:4772` → `/booked/[id]`
 - ☑ P1c · Cancel booking? — `825:5645` (dialog)
-- ☐ P2 · Reminder — `825:3999` (notification reference)
+- ☑ P2 · Reminder — `825:3999` (notification reference)
 - ☑ P3 · It’s today — `825:4824` → `/today/[id]`
-- ☐ P3m · Missed booking — `825:4875` → `/today/[id]` missed state
+- ☑ P3m · Missed booking — `825:4875` → `/today/[id]` missed state
 - ☑ P4 · Show code — `825:4915` → `/code/[id]`
-- ☐ P4o · Show code (offline) — `825:5879` (offline state)
+- ☑ P4o · Show code (offline) — `825:5879` (offline state)
 - ☑ P5 · All done — `825:4955` → `/saved/[id]`
-- ☐ P6 · Rate your visit — `825:5956` → `/rate/[id]` (needs 336px; tight at 375)
+- ☑ P6 · Rate your visit — `825:5956` → `/rate/[id]` (needs 336px; tight at 375)
 
 ### Account & support
 - ☑ H2 · My bookings — `825:5016` → `/bookings`
@@ -206,7 +206,7 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☑ H4 · Favorites — `825:5167` → `/favorites`
 
 ### Business side (BLOCKER — not in Figma yet)
-- ☐ Business confirms — design + build (`/staff/confirm`): code entry · wrong code ·
+- ☑ Business confirms (built from the design system; not in Figma) — design + build (`/staff/confirm`): code entry · wrong code ·
   visit confirmed.
 
 ---
@@ -321,4 +321,15 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   selected pin "Save $X" and "See open times" shortcut. Deals cleanup: real counts, "See
   all N offers" only when narrowed, settings icon → Settings, dead "Learn more" replaced by
   an honest note. Started `docs/notes-for-judges.md`.
+- 2026-11-21 — **Remaining screens.** P2 reminder: in-app card 1 h before (+ browser
+  notification if allowed) and a **demo-only** lock-screen page `/demo/reminder` (to be
+  removed later). P3m missed (Figma styling, limit from history). P4o offline notice on
+  Show code. R5x "isn't available any more" banner on Pick a time with nearest open time
+  pre-selected (triggered when the picked time started/closed; true "someone else
+  booked it" needs the shared backend). O5b reminders sheet after About (asks browser
+  permission; Settings switches now saved to the profile). O5l location: nearest LA
+  neighborhood from a built-in list, coordinates not kept. P6 rate (stars + tags, saved
+  to the visit). Business confirms `/staff/confirm`: staff type the 6-digit code; only a
+  matching open booking is confirmed. O3c not built: the team decided to save it for
+  a later version (Figma designs it as an assistant).
 - _(add each screen as it lands)_

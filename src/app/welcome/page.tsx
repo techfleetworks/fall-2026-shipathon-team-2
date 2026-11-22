@@ -27,7 +27,7 @@ export default function Welcome() {
           </p>
           <div className="mt-5 flex flex-col gap-3">
             <Button fullWidth onClick={() => router.push("/phone")}>Get started</Button>
-            <Button variant="outlined" fullWidth onClick={() => router.push("/phone")}>Sign in</Button>
+            <Button variant="outlined" fullWidth onClick={() => router.push("/signin")}>Sign in</Button>
           </div>
         </div>
       </div>

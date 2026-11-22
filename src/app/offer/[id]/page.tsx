@@ -8,6 +8,7 @@ import { getService, getBusiness, servicesAt, savings, CATEGORY_LABEL } from "@/
 import { groupHours, offPeakLabel } from "@/lib/slots";
 import { Availability } from "./availability";
 import { FavoriteHeart } from "@/components/ui/favorite-heart";
+import { BackButton } from "@/components/ui/back-button";
 
 // R5 · Offer detail. Everything comes from the (sample) shop's own data: its
 // description, hours, off-peak window, what's included and its other offers.
@@ -31,13 +32,12 @@ export default async function OfferPage({ params }: PageProps<"/offer/[id]">) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={business.photo} alt={business.name} className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
-            <Link
-              href="/deals"
-              aria-label="Go back"
+            <BackButton
+              fallback="/deals"
               className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-default/90 text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
             >
               <Icon name="chevron-left" />
-            </Link>
+            </BackButton>
             <FavoriteHeart businessId={business.id} businessName={business.name} />
           </div>
           <div

@@ -7,11 +7,12 @@ import type { Business, Service } from "@/lib/mock-data";
 // Optional status header (label + big time line), then the shop, then a 2×2 grid
 // of when / total / payment / booking ID. Status is always icon + text, never
 // colour alone.
-type Tone = "booked" | "today";
+type Tone = "booked" | "today" | "missed";
 
 const headerCls: Record<Tone, { bar: string; band: string }> = {
   booked: { bar: "bg-action-primary text-on-action", band: "bg-surface-muted text-text-primary" },
   today: { bar: "bg-status-positive text-on-action", band: "bg-status-positive-surface text-on-tint-positive" },
+  missed: { bar: "bg-action-secondary text-on-action", band: "bg-surface-subtle text-on-tint-primary" },
 };
 
 export function BookingTicket({
@@ -21,6 +22,7 @@ export function BookingTicket({
   service,
   when,
   status,
+  details,
   className,
 }: {
   bookingRef: string;
@@ -29,9 +31,17 @@ export function BookingTicket({
   service: Service;
   /** "When" cell copy, e.g. "Tue 24, 2:30–3:00 pm" or "Today, 2:30–3:00 pm". */
   when: string;
-  status?: { tone: Tone; label: string; icon: "check" | "calendar"; headline: ReactNode };
+  status?: { tone: Tone; label: string; icon: "check" | "calendar" | "x"; headline: ReactNode };
+  /** Replaces the default 2×2 grid (When / Total / Payment / Booking ID); null = empty cell. */
+  details?: ([string, string] | null)[];
   className?: string;
 }) {
+  const cells: ([string, string] | null)[] = details ?? [
+    ["When", when],
+    ["Total", `$${total}`],
+    ["Payment", "Cash on arrival"],
+    ["Booking ID", bookingRef],
+  ];
   return (
     <section
       aria-label="Booking details"
@@ -62,22 +72,16 @@ export function BookingTicket({
       </div>
 
       <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-3 border-t border-border-default p-4">
-        <div>
-          <dt className="text-label-sm text-text-secondary">When</dt>
-          <dd className="text-body-lg text-text-primary">{when}</dd>
-        </div>
-        <div className="text-right">
-          <dt className="text-label-sm text-text-secondary">Total</dt>
-          <dd className="text-body-lg text-text-primary">${total}</dd>
-        </div>
-        <div>
-          <dt className="text-label-sm text-text-secondary">Payment</dt>
-          <dd className="text-body-lg text-text-primary">Cash on arrival</dd>
-        </div>
-        <div className="text-right">
-          <dt className="text-label-sm text-text-secondary">Booking ID</dt>
-          <dd className="text-body-lg text-text-primary">{bookingRef}</dd>
-        </div>
+        {cells.map((cell, i) =>
+          cell ? (
+            <div key={cell[0]} className={i % 2 ? "text-right" : undefined}>
+              <dt className="text-label-sm text-text-secondary">{cell[0]}</dt>
+              <dd className="text-body-lg text-text-primary">{cell[1]}</dd>
+            </div>
+          ) : (
+            <div key={`empty-${i}`} aria-hidden="true" />
+          ),
+        )}
       </dl>
     </section>
   );

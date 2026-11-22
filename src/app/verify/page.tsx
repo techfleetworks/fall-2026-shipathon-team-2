@@ -53,7 +53,7 @@ export default function VerifyPage() {
   return (
     <StepShell
       step={2}
-      onBack={() => router.push("/phone")}
+      onBack={() => router.back()}
       action={
         <Button fullWidth disabled={code.length !== 6} onClick={submit}>
           Continue

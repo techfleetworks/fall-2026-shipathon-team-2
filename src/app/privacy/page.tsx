@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BackButton } from "@/components/ui/back-button";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -17,15 +18,16 @@ function H2({ children }: { children: React.ReactNode }) {
 export default function PrivacyPage() {
   return (
     <main className="mx-auto w-full max-w-md px-4 pb-16 pt-6">
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1 text-sm text-muted transition-colors hover:text-primary"
+      <BackButton
+        fallback="/"
+        label="Back"
+        className="inline-flex min-h-[48px] items-center gap-1 text-sm text-muted transition-colors hover:text-primary"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="m15 18-6-6 6-6" />
         </svg>
         Back
-      </Link>
+      </BackButton>
 
       <h1 className="mt-4 text-2xl font-bold tracking-tight">Privacy Policy</h1>
       <p className="mt-1 text-sm text-muted">Draft · last updated Nov 20, 2026</p>
