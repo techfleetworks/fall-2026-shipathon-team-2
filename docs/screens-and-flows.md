@@ -3,6 +3,14 @@
 **Status: current (Nov 20, 2026).** One happy path: **find, book, show up.** There
 are no other MVP flows. Target: about **4–5 taps** to a booking (was 9–10).
 
+> **What was built (Nov 21).** The app follows the team's Figma screens and three
+> flows (Gentle onboarding → Find and book → Show up). Differences from this doc:
+> sign-up is **phone number + one-time code first** (Figma O1–O5), not a ZIP field
+> with no account; services are **haircuts, laundry and clothing care**; reminders
+> are **in-app only**; and **Done** on Show code stands in for the business
+> confirming. Screen-by-screen status: [frontend-build-plan.md](frontend-build-plan.md).
+> Demo approach: [ADR-0006](adr/0006-working-demo-on-device-data.md).
+
 Routes and names follow the README. The MVP has no up-front account screen and no
 separate services-preference screen.
 

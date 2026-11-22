@@ -4,6 +4,10 @@ Tech Fleet Catalyst Cup Shipathon 2026 · Team 2
 
 **Live demo:** https://fall-2026-shipathon-team-2.vercel.app
 
+> **Judges, start here:** [Notes for judges](docs/notes-for-judges.md) explains
+> what in the demo is real, what is simulated (sample businesses, an on-screen
+> sign-up code, a drawn map), and why.
+
 Sparetime connects low-income people with discounted off-peak services from
 small local businesses. Our MVP starts with **job-readiness services**
 (grooming, laundry) for job seekers like Dana.
@@ -38,12 +42,14 @@ them and pay the business in cash, in person.
   group within this audience, not all of it.
 - **Secondary:** small local businesses with open capacity during off-peak hours.
 
-The MVP focuses on **job-readiness services** — haircut/barber, laundry/dry
-cleaning, nails/grooming — and on **Dana**, a job seeker (see
+The MVP focuses on **job-readiness services** — **haircuts, laundry and clothing
+care** (pressing and dry cleaning) — and on **Dana**, a job seeker (see
 [docs/personas.md](docs/personas.md)). That keeps the demo concrete; it does not
-narrow the product to job-readiness.
+narrow the product to job-readiness. (Nails and grooming were in the earlier scope
+and are left for later; see [ADR-0006](docs/adr/0006-working-demo-on-device-data.md).)
 
-**Launch area:** LA County, with **Palms** as the seeded demo area.
+**Launch area:** LA County. The demo's sample shops are in **Westlake, Downtown LA,
+South Park and Little Tokyo**.
 
 ## Unique value proposition
 
@@ -58,8 +64,9 @@ discounted, bookable off-peak services — with **no income verification require
    a discounted price.
 2. A slot shows the business, the time, the **regular price**, the **now price**,
    and **"Save $X"** (regular price − now price).
-3. The customer browses offers near a **ZIP code**, filters by service type, opens
-   an offer, picks an open slot, and books it. The slot is held for them.
+3. The customer signs up with a **phone number and a one-time 6-digit code**, tells
+   us their area and the services they need, then browses offers, filters them,
+   opens an offer, picks an open slot, and books it. The slot is held for them.
 4. They get a short **booking code**, show it at the counter, and the business
    confirms and serves. That counts as a show-up.
 5. They pay the business **in cash, in person**, at the discounted price.
@@ -74,8 +81,45 @@ Rules:
   the limit opens up. Two total misses reset it to 1. (See
   [docs/screens-and-flows.md](docs/screens-and-flows.md).)
 
-For the MVP, businesses and slots are **seeded demo data** (fake businesses, fake
-pictures). Business-side screens for posting slots are not built.
+For the MVP, businesses and slots are **sample data** (fictional businesses,
+AI-generated pictures). Business-side screens for posting slots are not built.
+
+## What the demo shows
+
+The demo is a **working app**, not a click-through prototype. Everything the
+person does is real; only the businesses are sample data.
+
+**Works end to end**
+
+- **Sign-up** — the phone number and name you type (nothing is pre-filled), a
+  6-digit code that is really checked, then your reason, timing, area and
+  services. "Good morning, [your name]" on Deals.
+- **Find** — every offer from 5 sample shops (9 offers), with **live open times**
+  from each shop's off-peak hours. **Search**, service tabs, a **Filters** sheet
+  (day, time of day, distance, transit, price) and a **map view**.
+- **Book** — any shop and service: pick a real time, confirm, get a booking ID and
+  code. The **trust-ladder limit** is enforced ("one booking at a time" for new
+  accounts). **Reschedule** and **cancel** (cancelling within 2 hours counts as a
+  miss).
+- **Show up** — "It's today" on the day, **Show code** at the counter, then
+  **You saved $X** and your monthly total.
+- **Your history** — **My bookings** (upcoming and past), **Favorites** (tap a
+  heart to save a place), and **Account** (your details, how bookings work,
+  settings, privacy, delete account, log out). A new account starts empty.
+
+**Simulated, and why** (full details in [Notes for judges](docs/notes-for-judges.md))
+
+| What | Why |
+|---|---|
+| **Sample businesses** | We haven't partnered with or spoken to any shops yet, so we couldn't present real information on a business's behalf. |
+| **Sign-up code shown on screen** (labelled *Demo*) | Real texts need a paid SMS provider and US carrier registration (days to weeks). The code is still really checked. |
+| **Drawn map** | The sample shops use real LA addresses; a real map would put pins on real buildings that may hold real businesses. |
+| **"Done" on Show code** stands in for the shop confirming the visit | The business side isn't built yet. |
+| **Data saved on the device** (Log out clears it) | Supabase is set up but not yet connected to these screens. |
+
+**Try it:** Welcome → **Get started**, use any US-format phone number (the code
+appears on screen), book any shop, then tap **Done** on Show code to finish the
+visit. **Account → Log out** resets everything on that device.
 
 ## What we decided (and what's still open)
 
@@ -83,9 +127,13 @@ pictures). Business-side screens for posting slots are not built.
   the app (cash at the business).
 - Sparetime is a **planned public benefit corporation** (not yet filed).
 - **Revenue model: not yet decided** — treat it as an open assumption.
-- Open items still to settle: how the reminder reaches people (suggested: in-app
-  only), the backend fields behind the trust ladder, and the demo control for a
-  business confirming a show-up.
+- **Demo approach** (Nov 21): a working app with on-device data, an on-screen
+  sign-up code and a drawn map, so every flow works without a paid SMS provider or
+  real businesses. See [ADR-0006](docs/adr/0006-working-demo-on-device-data.md).
+- Reminders are **in-app only** for now; the business confirming a show-up is
+  stood in by **Done** on the Show code screen.
+- Open items still to settle: connecting these screens to Supabase (the backend
+  fields behind the trust ladder), real SMS, and the business-side screens.
 
 ## Tech stack
 
@@ -112,6 +160,9 @@ Open http://localhost:3000.
 
 | Document | What it covers |
 |---|---|
+| [docs/notes-for-judges.md](docs/notes-for-judges.md) | What in the demo is real, what is simulated, and why |
+| [docs/frontend-build-plan.md](docs/frontend-build-plan.md) | Screen-by-screen build status and progress log |
+| [docs/adr/](docs/adr) | Architecture decisions (ADRs) |
 | [docs/personas.md](docs/personas.md) | Dana, the MVP persona |
 | [docs/screens-and-flows.md](docs/screens-and-flows.md) | The find → book → show-up flow and screens |
 | [docs/data-contract-v2.md](docs/data-contract-v2.md) | Database model (businesses, services, slots, profiles, bookings) |
