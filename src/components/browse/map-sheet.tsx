@@ -18,10 +18,20 @@ const SETTLE = "transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1)";
 
 type Stop = 0 | 1 | 2;
 
-export function MapSheet({ title, children }: { title: ReactNode; children: ReactNode }) {
+export function MapSheet({
+  title,
+  children,
+  coverSelector,
+}: {
+  title: ReactNode;
+  children: ReactNode;
+  /** At the top stop, the panel rises to cover this element (e.g. the chip row). */
+  coverSelector?: string;
+}) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const [area, setArea] = useState(0); // height of the map area we sit in
+  const [extra, setExtra] = useState(0); // how far above that area the top stop reaches
   const [stop, setStop] = useState<Stop>(1);
   const [dragging, setDragging] = useState(false);
 
@@ -31,13 +41,26 @@ export function MapSheet({ title, children }: { title: ReactNode; children: Reac
   useEffect(() => {
     const el = sheetRef.current?.parentElement;
     if (!el) return;
-    const ro = new ResizeObserver(() => setArea(el.clientHeight));
+    const measure = () => {
+      setArea(el.clientHeight);
+      const cover = coverSelector ? document.querySelector(coverSelector) : null;
+      setExtra(cover ? Math.max(0, Math.round(el.getBoundingClientRect().top - cover.getBoundingClientRect().top)) : 0);
+    };
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
-    setArea(el.clientHeight);
-    return () => ro.disconnect();
-  }, []);
+    measure();
+    // iPhone: don't let the whole page rubber-band under a drag on this screen.
+    const html = document.documentElement;
+    const prev = html.style.overscrollBehavior;
+    html.style.overscrollBehavior = "none";
+    return () => {
+      ro.disconnect();
+      html.style.overscrollBehavior = prev;
+    };
+  }, [coverSelector]);
 
-  const full = Math.max(LOW_PX, area - 24); // panel height = the high stop
+  // Panel height = the top stop: the map area plus what it covers above it.
+  const full = Math.max(LOW_PX, area + extra - (extra ? 0 : 24));
   const visible = [LOW_PX, Math.round(area * 0.5), full];
   const offsetFor = (s: Stop) => full - visible[s]; // translateY for a stop
 
@@ -55,7 +78,7 @@ export function MapSheet({ title, children }: { title: ReactNode; children: Reac
     apply(offsetFor(stop), true);
     if (stop !== 2 && listRef.current) listRef.current.scrollTop = 0;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stop, area]);
+  }, [stop, area, extra]);
 
   const begin = (e: React.PointerEvent, fromHandle: boolean) => {
     g.current.moved = false;
@@ -97,13 +120,20 @@ export function MapSheet({ title, children }: { title: ReactNode; children: Reac
     if (s.active) {
       s.active = false;
       setDragging(false);
+      // Any deliberate slide commits in its direction (like Maps apps): go to
+      // the next stop past where the finger left the panel. A barely-moved
+      // drag (< 24px) with no flick settles back.
+      const all = [0, 1, 2] as Stop[];
+      const travel = s.offset - s.startOffset; // < 0 = moved up
       let next: Stop;
-      if (Math.abs(s.v) > FLICK) {
-        // Flick: one stop in the direction of the swipe (down = smaller).
-        const cur = ([0, 1, 2] as Stop[]).reduce((a, b) => (Math.abs(offsetFor(b) - s.startOffset) < Math.abs(offsetFor(a) - s.startOffset) ? b : a));
-        next = (s.v > 0 ? Math.max(0, cur - 1) : Math.min(2, cur + 1)) as Stop;
+      if (Math.abs(travel) < 24 && Math.abs(s.v) < FLICK) {
+        next = all.reduce((a, b) => (Math.abs(offsetFor(b) - s.offset) < Math.abs(offsetFor(a) - s.offset) ? b : a));
+      } else if (travel < 0 || (Math.abs(travel) < 24 && s.v < 0)) {
+        // Up: the lowest stop that is above the current position (else the top).
+        next = (all.find((x) => offsetFor(x) < s.offset - 1 && x > 0 && offsetFor(x) <= s.startOffset - 1) ?? 2) as Stop;
       } else {
-        next = ([0, 1, 2] as Stop[]).reduce((a, b) => (Math.abs(offsetFor(b) - s.offset) < Math.abs(offsetFor(a) - s.offset) ? b : a));
+        // Down: the highest stop that is below the current position (else low).
+        next = ([...all].reverse().find((x) => offsetFor(x) > s.offset + 1 && offsetFor(x) >= s.startOffset + 1) ?? 0) as Stop;
       }
       if (next === stop) apply(offsetFor(next), true);
       else setStop(next);

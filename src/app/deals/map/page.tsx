@@ -59,7 +59,7 @@ export default function DealsMapPage() {
         <div className="relative mt-3 min-h-0 flex-1">
           <DrawnMap pins={pins} selected={sel} onSelect={select} area={profile?.area} className="h-full" />
 
-          <MapSheet title={shown.length === 0 ? "No offers nearby" : `${plural(shown.length, "offer")} nearby`}>
+          <MapSheet coverSelector={`[role="tablist"][aria-label="Service"]`} title={shown.length === 0 ? "No offers nearby" : `${plural(shown.length, "offer")} nearby`}>
           <p className="sr-only" aria-live="polite">
             {plural(shown.length, "offer")} nearby
           </p>
