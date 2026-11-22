@@ -59,3 +59,10 @@ Build the MVP as a working demo:
 - Next: apply schema v2 in Supabase and replace `account.ts` storage with queries;
   add an SMS provider for real codes and reminders; build the business side
   (posting slots, confirming visits); real map only once real businesses join.
+- **Security (do not ship the demo's check-in as-is):** the shop view
+  (`/staff/confirm`) verifies the 6-digit code **on the device**. A real version must
+  verify the code **on the server**, scoped to that booking, with a **limit on wrong
+  attempts** (authorization + rate limiting) so a code can't be brute-forced. The
+  sign-up code is checked client-side for the same reason and has the same requirement
+  once SMS and Supabase are wired. Never rely on a client-side code check for anything
+  that releases a service or money.

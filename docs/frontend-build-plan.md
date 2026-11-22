@@ -332,4 +332,23 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   to the visit). Business confirms `/staff/confirm`: staff type the 6-digit code; only a
   matching open booking is confirmed. O3c not built: the team decided to save it for
   a later version (Figma designs it as an assistant).
+- 2026-11-21 — **Audit fixes (23), committed with the screens above in `1601329`.**
+  Code review (16): bottom sheets call `onClose` only on user dismiss (fixed "reminders
+  saved as OFF"); R5x prefers the same day; stale R5x notice ignored after 10 min
+  (`slotGone.at`); only confirmed visits can be rated; Shop view accepts only today's
+  open booking; in-app reminder card follows the booking's "Remind me", browser
+  notification needs the reminders choice; location result ignored after "Not now",
+  status resets; unique sheet title ids (`useId`); reminder card no longer a live region;
+  star rating = one tab stop + arrow keys; focus moves to the success message after
+  rating / shop confirm; silent spacer cell on Missed ticket; neutral R5x copy "It's no
+  longer open for booking."; "missed 2 or more" copy; Settings note when the browser
+  blocks notifications; location copy no longer claims distances. Vichea's audit (6 + a
+  hint): Sign in has its own "Welcome back" screen (`/signin`, shared
+  `components/onboarding/phone-step.tsx`); "See all N offers" remembers the view and
+  shows "← Back to …" (`seeAll`/`undoSeeAll` in `browse.ts`); back buttons go one step
+  back (`components/ui/back-button.tsx` on Offer, Pick a time, Terms, Privacy); "Save
+  [shop] to favorites" on All done and Booked; Language row "Soon"; About-you hint
+  "Laundry is wash & fold. Clothing care is pressing & dry cleaning." Security note added
+  to notes-for-judges and ADR-0006: the 6-digit code must be checked server-side with a
+  wrong-attempt limit in a real version. Teammate test guide: `docs/audit-checklist.md`.
 - _(add each screen as it lands)_
