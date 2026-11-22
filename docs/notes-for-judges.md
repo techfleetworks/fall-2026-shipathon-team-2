@@ -28,7 +28,7 @@ This page lists each one and why.
   this phone and returns you to Welcome ("Your account was deleted from this phone.").
 - **Dates and times.** Open times are built from each shop's off-peak hours and your
   real clock: today, tomorrow and the next day. Past times are skipped. **Spin City
-  Laundry** has off-peak times **every day** (10 am–2 pm), so the whole flow —
+  Laundry** has off-peak times **every day** (9 am–9 pm), so the whole flow —
   booking for today, Show code, the shop check-in, All done and Rate — works on any
   day, weekends included.
 - **Search and filters** narrow the offers you see by service, shop, area, day, time

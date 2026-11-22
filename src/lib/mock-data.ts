@@ -183,8 +183,9 @@ export const businesses: Business[] = [
       "A full-service laundromat. Drop off your laundry in a quiet hour and they wash, dry and fold it, ready to pick up the same evening.",
     transit: "2 min walk from Westlake/MacArthur Park station",
     hours: [[7, 22], [7, 22], [7, 22], [7, 22], [7, 22], [7, 22], [7, 22]],
-    // Every day, so the full demo (same-day booking, shop check-in) works on weekends too.
-    offPeak: { days: [0, 1, 2, 3, 4, 5, 6], start: 10, end: 14 },
+    // Every day 9 am–9 pm, so the full demo (same-day booking, shop check-in) works
+    // on weekends and into the evening.
+    offPeak: { days: [0, 1, 2, 3, 4, 5, 6], start: 9, end: 21 },
     blurb: "Wash and fold",
     transitModes: ["metro", "bus"],
     mapPos: { x: 20, y: 22 },

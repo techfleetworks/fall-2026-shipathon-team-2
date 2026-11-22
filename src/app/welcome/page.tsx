@@ -17,11 +17,10 @@ export default function Welcome() {
   return (
     <div className="min-h-dvh w-full bg-bg-canvas">
       <PageMotion>
-      <div className="relative mx-auto flex min-h-dvh max-w-[430px] flex-col">
-        <div
-          className="flex flex-1 flex-col items-center justify-center px-8 text-center"
-          style={{ background: BRAND_GRADIENT }}
-        >
+      {/* Gradient on the whole column (not just the top), so the panel's rounded
+          corners show the gradient behind them, not the grey page canvas. */}
+      <div className="relative mx-auto flex min-h-dvh max-w-[430px] flex-col" style={{ background: BRAND_GRADIENT }}>
+        <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
           <SparetimeLogo size={72} />
           <p className="mt-4 text-title-lg text-text-heading">Sparetime</p>
           <h1 className="mt-3 text-headline-lg text-text-heading">Cheaper services at quieter times</h1>

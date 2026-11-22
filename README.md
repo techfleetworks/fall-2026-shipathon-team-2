@@ -111,7 +111,7 @@ person does is real; only the businesses are sample data.
 - **Show up** — "It's today" on the day, **Show code** at the counter (plus a
   simple shop view where staff type your code), then **You saved $X**, your
   monthly total and **Rate your visit**. **Spin City Laundry** has off-peak times
-  every day (10 am–2 pm), so the whole flow works on any day, weekends included.
+  every day (9 am–9 pm), so the whole flow works on any day, weekends included.
 - **Your history** — **My bookings** (upcoming and past), **Favorites** (tap a
   heart to save a place; removing one can be undone), and **Account** (your
   details, how bookings work, settings, privacy, log out). **Delete account**

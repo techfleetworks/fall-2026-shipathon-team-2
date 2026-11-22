@@ -42,7 +42,7 @@ may be picking up where someone left off.
 
 > **Some states depend on the clock** — a booking in the next hour, a booking whose time
 > already passed, "it's today". **Spin City Laundry** has off-peak times **every day**
-> (10 am–2 pm), so you can book it for today on any day (weekends too) and walk the
+> (9 am–9 pm), so you can book it for today on any day (weekends too) and walk the
 > whole flow. For states that need a time already passed, ask Claude to *set up test
 > bookings*.
 
