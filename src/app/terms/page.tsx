@@ -21,7 +21,7 @@ export default function TermsPage() {
       <BackButton
         fallback="/"
         label="Back"
-        className="inline-flex min-h-[48px] items-center gap-1 text-sm text-muted transition-colors hover:text-primary"
+        className="inline-flex min-h-[48px] items-center gap-1 text-sm text-text-secondary transition-colors hover:text-action-primary"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="m15 18-6-6 6-6" />
@@ -30,9 +30,9 @@ export default function TermsPage() {
       </BackButton>
 
       <h1 className="mt-4 text-2xl font-bold tracking-tight">Terms of Service</h1>
-      <p className="mt-1 text-sm text-muted">Draft · last updated Nov 20, 2026</p>
+      <p className="mt-1 text-sm text-text-secondary">Draft · last updated Nov 20, 2026</p>
 
-      <div className="mt-4 rounded-2xl border border-border bg-surface p-4 text-sm text-muted shadow-[var(--shadow-card,0_2px_8px_rgba(0,0,0,0.05))]">
+      <div className="mt-4 rounded-2xl border border-border-default bg-surface-default p-4 text-sm text-text-secondary shadow-e1">
         This is a placeholder for the demo and is <strong>not legal advice</strong>.
         A qualified person must review it before any real launch.
       </div>
@@ -75,12 +75,12 @@ export default function TermsPage() {
       <p className="mt-2 text-[15px] leading-relaxed">
         Sparetime is a <strong>planned public benefit corporation</strong> (not yet
         filed). Legal entity name and address:{" "}
-        <span className="text-muted">to be added</span>.
+        <span className="text-text-secondary">to be added</span>.
       </p>
 
-      <p className="mt-8 text-sm text-muted">
+      <p className="mt-8 text-sm text-text-secondary">
         See also our{" "}
-        <Link href="/privacy" replace className="font-semibold text-primary underline">Privacy Policy</Link>.
+        <Link href="/privacy" replace className="font-semibold text-action-primary underline">Privacy Policy</Link>.
       </p>
     </main>
   );

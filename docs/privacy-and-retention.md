@@ -1,6 +1,6 @@
 # Privacy and retention — DRAFT
 
-**Demo draft, last updated Nov 20, 2026. This is a placeholder for the demo and is
+**Demo draft, last updated Nov 21, 2026. This is a placeholder for the demo and is
 not legal advice.** A lawyer must review it before any real launch. Do not claim in
 any text or in the pitch that the policy has been reviewed.
 
@@ -18,8 +18,9 @@ time.
 
 ## What we collect
 
-- **Account details:** your first name, email address and password (stored
-  securely, never in plain text).
+- **Account details:** your first name and your US mobile phone number. We sign
+  you in by texting a 6-digit code to that number, so there is no password. The
+  code is used once and not kept.
 - **Location:** your ZIP code, so we can show businesses near you. If a map is
   used, device location is used only while you are on the map and is not stored.
 - **Bookings:** what you booked, with which business, your time slot, and whether
@@ -28,6 +29,11 @@ time.
   tailor the slots we show.
 - **Consent record:** which version of the policy you agreed to, and when.
 - **Security logs:** sign-in attempts and error logs.
+
+> **In this demo:** no text message is sent (the 6-digit code is shown on screen),
+> and everything you enter (phone number, first name, ZIP code, bookings and
+> preferences) is saved only on your device, in this browser. None of it is sent
+> to a server. "Start fresh on this device" in Account deletes it.
 
 ## What we do not collect
 
@@ -51,7 +57,7 @@ your data to provide that service. We may disclose data if the law requires it.
 
 | Data | What we keep | How long | Why |
 |---|---|---|---|
-| Account | Email, first name, hashed password | Until you delete your account, or 12 months after your last login | Needed to sign in |
+| Account | Phone number, first name | Until you delete your account, or 12 months after your last login | Needed to sign in |
 | ZIP code | Home ZIP | Until you change it or delete your account | Shows nearby offers |
 | Live location | Not stored | Session only | Privacy by default |
 | Active bookings | Service, business, time slot, booking code | Until the booking ends | Needed to complete the visit |
@@ -72,7 +78,8 @@ differently for using these rights. Contact: _[privacy contact email, to be adde
 ## Security
 
 Encrypted connections and access controls; each user can read only their own
-records. No system is perfectly secure, so use a strong, unique password.
+records. No system is perfectly secure, so keep your phone and your sign-in codes
+to yourself.
 
 ## Children
 

@@ -21,7 +21,7 @@ export default function PrivacyPage() {
       <BackButton
         fallback="/"
         label="Back"
-        className="inline-flex min-h-[48px] items-center gap-1 text-sm text-muted transition-colors hover:text-primary"
+        className="inline-flex min-h-[48px] items-center gap-1 text-sm text-text-secondary transition-colors hover:text-action-primary"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="m15 18-6-6 6-6" />
@@ -30,9 +30,9 @@ export default function PrivacyPage() {
       </BackButton>
 
       <h1 className="mt-4 text-2xl font-bold tracking-tight">Privacy Policy</h1>
-      <p className="mt-1 text-sm text-muted">Draft · last updated Nov 20, 2026</p>
+      <p className="mt-1 text-sm text-text-secondary">Draft · last updated Nov 21, 2026</p>
 
-      <div className="mt-4 rounded-2xl border border-border bg-surface p-4 text-sm text-muted shadow-[var(--shadow-card,0_2px_8px_rgba(0,0,0,0.05))]">
+      <div className="mt-4 rounded-2xl border border-border-default bg-surface-default p-4 text-sm text-text-secondary shadow-e1">
         This is a placeholder for the demo and is <strong>not legal advice</strong>.
         A qualified person must review it before it is shown to real users.
       </div>
@@ -44,19 +44,27 @@ export default function PrivacyPage() {
         data, and you can delete it at any time.
       </p>
 
-      <p className="mt-4 rounded-xl bg-primary-soft px-4 py-3 text-[15px] font-semibold text-primary-hover">
+      <p className="mt-4 rounded-xl bg-surface-subtle px-4 py-3 text-[15px] font-semibold text-on-tint-primary">
         We never ask you to prove your income.
       </p>
 
       <H2>What we collect</H2>
       <ul className="mt-2 flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed">
-        <li><strong>Account details:</strong> your first name, email address and password (stored securely, never in plain text).</li>
+        <li><strong>Account details:</strong> your first name and your US mobile phone number. We sign you in by texting a 6-digit code to that number, so there is no password. The code is used once and not kept.</li>
         <li><strong>Location:</strong> your ZIP code, so we can show businesses near you. If a map is used, device location is used only while you are on the map and is not stored.</li>
         <li><strong>Bookings:</strong> what you booked, with which business, your time slot, and whether you showed up. We use this to set how many bookings you can hold at once.</li>
         <li><strong>Preferences:</strong> any settings you choose (for example service filters), so we can tailor the slots we show.</li>
         <li><strong>Consent record:</strong> which version of the policy you agreed to, and when.</li>
         <li><strong>Security logs:</strong> sign-in attempts and error logs.</li>
       </ul>
+
+      <p className="mt-4 rounded-2xl border border-border-default bg-surface-default p-4 text-sm text-text-secondary shadow-e1">
+        <strong>In this demo:</strong> no text message is sent (the 6-digit code is
+        shown on screen), and everything you enter (phone number, first name, ZIP
+        code, bookings and preferences) is saved only on your device, in this
+        browser. None of it is sent to a server. &ldquo;Start fresh on this
+        device&rdquo; in Account deletes it.
+      </p>
 
       <H2>What we do not collect</H2>
       <ul className="mt-2 flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed">
@@ -82,17 +90,17 @@ export default function PrivacyPage() {
       </p>
 
       <H2>How long we keep it</H2>
-      <div className="mt-3 overflow-hidden rounded-2xl border border-border">
+      <div className="mt-3 overflow-hidden rounded-2xl border border-border-default">
         <table className="w-full border-collapse text-left text-[13px]">
-          <thead className="bg-primary-soft text-primary-hover">
+          <thead className="bg-surface-subtle text-on-tint-primary">
             <tr>
               <th className="p-2.5 font-semibold">Data</th>
               <th className="p-2.5 font-semibold">How long</th>
             </tr>
           </thead>
-          <tbody className="bg-surface">
+          <tbody className="bg-surface-default">
             {[
-              ["Account (email, first name, hashed password)", "Until you delete your account, or 12 months after your last login"],
+              ["Account (phone number, first name)", "Until you delete your account, or 12 months after your last login"],
               ["ZIP code", "Until you change it or delete your account"],
               ["Live location", "Not stored — session only"],
               ["Active bookings", "Until the booking ends"],
@@ -103,9 +111,9 @@ export default function PrivacyPage() {
               ["Security logs", "90 days"],
               ["Deleted accounts (except consent records)", "Removed within 30 days of your request"],
             ].map(([data, keep]) => (
-              <tr key={data} className="border-t border-border align-top">
+              <tr key={data} className="border-t border-border-default align-top">
                 <td className="p-2.5 font-medium">{data}</td>
-                <td className="p-2.5 text-muted">{keep}</td>
+                <td className="p-2.5 text-text-secondary">{keep}</td>
               </tr>
             ))}
           </tbody>
@@ -118,14 +126,14 @@ export default function PrivacyPage() {
         delete your account at any time. If you live in <strong>California</strong>{" "}
         you also have the right to know what we collect, to request deletion or
         correction, and not to be treated differently for using these rights.
-        Contact: <span className="text-muted">[privacy contact email, to be added]</span>.
+        Contact: <span className="text-text-secondary">[privacy contact email, to be added]</span>.
       </p>
 
       <H2>Security</H2>
       <p className="mt-2 text-[15px] leading-relaxed">
         Encrypted connections and access controls; each user can read only their
-        own records. No system is perfectly secure, so use a strong, unique
-        password.
+        own records. No system is perfectly secure, so keep your phone and your
+        sign-in codes to yourself.
       </p>
 
       <H2>Children</H2>
@@ -140,9 +148,9 @@ export default function PrivacyPage() {
         effect.
       </p>
 
-      <p className="mt-8 text-sm text-muted">
+      <p className="mt-8 text-sm text-text-secondary">
         See also our{" "}
-        <Link href="/terms" replace className="font-semibold text-primary underline">Terms of Service</Link>.
+        <Link href="/terms" replace className="font-semibold text-action-primary underline">Terms of Service</Link>.
       </p>
     </main>
   );
