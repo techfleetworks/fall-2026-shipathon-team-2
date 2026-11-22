@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { PageHeader } from "@/components/ui/page-header";
 import { BookingTicket } from "@/components/ui/booking-ticket";
@@ -10,16 +10,20 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icon";
 import { NavBar } from "@/components/ui/nav-bar";
-import { CATEGORY_LABEL, type Booking, type Business, type Service } from "@/lib/mock-data";
+import { CATEGORY_WORDS } from "@/lib/mock-data";
+import { formatRange, formatTime, longDay, relativeDay, sameDay, shortDay } from "@/lib/slots";
+import { cancelBooking, isLateToCancel, isMissed, setReschedule, type Booking } from "@/lib/account";
+import type { Business, Service } from "@/lib/mock-data";
+import { useBooking } from "./use-booking";
+import { BookingLoading, BookingMissing } from "./booking-states";
 
-// P1 "Your booking" (booked) and P3 "It's today" share this screen; they differ in
-// the ticket header, the secondary action, and the "when" copy. Cancelling opens
-// P1c (bottom sheet) and, once confirmed, swaps to a clear "cancelled" status.
-type Variant = "booked" | "today";
+// P1 "Your booking" and P3 "It's today" (shown automatically on the day), plus
+// P1c cancel sheet and the cancelled / missed / done states. Everything comes from
+// the person's real booking.
 
-// Demo slot: Tue Nov 24 2026, 2:30–3:00 pm (local time).
-const ICS_START = "20261124T143000";
-const ICS_END = "20261124T150000";
+const pad = (n: number) => String(n).padStart(2, "0");
+const icsTime = (d: Date) =>
+  `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
 
 function downloadCalendarFile(booking: Booking, business: Business, service: Service) {
   const ics = [
@@ -27,12 +31,12 @@ function downloadCalendarFile(booking: Booking, business: Business, service: Ser
     "VERSION:2.0",
     "PRODID:-//Sparetime//Booking//EN",
     "BEGIN:VEVENT",
-    `UID:${booking.ref}@sparetime`,
-    `DTSTART:${ICS_START}`,
-    `DTEND:${ICS_END}`,
+    `UID:${booking.id}@sparetime`,
+    `DTSTART:${icsTime(new Date(booking.startsAt))}`,
+    `DTEND:${icsTime(new Date(booking.endsAt))}`,
     `SUMMARY:${service.name} at ${business.name}`,
     `LOCATION:${business.address.replace(/,/g, "\\,")}`,
-    `DESCRIPTION:Booking ${booking.ref}. Pay $${service.offPeakPrice} cash at the shop.`,
+    `DESCRIPTION:Booking ${booking.ref}. Pay $${booking.paid} cash at the shop.`,
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");
@@ -44,67 +48,90 @@ function downloadCalendarFile(booking: Booking, business: Business, service: Ser
   URL.revokeObjectURL(url);
 }
 
-export function BookingView({
-  variant,
-  booking,
-  business,
-  service,
-}: {
-  variant: Variant;
-  booking: Booking;
-  business: Business;
-  service: Service;
-}) {
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [cancelled, setCancelled] = useState(false);
-  const serviceWord = CATEGORY_LABEL[business.category].toLowerCase();
-  const shortName = business.name.split(" ").slice(0, 2).join(" ");
-  // "2:30–3:00 pm" → "2:30 pm"
-  const [start, end] = booking.timeRange.split("–");
-  const startTime = `${start} ${end.split(" ")[1] ?? ""}`.trim();
+const linkCls =
+  "inline-flex min-h-[48px] items-center gap-2 rounded-full px-4 text-label-md text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring";
 
-  if (cancelled) {
+export function BookingView({ bookingId }: { bookingId: string }) {
+  const router = useRouter();
+  const data = useBooking(bookingId);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  if (data.state === "loading") return <BookingLoading title="Your booking" />;
+  if (data.state === "missing") return <BookingMissing title="Your booking" />;
+
+  const { booking, business, service, now, nowMs } = data;
+  const start = new Date(booking.startsAt);
+  const end = new Date(booking.endsAt);
+  const words = CATEGORY_WORDS[business.category];
+  const startTime = formatTime(start);
+  const isToday = sameDay(start, now);
+  const missed = isMissed(booking, nowMs);
+  const late = isLateToCancel(booking, nowMs);
+
+  // Finished states: cancelled, missed, done.
+  if (booking.status !== "booked" || missed) {
+    const kept = booking.status === "kept";
     return (
       <Screen>
-        <PageHeader title="Your booking" backHref="/deals" />
-        <ScreenBody className="flex flex-col items-start gap-4">
-          <StatusBadge tone="neutral">
-            <Icon name="x" size={14} /> Cancelled
+        <PageHeader title="Your booking" backHref="/bookings" />
+        <ScreenBody className="flex flex-col items-start gap-4 pt-2">
+          <StatusBadge tone={kept ? "positive" : missed || booking.lateCancel ? "danger" : "neutral"}>
+            <Icon name={kept ? "check" : missed ? "alert" : "x"} size={14} />{" "}
+            {kept ? "Visit done" : missed ? "Missed" : "Cancelled"}
           </StatusBadge>
           <p role="status" className="text-body-lg text-text-primary">
-            Your {startTime} {serviceWord} at {business.name} is cancelled. It won&apos;t count as a missed booking.
+            {kept
+              ? `You went to ${business.shortName} ${relativeDay(start, now).toLowerCase() === "today" ? "today" : `on ${shortDay(start)}`} and paid $${booking.paid}.`
+              : missed
+                ? `No one confirmed your ${startTime} ${words.booking} at ${business.shortName}, so it counts as a missed booking. A missed booking costs nothing.`
+                : booking.lateCancel
+                  ? `Your ${startTime} ${words.booking} at ${business.shortName} is cancelled. It was less than 2 hours before, so it counts as a missed booking.`
+                  : `Your ${startTime} ${words.booking} at ${business.shortName} is cancelled. It won't count as a missed booking.`}
           </p>
-          <ButtonLink href="/deals" fullWidth>
-            Find another deal
-          </ButtonLink>
+          {kept ? (
+            <ButtonLink href={`/saved/${booking.id}`} fullWidth>
+              See what you saved
+            </ButtonLink>
+          ) : (
+            <ButtonLink href="/deals" fullWidth>
+              Find another deal
+            </ButtonLink>
+          )}
         </ScreenBody>
         <NavBar active="bookings" />
       </Screen>
     );
   }
 
-  const isToday = variant === "today";
+  const remindAt = new Date(start.getTime() - 60 * 60_000);
+  const dayWord = isToday ? "today" : relativeDay(start, now) === "Tomorrow" ? "tomorrow" : longDay(start);
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.name}, ${business.address}`)}`;
 
   return (
     <Screen>
-      <PageHeader title="Your booking" backHref="/deals" />
+      <PageHeader title="Your booking" backHref="/bookings" />
       <ScreenBody className="pt-0">
-        {!isToday && (
+        {!isToday && remindAt.getTime() > nowMs && (
           <p className="mb-4 text-body-lg text-text-secondary">
-            You&apos;re all set. We&apos;ll remind you Tuesday at 1:30 pm.
+            You&apos;re all set. We&apos;ll remind you {dayWord} at {formatTime(remindAt)}.
           </p>
         )}
 
         <BookingTicket
-          booking={booking}
+          bookingRef={booking.ref}
+          total={booking.paid}
           business={business}
           service={service}
-          when={isToday ? `Today, ${booking.timeRange}` : `${booking.dayLabel}, ${booking.timeRange}`}
+          when={`${isToday ? "Today" : shortDay(start)}, ${formatRange(start, end)}`}
           status={
             isToday
               ? { tone: "today", label: "It’s today", icon: "calendar", headline: `Arrive by ${startTime}` }
-              : { tone: "booked", label: "Booked", icon: "check", headline: `Tuesday at ${startTime}` }
+              : {
+                  tone: "booked",
+                  label: "Booked",
+                  icon: "check",
+                  headline: `${relativeDay(start, now) === "Tomorrow" ? "Tomorrow" : longDay(start)} at ${startTime}`,
+                }
           }
         />
 
@@ -130,17 +157,17 @@ export function BookingView({
         )}
 
         <div className="mt-2 flex justify-center gap-2">
-          <Link
-            href={`/offer/${service.id}/time`}
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-full px-4 text-label-md text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
-          >
-            <Icon name="calendar" size={18} /> Reschedule
-          </Link>
           <button
             type="button"
-            onClick={() => setSheetOpen(true)}
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-full px-4 text-label-md text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+            className={linkCls}
+            onClick={() => {
+              setReschedule(booking.id);
+              router.push(`/offer/${service.id}/time`);
+            }}
           >
+            <Icon name="calendar" size={18} /> Reschedule
+          </button>
+          <button type="button" onClick={() => setSheetOpen(true)} className={linkCls}>
             <Icon name="x" size={18} /> Cancel booking
           </button>
         </div>
@@ -155,10 +182,11 @@ export function BookingView({
         <NavBar active="bookings" />
       </div>
 
-      <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title={`Cancel your ${startTime} ${serviceWord}?`}>
+      <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title={`Cancel your ${startTime} ${words.booking}?`}>
         <p className="mt-3 text-body-lg text-text-secondary">
-          You&apos;re cancelling more than 2 hours before, so it won&apos;t count as a miss. {shortName} will offer your
-          slot to someone else.
+          {late
+            ? `It's less than 2 hours before, so cancelling now counts as a missed booking. ${business.shortName} will offer your slot to someone else.`
+            : `You're cancelling more than 2 hours before, so it won't count as a miss. ${business.shortName} will offer your slot to someone else.`}
         </p>
         <div className="mt-5 flex flex-col gap-3">
           <Button fullWidth autoFocus onClick={() => setSheetOpen(false)}>
@@ -170,7 +198,7 @@ export function BookingView({
             className="border border-danger-primary"
             onClick={() => {
               setSheetOpen(false);
-              setCancelled(true);
+              cancelBooking(booking.id);
             }}
           >
             Cancel booking

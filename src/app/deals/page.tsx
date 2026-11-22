@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useGreeting, useProfile } from "@/lib/account";
+import { useGreeting, useHydrated, useNowMinute, useProfile } from "@/lib/account";
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { NavBar } from "@/components/ui/nav-bar";
 import { IconButton } from "@/components/ui/icon-button";
@@ -10,34 +10,41 @@ import { Chip } from "@/components/ui/chip";
 import { Icon } from "@/components/ui/icon";
 import { InfoBox } from "@/components/ui/info-box";
 import { OfferCard, type Offer } from "@/components/ui/offer-card";
-import { businesses, services, getBusiness, type Category } from "@/lib/mock-data";
+import { NEED_TO_CATEGORY, services, getBusiness, plural, type Category } from "@/lib/mock-data";
+import { formatTime, nextAvailability, relativeDay } from "@/lib/slots";
 
-// H1 · Deals. The main browse screen. Offers come from mock data; category chips
-// filter the list.
-const AVAIL: Record<string, string> = {
-  s1: "Today · 2–4 pm",
-  s2: "Today · 1–3 pm · 4 left",
-  s3: "Today · 1 left",
-  s4: "Today · 1–3 pm · 3 left",
-};
+// H1 · Deals. The main browse screen. Offers are the sample shops' services;
+// availability is live from each shop's off-peak hours (needs the person's clock,
+// so it's computed after load). "For you" shows the services picked at sign-up.
+type DealOffer = Offer & { category: Category; soonest: number };
 
-const offers: (Offer & { category: Category })[] = services
-  .filter((s) => s.businessId !== "b5")
-  .map((s) => {
-    const b = getBusiness(s.businessId)!;
-    return {
-      id: s.id,
-      title: s.name,
-      business: b.name,
-      rating: b.rating,
-      distanceMi: b.distanceMi,
-      price: s.offPeakPrice,
-      regular: s.regularPrice,
-      availability: AVAIL[s.id] ?? "Today",
-      photo: b.photo,
-      category: b.category,
-    };
-  });
+function buildOffers(nowMs: number): DealOffer[] {
+  const now = new Date(nowMs);
+  return services
+    .map((s) => {
+      const b = getBusiness(s.businessId)!;
+      const next = nowMs ? nextAvailability(s, b, now) : null;
+      const availability = !nowMs
+        ? "Checking open times…"
+        : next
+          ? `${relativeDay(next.day, now)} · from ${formatTime(next.free[0].start, true)} · ${next.free.length} left`
+          : "No open times soon";
+      return {
+        id: s.id,
+        title: s.name,
+        business: b.name,
+        rating: b.rating,
+        distanceMi: b.distanceMi,
+        price: s.offPeakPrice,
+        regular: s.regularPrice,
+        availability,
+        photo: b.photo,
+        category: b.category,
+        soonest: next ? next.free[0].start.getTime() : Number.MAX_SAFE_INTEGER,
+      };
+    })
+    .sort((a, b) => a.soonest - b.soonest);
+}
 
 const CHIPS: { key: string; label: string; cat?: Category }[] = [
   { key: "foryou", label: "For you" },
@@ -51,8 +58,16 @@ export default function DealsPage() {
   const [chip, setChip] = useState("foryou");
   const profile = useProfile();
   const greeting = useGreeting();
+  const hydrated = useHydrated();
+  const nowMs = useNowMinute();
+  const offers = buildOffers(hydrated ? nowMs : 0);
   const activeCat = CHIPS.find((c) => c.key === chip)?.cat;
-  const shown = activeCat ? offers.filter((o) => o.category === activeCat) : offers;
+  const mine = (profile?.needs ?? []).map((n) => NEED_TO_CATEGORY[n]).filter(Boolean);
+  const shown = activeCat
+    ? offers.filter((o) => o.category === activeCat)
+    : chip === "foryou" && mine.length
+      ? offers.filter((o) => mine.includes(o.category))
+      : offers;
 
   return (
     <Screen>
@@ -102,7 +117,7 @@ export default function DealsPage() {
 
         <div className="mt-4 flex items-center justify-between px-5">
           <h2 className="text-title-sm text-text-heading">For you today &amp; tomorrow</h2>
-          <span className="text-body-sm text-text-secondary">9 offers</span>
+          <span className="text-body-sm text-text-secondary">{plural(shown.length, "offer")}</span>
         </div>
         <p className="mt-1 px-5 text-body-sm text-text-secondary">
           Full-length appointments, just at quieter hours. Rated by people who booked.

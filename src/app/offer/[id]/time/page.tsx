@@ -1,18 +1,13 @@
 import { notFound } from "next/navigation";
-import { getService, getBusiness } from "@/lib/mock-data";
+import { getService } from "@/lib/mock-data";
 import { PickTime } from "./pick-time";
 
 // R5t · Pick a time. Server page reads the route param and hands it to the client
-// slot-picker. Blocking render (route params; mock data, not cached).
+// slot-picker (open times depend on the person's clock, so they're built there).
 export const instant = false;
 
 export default async function PickTimePage({ params }: PageProps<"/offer/[id]/time">) {
   const { id } = await params;
-  const service = getService(id);
-  const business = service ? getBusiness(service.businessId) : undefined;
-  if (!service || !business) notFound();
-
-  return (
-    <PickTime serviceId={id} businessName={business.name} serviceName={service.name} price={service.offPeakPrice} />
-  );
+  if (!getService(id)) notFound();
+  return <PickTime serviceId={id} />;
 }

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Icon } from "./icon";
-import type { Booking, Business, Service } from "@/lib/mock-data";
+import type { Business, Service } from "@/lib/mock-data";
 
 // The booking card used across the "after booking" screens (Figma P1, P3, P4).
 // Optional status header (label + big time line), then the shop, then a 2×2 grid
@@ -15,14 +15,16 @@ const headerCls: Record<Tone, { bar: string; band: string }> = {
 };
 
 export function BookingTicket({
-  booking,
+  bookingRef,
+  total,
   business,
   service,
   when,
   status,
   className,
 }: {
-  booking: Booking;
+  bookingRef: string;
+  total: number;
   business: Business;
   service: Service;
   /** "When" cell copy, e.g. "Tue 24, 2:30–3:00 pm" or "Today, 2:30–3:00 pm". */
@@ -66,7 +68,7 @@ export function BookingTicket({
         </div>
         <div className="text-right">
           <dt className="text-label-sm text-text-secondary">Total</dt>
-          <dd className="text-body-lg text-text-primary">${service.offPeakPrice}</dd>
+          <dd className="text-body-lg text-text-primary">${total}</dd>
         </div>
         <div>
           <dt className="text-label-sm text-text-secondary">Payment</dt>
@@ -74,7 +76,7 @@ export function BookingTicket({
         </div>
         <div className="text-right">
           <dt className="text-label-sm text-text-secondary">Booking ID</dt>
-          <dd className="text-body-lg text-text-primary">{booking.ref}</dd>
+          <dd className="text-body-lg text-text-primary">{bookingRef}</dd>
         </div>
       </dl>
     </section>

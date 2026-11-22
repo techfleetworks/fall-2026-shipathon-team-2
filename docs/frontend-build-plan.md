@@ -183,7 +183,7 @@ File key `l3nYaHafMl1IaYZMpB70A3`. Status: ☐ todo · ◐ in progress · ☑ do
 - ☑ R5t · Pick a time — `825:4594` → `/offer/[id]/time`
 - ☐ R5x · Slot just taken — `825:5832` (error on pick/confirm)
 - ☑ R6 · Confirm — `825:4638` → `/confirm`
-- ☐ R6b · One booking at a time — `825:4700` (limit-reached state)
+- ☑ R6b · One booking at a time — `825:4700` (limit-reached state)
 
 ### After booking
 - ☑ P1 · Booked — `825:4772` → `/booked/[id]`
@@ -291,4 +291,16 @@ rather than exhaustively re-screenshot once a pattern is proven. Run `npm run li
   (Deals "Good morning/afternoon/evening, {name}", Confirm, Account, Your details).
   Splash sends signed-up people to Deals. Log out clears the device. Sample `user`
   keeps only kept/miss counts until history goes real (step 3).
+- 2026-11-21 — **Every shop bookable, real dates (step 2).** Sample business data now has
+  each shop's description, hours, off-peak window, transit, "Includes" and 9 offers (Figma's
+  "9 offers"; Fresh Cuts keeps Figma copy). `src/lib/slots.ts` builds open times for today
+  + 2 days from off-peak hours (past times skipped; ~30% shown taken). Per-category words
+  (chair / machine / counter slot). Pick a time → draft → Confirm → **real booking** on
+  the device (ref, 6-digit pin). Confirm enforces the trust-ladder limit (R6b). Booked
+  auto-switches to "It's today"; cancel <2 h counts as a miss; missed/cancelled/done
+  states; Reschedule replaces the old booking. Show code "Done" (demo stand-in for the
+  shop confirming) marks it kept; All done + month savings come from real kept visits.
+  My bookings Upcoming is real; Past/favorites are still sample until step 3. Deals:
+  live availability, sorted soonest, "For you" = sign-up services, real count. Fixed
+  swapped Spin City / Prime Press photos from the Figma export.
 - _(add each screen as it lands)_

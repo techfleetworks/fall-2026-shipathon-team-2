@@ -6,89 +6,148 @@ import { cn } from "@/lib/cn";
 import { Screen, ScreenBody, AppBar, BottomActionBar } from "@/components/ui/screen";
 import { Chip } from "@/components/ui/chip";
 import { Button } from "@/components/ui/button";
+import { LoadingRow } from "@/components/ui/spinner";
+import { CATEGORY_WORDS, getBusiness, getService } from "@/lib/mock-data";
+import { formatTime, longDay, offPeakLabel, relativeDay, sameDay, slotsFor, upcomingDays } from "@/lib/slots";
+import { setDraft, useAccount, useBookings, useHydrated, useNowMinute } from "@/lib/account";
 
-type SlotRow = { t: string; left?: string; booked?: boolean };
-const DAY_SLOTS: SlotRow[] = [
-  { t: "2:00 pm", left: "1 left" },
-  { t: "2:30 pm", left: "1 left" },
-  { t: "3:00 pm", booked: true },
-  { t: "3:30 pm", booked: true },
-];
-
-export function PickTime({
-  serviceId,
-  businessName,
-  serviceName,
-  price,
-}: {
-  serviceId: string;
-  businessName: string;
-  serviceName: string;
-  price: number;
-}) {
+// R5t · Pick a time. Real dates: today and the next two days, built from the
+// shop's off-peak hours. Nothing is pre-selected; Continue waits for a pick.
+export function PickTime({ serviceId }: { serviceId: string }) {
   const router = useRouter();
-  const [day, setDay] = useState("Tue 24");
-  const [slot, setSlot] = useState("2:30 pm");
+  const service = getService(serviceId)!;
+  const business = getBusiness(service.businessId)!;
+  const words = CATEGORY_WORDS[business.category];
+  const hydrated = useHydrated();
+  const nowMs = useNowMinute();
+  const bookings = useBookings();
+  const { reschedule } = useAccount();
+  // Rescheduling only applies to the same service the booking was for.
+  const replaces = bookings.find((b) => b.id === reschedule && b.serviceId === serviceId && b.status === "booked")?.id;
+  const [dayIdx, setDayIdx] = useState<number | null>(null);
+  const [pick, setPick] = useState<number | null>(null);
+
+  const ready = hydrated && nowMs > 0;
+  const now = new Date(nowMs);
+  const mine = new Set(
+    bookings.filter((b) => b.serviceId === serviceId && b.status === "booked").map((b) => new Date(b.startsAt).getTime()),
+  );
+  const days = ready ? upcomingDays(now) : [];
+  const daySlots = days.map((d) => slotsFor(service, business, d, now, mine));
+  const firstOpen = daySlots.findIndex((s) => s.some((x) => !x.taken));
+  const selected = dayIdx ?? (firstOpen >= 0 ? firstOpen : 0);
+  const slotsToday = daySlots[selected] ?? [];
+  const picked = slotsToday.find((s) => s.start.getTime() === pick);
+  const pickedDay = days[selected];
+  const dayWord = pickedDay ? (sameDay(pickedDay, now) ? "today" : relativeDay(pickedDay, now) === "Tomorrow" ? "tomorrow" : longDay(pickedDay)) : "";
 
   return (
     <Screen>
-      <AppBar title="Pick a time" onBack={() => router.push(`/offer/${serviceId}`)} />
+      <AppBar title={replaces ? "Pick a new time" : "Pick a time"} onBack={() => router.push(`/offer/${serviceId}`)} />
       <ScreenBody>
-        <p className="text-body-lg text-text-secondary">
-          {businessName} will have your chair ready for the slot you pick.
-        </p>
+        <p className="text-body-lg text-text-secondary">{words.ready(business.shortName)}</p>
 
-        <div className="mt-4 flex gap-2">
-          {["Today", "Mon 23", "Tue 24"].map((d) => (
-            <Chip key={d} selected={day === d} onClick={() => setDay(d)}>{d}</Chip>
-          ))}
-        </div>
+        {!ready ? (
+          <div className="mt-4">
+            <LoadingRow label="Finding open times…" />
+          </div>
+        ) : (
+          <>
+            <div className="mt-4 flex gap-2" role="tablist" aria-label="Day">
+              {days.map((d, i) => (
+                <Chip
+                  key={d.getTime()}
+                  as="tab"
+                  selected={selected === i}
+                  onClick={() => {
+                    setDayIdx(i);
+                    setPick(null);
+                  }}
+                >
+                  {relativeDay(d, now)}
+                </Chip>
+              ))}
+            </div>
 
-        <p className="mt-5 text-title-sm text-text-heading">{day} · 30-minute slots</p>
-        <div className="mt-3 flex flex-col gap-2" role="radiogroup">
-          {DAY_SLOTS.map((s) =>
-            s.booked ? (
-              <div
-                key={s.t}
-                aria-disabled
-                className="flex items-center justify-between rounded-lg border border-dashed border-border-default px-4 py-4 text-text-secondary"
-              >
-                <span className="flex items-center gap-3">
-                  <span className="h-6 w-6 rounded-full border-2 border-border-default" />
-                  <span className="text-body-lg">{s.t}</span>
-                </span>
-                <span className="text-body-md">Booked</span>
+            <p className="mt-5 text-title-sm text-text-heading">
+              {relativeDay(days[selected], now)} · {service.minutes}-minute {business.category === "haircut" ? "slots" : "drop-off windows"}
+            </p>
+
+            {slotsToday.length === 0 ? (
+              <div className="mt-3 rounded-lg bg-surface-muted px-4 py-4 text-body-md text-text-secondary">
+                No open times {sameDay(days[selected], now) ? "left today" : `on ${longDay(days[selected])}`}. {business.shortName}{" "}
+                offers off-peak slots {offPeakLabel(business)}. Try another day.
               </div>
             ) : (
-              <button
-                key={s.t}
-                type="button"
-                role="radio"
-                aria-checked={slot === s.t}
-                onClick={() => setSlot(s.t)}
-                className={cn(
-                  "flex items-center justify-between rounded-lg border px-4 py-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring",
-                  slot === s.t ? "border-action-primary ring-1 ring-action-primary" : "border-border-default hover:bg-surface-muted",
-                )}
-              >
-                <span className="flex items-center gap-3">
-                  <span className={cn("flex h-6 w-6 items-center justify-center rounded-full border-2", slot === s.t ? "border-action-primary" : "border-border-control")}>
-                    {slot === s.t && <span className="h-3 w-3 rounded-full bg-action-primary" />}
-                  </span>
-                  <span className="text-body-lg text-text-primary">{s.t}</span>
-                </span>
-                <span className="text-body-md text-text-secondary">{s.left}</span>
-              </button>
-            ),
-          )}
-        </div>
+              <div className="mt-3 flex flex-col gap-2" role="radiogroup" aria-label="Time">
+                {slotsToday.map((s) => {
+                  const t = s.start.getTime();
+                  return s.taken ? (
+                    <div
+                      key={t}
+                      aria-disabled
+                      className="flex items-center justify-between rounded-lg border border-dashed border-border-default px-4 py-4 text-text-secondary"
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="h-6 w-6 rounded-full border-2 border-border-default" />
+                        <span className="text-body-lg">{formatTime(s.start)}</span>
+                      </span>
+                      <span className="text-body-md">{mine.has(t) ? "Your booking" : "Booked"}</span>
+                    </div>
+                  ) : (
+                    <button
+                      key={t}
+                      type="button"
+                      role="radio"
+                      aria-checked={pick === t}
+                      onClick={() => setPick(t)}
+                      className={cn(
+                        "flex items-center justify-between rounded-lg border px-4 py-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring",
+                        pick === t ? "border-action-primary ring-1 ring-action-primary" : "border-border-default hover:bg-surface-muted",
+                      )}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span
+                          className={cn(
+                            "flex h-6 w-6 items-center justify-center rounded-full border-2",
+                            pick === t ? "border-action-primary" : "border-border-control",
+                          )}
+                        >
+                          {pick === t && <span className="h-3 w-3 rounded-full bg-action-primary" />}
+                        </span>
+                        <span className="text-body-lg text-text-primary">{formatTime(s.start)}</span>
+                      </span>
+                      <span className="text-body-md text-text-secondary">Open</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
-        <p className="mt-4 text-title-sm text-text-heading">{businessName} will expect you Tuesday at {slot}.</p>
+            {picked && (
+              <p className="mt-4 text-title-sm text-text-heading" role="status">
+                {business.shortName} will expect you {dayWord} at {formatTime(picked.start)}.
+              </p>
+            )}
+          </>
+        )}
       </ScreenBody>
 
       <BottomActionBar>
-        <p className="mb-2 text-center text-body-sm text-text-secondary">{serviceName} · ${price} · cash at the shop</p>
-        <Button fullWidth onClick={() => router.push("/confirm")}>Continue</Button>
+        <p className="mb-2 text-center text-body-sm text-text-secondary">
+          {service.name} · ${service.offPeakPrice} · cash at the shop
+        </p>
+        <Button
+          fullWidth
+          disabled={!picked}
+          onClick={() => {
+            if (!picked) return;
+            setDraft({ serviceId, startsAt: picked.start.toISOString(), endsAt: picked.end.toISOString(), replaces });
+            router.push("/confirm");
+          }}
+        >
+          Continue
+        </Button>
       </BottomActionBar>
     </Screen>
   );
