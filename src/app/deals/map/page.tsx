@@ -33,10 +33,11 @@ export default function DealsMapPage() {
   const pins: MapPin[] = [];
   for (const o of shown) {
     const existing = pins.find((p) => p.business.id === o.business.id);
-    if (!existing) pins.push({ business: o.business, price: o.service.offPeakPrice, save: savings(o.service) });
+    if (!existing) pins.push({ business: o.business, price: o.service.offPeakPrice, save: savings(o.service), serviceId: o.service.id });
     else if (o.service.offPeakPrice < existing.price) {
       existing.price = o.service.offPeakPrice;
       existing.save = savings(o.service);
+      existing.serviceId = o.service.id;
     }
   }
   const sel = pins.some((p) => p.business.id === selected) ? selected : null;

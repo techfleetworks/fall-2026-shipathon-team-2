@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/icon";
 import type { Business } from "@/lib/mock-data";
@@ -13,6 +14,8 @@ export interface MapPin {
   business: Business;
   price: number;
   save: number;
+  /** Cheapest matching offer at this shop — used by the pin callout's link. */
+  serviceId: string;
 }
 
 export function DrawnMap({
@@ -83,6 +86,47 @@ export function DrawnMap({
           </button>
         );
       })}
+
+      {/* Callout popup for the selected pin */}
+      {(() => {
+        const sel = pins.find((p) => p.business.id === selected);
+        if (!sel) return null;
+        const cx = Math.min(74, Math.max(26, sel.business.mapPos.x));
+        const below = sel.business.mapPos.y < 40;
+        return (
+          <div
+            style={{
+              left: `${cx}%`,
+              top: `${sel.business.mapPos.y}%`,
+              transform: below ? "translate(-50%, 28px)" : "translate(-50%, calc(-100% - 28px))",
+            }}
+            className="absolute z-30 w-52"
+            role="dialog"
+            aria-label={`${sel.business.name} details`}
+          >
+            <div className="rounded-lg border border-border-default bg-surface-default p-3 shadow-e3">
+              <p className="truncate text-title-sm text-text-primary">{sel.business.name}</p>
+              <p className="mt-0.5 text-body-sm text-text-secondary">
+                <span className="text-text-primary">${sel.price}</span> · Save ${sel.save} · {sel.business.distanceMi} mi
+              </p>
+              <Link
+                href={`/offer/${sel.serviceId}/time`}
+                className="mt-2 inline-flex min-h-[40px] w-full items-center justify-center rounded-full bg-action-primary px-4 text-label-md text-on-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+              >
+                See open times →
+              </Link>
+            </div>
+            {/* little pointer toward the pin */}
+            <div
+              aria-hidden="true"
+              className={cn(
+                "absolute left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-border-default bg-surface-default",
+                below ? "-top-1.5 border-l border-t" : "-bottom-1.5 border-b border-r",
+              )}
+            />
+          </div>
+        );
+      })()}
 
       <p className="absolute top-2 right-3 rounded-full bg-surface-default/90 px-2 py-0.5 text-label-sm text-text-secondary">
         Illustrative map · sample shops

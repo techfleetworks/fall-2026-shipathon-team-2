@@ -142,7 +142,7 @@ export default function PrivacyPage() {
 
       <p className="mt-8 text-sm text-muted">
         See also our{" "}
-        <Link href="/terms" className="font-semibold text-primary underline">Terms of Service</Link>.
+        <Link href="/terms" replace className="font-semibold text-primary underline">Terms of Service</Link>.
       </p>
     </main>
   );

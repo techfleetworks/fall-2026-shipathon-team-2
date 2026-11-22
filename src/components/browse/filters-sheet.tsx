@@ -33,7 +33,7 @@ function Row<T extends string>({
   return (
     <fieldset className="mt-5">
       <legend className="text-label-md text-text-secondary">{label}</legend>
-      <div className="mt-2 -mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
+      <div className="no-scrollbar mt-2 -mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
         {options.map(([v, text]) => (
           <Chip key={v} selected={value === v} onClick={() => onChange(v)}>
             {text}

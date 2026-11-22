@@ -179,3 +179,13 @@ h1, h2, h3 {
   font-family: var(--font-display);
   color: var(--color-text-heading);
 }
+
+/* Hide the scrollbar on horizontal chip carousels and sheet content while
+   keeping the content scrollable (swipe / wheel / keyboard still work). */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/old Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}

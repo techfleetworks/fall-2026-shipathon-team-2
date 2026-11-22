@@ -49,7 +49,7 @@ export function BottomSheet({
       onClick={(e) => e.target === ref.current && onClose()}
       className="fixed inset-x-0 top-auto bottom-0 m-0 mx-auto flex max-h-[92dvh] w-full max-w-[430px] flex-col rounded-t-xl bg-surface-default p-0 shadow-e3 backdrop:bg-text-primary/40 [&:not([open])]:hidden"
     >
-      <div className="overflow-y-auto px-5 pt-2 pb-[max(20px,env(safe-area-inset-bottom))]">
+      <div className="no-scrollbar overflow-y-auto px-5 pt-2 pb-[max(20px,env(safe-area-inset-bottom))]">
         <div aria-hidden="true" className="mx-auto mb-4 h-1 w-8 rounded-full bg-border-control" />
         <div className="flex items-center gap-1">
           {showClose && <IconButton icon="x" label="Close" onClick={onClose} className="-ml-3" />}

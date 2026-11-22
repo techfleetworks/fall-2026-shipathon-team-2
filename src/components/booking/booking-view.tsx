@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { PageHeader } from "@/components/ui/page-header";
 import { BookingTicket } from "@/components/ui/booking-ticket";
@@ -12,7 +12,8 @@ import { Icon } from "@/components/ui/icon";
 import { NavBar } from "@/components/ui/nav-bar";
 import { CATEGORY_WORDS } from "@/lib/mock-data";
 import { formatRange, formatTime, longDay, relativeDay, sameDay, shortDay } from "@/lib/slots";
-import { cancelBooking, isLateToCancel, isMissed, setReschedule, useHistoryCounts, type Booking } from "@/lib/account";
+import { cancelBooking, isLateToCancel, isMissed, setReschedule, useHistoryCounts, useProfile, type Booking } from "@/lib/account";
+import { RemindersSheet } from "@/components/onboarding/reminders-sheet";
 import { bookingLimit, type Business, type Service } from "@/lib/mock-data";
 import { InfoBox } from "@/components/ui/info-box";
 import { FavoriteHeart } from "@/components/ui/favorite-heart";
@@ -58,6 +59,10 @@ export function BookingView({ bookingId }: { bookingId: string }) {
   const router = useRouter();
   const data = useBooking(bookingId);
   const counts = useHistoryCounts();
+  const profile = useProfile();
+  // Right after booking (`?new=1`), offer reminders once if never asked before.
+  const justBooked = useSearchParams().get("new") === "1";
+  const [remindersDone, setRemindersDone] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   if (data.state === "loading") return <BookingLoading title="Your booking" />;
@@ -242,6 +247,11 @@ export function BookingView({ bookingId }: { bookingId: string }) {
         </div>
         <NavBar active="bookings" />
       </div>
+
+      <RemindersSheet
+        open={justBooked && !remindersDone && (profile?.reminders === undefined || profile?.reminders === null)}
+        onDone={() => setRemindersDone(true)}
+      />
 
       <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title={`Cancel your ${startTime} ${words.booking}?`}>
         <p className="mt-3 text-body-lg text-text-secondary">

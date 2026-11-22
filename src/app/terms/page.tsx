@@ -80,7 +80,7 @@ export default function TermsPage() {
 
       <p className="mt-8 text-sm text-muted">
         See also our{" "}
-        <Link href="/privacy" className="font-semibold text-primary underline">Privacy Policy</Link>.
+        <Link href="/privacy" replace className="font-semibold text-primary underline">Privacy Policy</Link>.
       </p>
     </main>
   );

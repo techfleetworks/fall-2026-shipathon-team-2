@@ -27,18 +27,11 @@ export function BrowseHeader({ mode, resultCount }: { mode: "list" | "map"; resu
 
   return (
     <>
-      <div className="flex items-center justify-between px-5 pt-4">
+      <div className="px-5 pt-4">
         <p className="text-title-md text-text-heading">
           {greeting}
           {profile?.firstName ? `, ${profile.firstName}` : ""}
         </p>
-        <Link
-          href="/account/settings"
-          aria-label="Settings"
-          className="-mr-3 inline-flex h-12 w-12 items-center justify-center rounded-full text-text-primary hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
-        >
-          <Icon name="sliders" />
-        </Link>
       </div>
 
       <div className="mt-2 flex items-center justify-between px-5">
@@ -83,7 +76,7 @@ export function BrowseHeader({ mode, resultCount }: { mode: "list" | "map"; resu
         </button>
       </div>
 
-      <div className="mt-3 flex gap-2 overflow-x-auto px-5 pb-1" role="tablist" aria-label="Service">
+      <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto px-5 pb-1" role="tablist" aria-label="Service">
         {TABS.map((t) => (
           <Chip key={t.key} as="tab" selected={browse.tab === t.key} onClick={() => setTab(t.key)}>
             {t.label}

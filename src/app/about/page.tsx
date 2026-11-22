@@ -9,7 +9,6 @@ import { Chip } from "@/components/ui/chip";
 import { Icon } from "@/components/ui/icon";
 import { updateProfile } from "@/lib/account";
 import { useRequirePhone } from "@/components/onboarding/use-require-phone";
-import { RemindersSheet } from "@/components/onboarding/reminders-sheet";
 import { LocationSheet } from "@/components/onboarding/location-sheet";
 
 // O5 · About you. Step 5 of 5 (last step). First name, area/ZIP, and what they
@@ -23,7 +22,6 @@ export default function AboutPage() {
   const [firstName, setFirstName] = useState(profile?.firstName ?? "");
   const [area, setArea] = useState(profile?.area ?? "");
   const [needs, setNeeds] = useState<string[]>(profile?.needs ?? []);
-  const [remindersOpen, setRemindersOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
 
   const toggle = (n: string) =>
@@ -52,9 +50,8 @@ export default function AboutPage() {
             disabled={!ready}
             onClick={() => {
               updateProfile({ firstName: firstName.trim(), area: area.trim(), needs });
-              // O5b: ask about reminders once; afterwards it lives in Settings.
-              if (profile?.reminders === undefined || profile?.reminders === null) setRemindersOpen(true);
-              else router.push("/deals");
+              // Reminders are asked after the first booking (not during sign-up).
+              router.push("/deals");
             }}
           >
             Confirm &amp; browse
@@ -108,16 +105,8 @@ export default function AboutPage() {
         <span className="font-bold text-text-primary">Laundry</span> is wash &amp; fold.{" "}
         <span className="font-bold text-text-primary">Clothing care</span> is pressing &amp; dry cleaning.
       </p>
-      <p className="mt-1 text-body-sm text-text-secondary">We&rsquo;ll show these first. You can still browse everything.</p>
 
       <LocationSheet open={locationOpen} onClose={() => setLocationOpen(false)} onArea={setArea} />
-      <RemindersSheet
-        open={remindersOpen}
-        onDone={() => {
-          setRemindersOpen(false);
-          router.push("/deals");
-        }}
-      />
     </StepShell>
   );
 }

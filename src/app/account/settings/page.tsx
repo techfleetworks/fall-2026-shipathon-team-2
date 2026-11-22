@@ -4,8 +4,8 @@ import { NavBar } from "@/components/ui/nav-bar";
 import { ListGroup, ListRow } from "@/components/ui/list-row";
 import { NotificationSettings } from "./notification-settings";
 
-// H3s · Settings. Area and search preferences have no screen yet ("Soon");
-// language and accessibility are informational for the LA County pilot.
+// H3s · Settings. Area, search preferences, language and accessibility have no
+// screen yet, so they're marked "Soon" for the LA County pilot.
 export default function SettingsPage() {
   return (
     <Screen>
@@ -18,7 +18,7 @@ export default function SettingsPage() {
 
         <ListGroup className="mt-3">
           <ListRow icon="globe" title="Language" value="English" soon />
-          <ListRow icon="accessibility" title="Accessibility" sub="Text size follows your phone settings" />
+          <ListRow icon="accessibility" title="Accessibility" sub="Text size and display options" soon />
         </ListGroup>
 
         <h2 className="mt-5 mb-2 text-label-md text-text-secondary">Notifications</h2>

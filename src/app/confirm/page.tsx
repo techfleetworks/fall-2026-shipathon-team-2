@@ -111,7 +111,8 @@ export default function ConfirmPage() {
       regular: service.regularPrice,
       remind,
     });
-    router.push(`/booked/${b.id}`);
+    // `new=1` lets the Booked screen offer reminders once, right after booking.
+    router.push(`/booked/${b.id}?new=1`);
   };
 
   return (

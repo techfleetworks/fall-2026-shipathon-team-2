@@ -123,7 +123,7 @@ export default function DealsPage() {
                 See all<span className="sr-only"> favorites</span>
               </Link>
             </div>
-            <div className="mt-3 flex gap-3 overflow-x-auto px-5 pb-1">
+            <div className="no-scrollbar mt-3 flex gap-3 overflow-x-auto px-5 pb-1">
               {favorites.map((id) => {
                 const b = getBusiness(id);
                 if (!b) return null;
