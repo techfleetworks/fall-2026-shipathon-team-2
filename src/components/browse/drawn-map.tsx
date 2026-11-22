@@ -24,14 +24,17 @@ export function DrawnMap({
   selected,
   onSelect,
   area,
+  className,
 }: {
   pins: MapPin[];
   selected: string | null;
   onSelect: (businessId: string) => void;
   area?: string;
+  /** Size override (default h-72). */
+  className?: string;
 }) {
   return (
-    <div className="relative h-72 w-full overflow-hidden bg-surface-muted" aria-label="Map of nearby offers (illustrative)" role="group">
+    <div className={cn("relative w-full overflow-hidden bg-surface-muted", className ?? "h-72")} aria-label="Map of nearby offers (illustrative)" role="group">
       {/* Streets, park and freeway — decorative */}
       <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
         <path d="M58 60 Q70 52 82 62 L86 82 Q72 90 60 84 Z" className="fill-status-positive-surface" />
