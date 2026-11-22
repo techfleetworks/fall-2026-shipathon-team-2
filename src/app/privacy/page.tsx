@@ -50,7 +50,7 @@ export default function PrivacyPage() {
 
       <H2>What we collect</H2>
       <ul className="mt-2 flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed">
-        <li><strong>Account details:</strong> your first name and your US mobile phone number. We sign you in by texting a 6-digit code to that number, so there is no password. The code is used once and not kept.</li>
+        <li><strong>Account details:</strong> your first name and your US mobile phone number. We sign you in with a 6-digit code. In this demo, the code is shown on screen and no text message is sent. There is no password, and the code is used once and not kept.</li>
         <li><strong>Location:</strong> your ZIP code, so we can show businesses near you. If a map is used, device location is used only while you are on the map and is not stored.</li>
         <li><strong>Bookings:</strong> what you booked, with which business, your time slot, and whether you showed up. We use this to set how many bookings you can hold at once.</li>
         <li><strong>Preferences:</strong> any settings you choose (for example service filters), so we can tailor the slots we show.</li>

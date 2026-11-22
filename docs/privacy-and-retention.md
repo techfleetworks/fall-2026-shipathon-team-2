@@ -19,8 +19,9 @@ time.
 ## What we collect
 
 - **Account details:** your first name and your US mobile phone number. We sign
-  you in by texting a 6-digit code to that number, so there is no password. The
-  code is used once and not kept.
+  you in with a 6-digit code. In this demo, the code is shown on screen and no
+  text message is sent. There is no password, and the code is used once and not
+  kept.
 - **Location:** your ZIP code, so we can show businesses near you. If a map is
   used, device location is used only while you are on the map and is not stored.
 - **Bookings:** what you booked, with which business, your time slot, and whether
