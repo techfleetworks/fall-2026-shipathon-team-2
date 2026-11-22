@@ -22,15 +22,6 @@ export async function AccountBar() {
   return (
     <div className={barClass}>
       <span className="text-zinc-600 dark:text-zinc-400">{user.email}</span>
-      <span
-        className={
-          user.verified
-            ? "rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100"
-            : "rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
-        }
-      >
-        {user.verified ? "Verified" : "Not verified"}
-      </span>
       <form action={signOut}>
         <button type="submit" className="font-medium hover:underline">
           Sign out
