@@ -4,15 +4,14 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 import { cn } from "@/lib/cn";
 
 // Slide-up panel over the map (like Maps apps). The map stays still behind it,
-// and the panel rests at one of three stops: low (mostly map), half, or high
-// (mostly list).
+// and the panel starts halfway. Slide or tap it all the way up (mostly list)
+// or all the way down (mostly map).
 // - Below the top stop, swiping anywhere on the panel moves the panel; the list
 //   doesn't scroll. Once the panel is all the way up, the list scrolls.
-// - A quick flick goes to the next stop; a slow drag settles on the nearest.
 // - Tapping the top of the panel goes all the way up (or all the way down if
 //   it's already up), so dragging is never required. Arrow keys step one stop.
 // Moves with transform (GPU), not height, so it tracks the finger smoothly.
-const LOW_PX = 120; // handle + "N offers nearby" peeking out
+const LOW_PX = 76; // just the handle + "N offers nearby": most of the map shows
 const FLICK = 0.45; // px per ms
 const SETTLE = "transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1)";
 
@@ -120,21 +119,14 @@ export function MapSheet({
     if (s.active) {
       s.active = false;
       setDragging(false);
-      // Any deliberate slide commits in its direction (like Maps apps): go to
-      // the next stop past where the finger left the panel. A barely-moved
-      // drag (< 24px) with no flick settles back.
-      const all = [0, 1, 2] as Stop[];
+      // Any deliberate slide (24px+ or a flick) goes all the way in its
+      // direction: up = fully up, down = fully down (most of the map). Half is
+      // only the starting position. A barely-moved drag settles back.
       const travel = s.offset - s.startOffset; // < 0 = moved up
       let next: Stop;
-      if (Math.abs(travel) < 24 && Math.abs(s.v) < FLICK) {
-        next = all.reduce((a, b) => (Math.abs(offsetFor(b) - s.offset) < Math.abs(offsetFor(a) - s.offset) ? b : a));
-      } else if (travel < 0 || (Math.abs(travel) < 24 && s.v < 0)) {
-        // Up: the lowest stop that is above the current position (else the top).
-        next = (all.find((x) => offsetFor(x) < s.offset - 1 && x > 0 && offsetFor(x) <= s.startOffset - 1) ?? 2) as Stop;
-      } else {
-        // Down: the highest stop that is below the current position (else low).
-        next = ([...all].reverse().find((x) => offsetFor(x) > s.offset + 1 && offsetFor(x) >= s.startOffset + 1) ?? 0) as Stop;
-      }
+      if (Math.abs(travel) >= 24) next = travel < 0 ? 2 : 0;
+      else if (Math.abs(s.v) > FLICK) next = s.v < 0 ? 2 : 0;
+      else next = stop;
       if (next === stop) apply(offsetFor(next), true);
       else setStop(next);
     } else if (s.pending && s.fromHandle && e.type === "pointerup") {
