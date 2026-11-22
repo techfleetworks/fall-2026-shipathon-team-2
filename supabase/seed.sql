@@ -1,35 +1,73 @@
--- Demo data for Plenty, from the frontend's fake-data.ts (the "bag" model).
--- DEMO RESET: wipes reservations, listings and stores, then re-creates them with
--- dates relative to today (Los Angeles time). Re-run on demo day so nothing is
--- expired. Never touches profiles or sign-in accounts.
+-- Sparetime demo data for schema v2 (businesses, services, off-peak slots).
+-- Source: src/lib/mock-data.ts on main. All businesses are FICTIONAL sample
+-- shops (the app says so). Run AFTER supabase/schema.sql (v2).
+--
+-- DEMO RESET: wipes bookings, slots, services and businesses, then re-creates
+-- them. Slots run for the next 7 days, in Los Angeles time, so nothing is in
+-- the past. Re-run on demo day. Never touches profiles, consents or sign-in.
 
-delete from public.reservations;
-delete from public.listings;
-delete from public.stores;
+delete from public.bookings;
+delete from public.slots;
+delete from public.services;
+delete from public.businesses;
 
-insert into public.stores (name, address, zip_code) values
-  ('Sunrise Bakery', '220 Rose Ave, Los Angeles, CA 90291', '90291'),
-  ('Vida Market',    '3420 Motor Ave, Los Angeles, CA 90034', '90034'),
-  ('Corner Fresh',   '3715 Overland Ave, Los Angeles, CA 90034', '90034'),
-  ('Palms Pantry',   '3600 Palms Blvd, Los Angeles, CA 90034', '90034');
+-- ───────────── 1. Businesses ─────────────
+-- zip_code: looked up from each street name. Check these before the demo.
+insert into public.businesses (name, category, address, zip_code) values
+  ('Fresh Cuts Barbershop', 'hair',         '1420 W 7th St, Westlake, Los Angeles, CA 90017',     '90017'),
+  ('Studio 7 Salon',        'hair',         '815 S Hill St, Downtown Los Angeles, CA 90014',      '90014'),
+  ('Main St Barbers',       'hair',         '2047 S Main St, South Park, Los Angeles, CA 90007',  '90007'),
+  ('Spin City Laundry',     'laundry',      '535 Alvarado St, Westlake, Los Angeles, CA 90057',   '90057'),
+  ('Prime Press',           'dry_cleaning', '312 E 2nd St, Little Tokyo, Los Angeles, CA 90012',  '90012');
 
--- day = days from today (0 = today); h1/h2 = pickup start/end hour, LA time.
-with d as (select (now() at time zone 'America/Los_Angeles')::date as today)
-insert into public.listings
-  (store_id, title, description, category, dietary_tags,
-   price_cents, original_price_cents, quantity_left, best_by, pickup_start, pickup_end)
-select s.id, v.title, v.description, v.category, v.tags,
-       v.price, v.orig, v.qty, d.today + v.best_by_days,
-       ((d.today + v.day) + make_time(v.h1, 0, 0)) at time zone 'America/Los_Angeles',
-       ((d.today + v.day) + make_time(v.h2, 0, 0)) at time zone 'America/Los_Angeles'
-from d,
-(values
-  ('Sunrise Bakery', 'Bread + produce bag',   'A mixed bag of day-fresh bakery and produce.',        'bakery',  '{vegetarian}'::text[],               600, 1500, 3,  1, 0, 15, 17),
-  ('Vida Market',    'Dairy + eggs bundle',   'Fridge staples close to their best-by date.',         'dairy',   '{vegetarian}'::text[],               500, 1100, 5,  3, 0, 16, 18),
-  ('Corner Fresh',   'Produce surprise bag',  'Whatever''s ripe and ready — great value.',           'produce', '{vegan,vegetarian}'::text[],         400,  900, 4,  2, 0, 17, 19),
-  ('Palms Pantry',   'Pantry staples bag',    'Shelf-stable basics to stretch the week.',            'pantry',  '{vegan,vegetarian}'::text[],           0, 1200, 6, 30, 0, 13, 16),
-  ('Sunrise Bakery', 'Pastry box',            'The last box of the day — croissants and more.',      'bakery',  '{vegetarian}'::text[],               300, 1000, 1,  1, 0, 16, 18),
-  ('Corner Fresh',   'Veggie + fruit bag',    'A free bag of produce for verified members.',         'produce', '{vegan,vegetarian,gluten_free}'::text[], 0, 1000, 2,  2, 1, 10, 12),
-  ('Vida Market',    'Deli lunch bag',        'Sold-out example.',                                   'pantry',  '{}'::text[],                         500, 1100, 0,  1, 0, 12, 14)
-) as v(store_name, title, description, category, tags, price, orig, qty, best_by_days, day, h1, h2)
-join public.stores s on s.name = v.store_name;
+-- ───────────── 2. Services (regular prices in dollars, converted to cents below) ─────────────
+insert into public.services (business_id, name, description, duration_minutes, regular_price_cents)
+select b.id, v.name, v.description, v.minutes, v.regular_dollars * 100
+from (values
+  ('Fresh Cuts Barbershop', 'Haircut',                 'Wash, cut and a hot-towel finish',                       30, 28),
+  ('Fresh Cuts Barbershop', 'Beard trim',              'Trim, line-up and a hot-towel finish',                   30, 15),
+  ('Fresh Cuts Barbershop', 'Kids’ haircut',           'Cut and style for kids under 12',                        30, 20),
+  ('Studio 7 Salon',        'Wash, cut and style',     'Wash, cut and blow-dry',                                 60, 40),
+  ('Studio 7 Salon',        'Blowout',                 'Wash and blow-dry',                                      30, 30),
+  ('Main St Barbers',       'Classic cut',             'Clipper or scissor cut and a neck shave',                30, 22),
+  ('Spin City Laundry',     'Wash and fold, 15 lb',    'Wash, dry and fold, ready the same evening',             60, 15),
+  ('Spin City Laundry',     'Wash and fold, 25 lb',    'Wash, dry and fold, ready the same evening',             60, 24),
+  ('Prime Press',           'Shirt press (5 items)',   'Press and hang, ready the next day',                     60, 30)
+) as v(business_name, name, description, minutes, regular_dollars)
+join public.businesses b on b.name = v.business_name;
+
+-- ───────────── 3. Off-peak slots, next 7 days (Los Angeles time) ─────────────
+-- offpeak_dollars = the discounted price paid in cash at the visit.
+-- days: 0 = Sunday ... 6 = Saturday. start_hour/end_hour = the off-peak window (24h).
+-- seats = how many people one slot holds (laundry has several machines).
+with rules (business_name, service_name, offpeak_dollars, seats, days, start_hour, end_hour) as (values
+  ('Fresh Cuts Barbershop', 'Haircut',                 12, 1, '{1,2,3,4,5}'::int[], 13, 17),
+  ('Fresh Cuts Barbershop', 'Beard trim',               8, 1, '{1,2,3,4,5}'::int[], 13, 17),
+  ('Fresh Cuts Barbershop', 'Kids’ haircut',           10, 1, '{1,2,3,4,5}'::int[], 13, 17),
+  ('Studio 7 Salon',        'Wash, cut and style',     18, 1, '{2,3,4,5}'::int[],   13, 16),
+  ('Studio 7 Salon',        'Blowout',                 14, 1, '{2,3,4,5}'::int[],   13, 16),
+  ('Main St Barbers',       'Classic cut',             10, 1, '{1,2,3,4,5}'::int[], 15, 17),
+  ('Spin City Laundry',     'Wash and fold, 15 lb',     6, 3, '{1,2,3,4,5}'::int[], 10, 14),
+  ('Spin City Laundry',     'Wash and fold, 25 lb',    10, 3, '{1,2,3,4,5}'::int[], 10, 14),
+  ('Prime Press',           'Shirt press (5 items)',    9, 1, '{1,2,3,4,5}'::int[], 11, 14)
+),
+days as (
+  select ((now() at time zone 'America/Los_Angeles')::date + g) as day
+  from generate_series(0, 6) as g
+)
+insert into public.slots (service_id, starts_at, ends_at, price_cents, seats_total, seats_left)
+select
+  s.id,
+  ((d.day + make_time(r.start_hour, 0, 0)) + k.n * make_interval(mins => s.duration_minutes))
+    at time zone 'America/Los_Angeles',
+  ((d.day + make_time(r.start_hour, 0, 0)) + (k.n + 1) * make_interval(mins => s.duration_minutes))
+    at time zone 'America/Los_Angeles',
+  r.offpeak_dollars * 100,
+  r.seats,
+  r.seats
+from rules r
+join public.businesses b on b.name = r.business_name
+join public.services s on s.business_id = b.id and s.name = r.service_name
+cross join days d
+cross join lateral generate_series(0, ((r.end_hour - r.start_hour) * 60 / s.duration_minutes) - 1) as k(n)
+where extract(dow from d.day)::int = any (r.days);
