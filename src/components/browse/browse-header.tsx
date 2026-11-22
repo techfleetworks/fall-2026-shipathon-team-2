@@ -49,12 +49,12 @@ export function BrowseHeader({ mode, resultCount }: { mode: "list" | "map"; resu
       <div className="mt-3 flex items-center gap-2 px-5">
         <label className="flex h-12 flex-1 items-center gap-2 rounded-full bg-surface-muted px-4 focus-within:ring-2 focus-within:ring-focus-ring">
           <Icon name="search" size={20} className="text-text-secondary" />
-          <span className="sr-only">Search offers or places</span>
+          <span className="sr-only">Search deals or shops</span>
           <input
             type="search"
             value={browse.query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search offers or places"
+            placeholder="Search deals or shops"
             className="w-full bg-transparent text-body-md text-text-primary outline-none placeholder:text-text-secondary"
           />
         </label>
