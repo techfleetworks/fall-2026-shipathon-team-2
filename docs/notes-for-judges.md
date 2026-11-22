@@ -8,7 +8,8 @@ This page lists each one and why.
 ## What is real
 
 - **Your account.** Sign-up uses the phone number and name you type. Nothing is
-  pre-filled.
+  pre-filled. No text is sent, so **any US phone number works** — the code appears
+  on screen (see below).
 - **Your bookings.** Picking a time and tapping **Book slot** creates a real booking
   with its own booking ID and 6-digit code. It shows in **My bookings**, can be
   cancelled or rescheduled, and moves to **Past** when the visit is done.
@@ -28,7 +29,7 @@ This page lists each one and why.
 | What | How the demo handles it | Why |
 |---|---|---|
 | **The businesses** | The 5 shops, their services, prices, hours, descriptions and photos are **sample data**. | We haven't partnered with or spoken to any businesses yet, so we couldn't present real information on a business's behalf. The shops are fictional; photos are AI-generated. |
-| **The sign-up code** | The app creates a random 6-digit code and shows it in a "text message" banner labelled *Demo*. The code is really checked (a wrong code is rejected). | Real text messages need a paid SMS provider (e.g. Twilio) and US carrier registration (A2P 10DLC), which takes days to weeks. In the live app this code arrives by text. |
+| **The sign-up code** | The app creates a random 6-digit code and shows it in a "text message" banner labelled *Demo*. Because no text is actually sent, **you can use any US phone number** — the code appears on screen and is really checked (a wrong code is rejected). | Real text messages need a paid SMS provider (e.g. Twilio) and US carrier registration (A2P 10DLC), which takes days to weeks. In the live app this code arrives by text. |
 | **The map** | **Deals → Map** shows a **drawn map** with price pins, not a real street map. | The sample shops use real LA street addresses. A real map would put pins on real buildings that may hold real businesses, which could suggest a real shop is on Sparetime when it isn't. A drawn map shows how the feature works without that risk (and without depending on a live map service during the pitch). |
 | **The shop confirming your visit** | On **Show code**, tapping **Done** stands in for the shop confirming you showed up. There is also a simple **shop view** (`/staff/confirm`, linked from Show code) where staff type your 6-digit code; only the right code confirms the visit. | The business side of the app isn't designed or built yet. The shop view is a stand-in built from our design system, and in the demo it checks bookings saved on the same phone. **Security note:** this check happens **on the device**, which is fine for a demo but not safe for real money. A real version must verify the 6-digit code **on the server**, tied to that booking, with a **limit on wrong attempts** (so a code can't be guessed) — i.e. proper authorization and rate limiting, never a client-side check. |
 | **"Sorry, that time isn't available any more"** | Appears on **Pick a time** if the time you chose has started or closed before you confirm, with the nearest open time already selected. | With everything saved on one phone, nobody else can book your time first. That case needs the shared database. |

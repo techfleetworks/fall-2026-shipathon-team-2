@@ -93,7 +93,8 @@ person does is real; only the businesses are sample data.
 
 - **Sign-up** — the phone number and name you type (nothing is pre-filled), a
   6-digit code that is really checked, then your reason, timing, area and
-  services. "Good morning, [your name]" on Deals.
+  services. No texts are sent, so **you can use any US phone number** — the code
+  appears on screen. "Good morning, [your name]" on Deals.
 - **Find** — every offer from 5 sample shops (9 offers), with **live open times**
   from each shop's off-peak hours. **Search**, service tabs, a **Filters** sheet
   (day, time of day, distance, transit, price) and a **map view**.
@@ -112,14 +113,15 @@ person does is real; only the businesses are sample data.
 | What | Why |
 |---|---|
 | **Sample businesses** | We haven't partnered with or spoken to any shops yet, so we couldn't present real information on a business's behalf. |
-| **Sign-up code shown on screen** (labelled *Demo*) | Real texts need a paid SMS provider and US carrier registration (days to weeks). The code is still really checked. |
+| **Sign-up code shown on screen** (labelled *Demo*) | Real texts need a paid SMS provider and US carrier registration (days to weeks). No text is sent, so **any US number works** for the demo; the code is still really checked. |
 | **Drawn map** | The sample shops use real LA addresses; a real map would put pins on real buildings that may hold real businesses. |
 | **"Done" on Show code** stands in for the shop confirming the visit | The business side isn't built yet. |
-| **Data saved on the device** (Log out clears it) | Supabase is set up but not yet connected to these screens. |
+| **Data saved on the device** (kept per phone number; **Log out** keeps your account and signing back in restores it, **Start fresh on this device** wipes it) | Supabase is set up but not yet connected to these screens. |
 
-**Try it:** Welcome → **Get started**, use any US-format phone number (the code
-appears on screen), book any shop, then tap **Done** on Show code to finish the
-visit. **Account → Log out** resets everything on that device.
+**Try it:** Welcome → **Get started**, use any US-format phone number (no text is
+sent — the code appears on screen), book any shop, then tap **Done** on Show code
+to finish the visit. **Account → Log out** keeps your account (sign back in with
+the same number to restore it); **Start fresh on this device** wipes it.
 
 ## What we decided (and what's still open)
 
