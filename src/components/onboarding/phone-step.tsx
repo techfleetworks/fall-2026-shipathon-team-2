@@ -78,7 +78,7 @@ export function PhoneStep({ mode }: { mode: "signup" | "signin" }) {
       <p className="mt-3 rounded-lg bg-surface-muted px-4 py-3 text-body-sm text-text-primary">
         <span className="font-bold">Demo:</span> no texts are sent. Your {signin ? "sign-in" : "sign-up"} code appears on the
         next screen, and your number stays on this phone.
-        {signin && " Accounts are saved on this phone only, so a new number here starts a new account."}
+        {signin && " Signing in with the number you used restores your account on this phone; a new number starts a fresh one."}
       </p>
     </StepShell>
   );

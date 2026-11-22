@@ -26,11 +26,14 @@ at the bottom).
 
 ### Start clean
 
-The app saves your account **on this device/browser**, so you may be picking up where
-someone left off. To test from scratch:
+The app saves your account **on this device/browser** (under your phone number), so you
+may be picking up where someone left off.
 
-- Go to **Account** (bottom nav) → **Log out**. That clears everything on this device
-  and drops you back at Welcome.
+- **Log out** (Account → Log out) ends the session but **keeps your account** — sign
+  back in with the same number and your bookings are still there. Good for testing that
+  re-login restores data.
+- To test **completely from scratch**, use **Account → Start fresh on this device** (under
+  Log out). That wipes every account in this browser and can't be undone.
 
 > **Some states depend on the clock** — a booking in the next hour, a booking whose time
 > already passed, "it's today". Today is a weekend and the sample shops only have
@@ -68,6 +71,9 @@ someone left off. To test from scratch:
 - [ ] From **Welcome**, tap **Sign in** (not Get started).
 - [ ] The screen says **"Welcome back"** (its own screen, not the sign-up one).
 - [ ] Entering your number + the demo code brings you straight to Deals.
+- [ ] **Re-login restores your data:** book something, **Log out**, then **Sign in**
+  with the **same number** → your booking and favorites are **still there** (not an
+  empty account).
 
 ## 3. Browse the Deals
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/icon";
-import { clearAccount, maskPhone, useProfile } from "@/lib/account";
+import { resetDevice, signOut, maskPhone, useProfile } from "@/lib/account";
 
 // Profile card: the person's own first name and masked phone (from sign-up).
 export function ProfileCard() {
@@ -40,20 +40,40 @@ export function ProfileCard() {
   );
 }
 
-// Log out forgets everything saved on this device and returns to Welcome, so
-// the next person (or the next demo run) starts clean.
-export function LogOutButton() {
+// Log out ends the session and returns to Welcome. The account stays saved
+// under its phone number, so signing back in restores it. "Start fresh" is the
+// deliberate wipe for handing a shared demo phone to the next person.
+export function AccountActions() {
   const router = useRouter();
+
+  const startFresh = () => {
+    const ok = window.confirm(
+      "Start fresh on this device?\n\nThis erases every account saved in this browser — for handing a demo phone to the next person. It can't be undone.",
+    );
+    if (!ok) return;
+    resetDevice();
+    router.push("/welcome");
+  };
+
   return (
-    <button
-      type="button"
-      onClick={() => {
-        clearAccount();
-        router.push("/welcome");
-      }}
-      className="inline-flex min-h-[48px] items-center rounded-full px-6 text-label-lg text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
-    >
-      Log out
-    </button>
+    <div className="mt-6 flex flex-col items-center gap-2">
+      <button
+        type="button"
+        onClick={() => {
+          signOut();
+          router.push("/welcome");
+        }}
+        className="inline-flex min-h-[48px] items-center rounded-full px-6 text-label-lg text-action-primary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+      >
+        Log out
+      </button>
+      <button
+        type="button"
+        onClick={startFresh}
+        className="inline-flex min-h-[48px] items-center rounded-full px-6 text-body-sm text-text-secondary hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+      >
+        Start fresh on this device
+      </button>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 import { Screen, ScreenBody } from "@/components/ui/screen";
 import { NavBar } from "@/components/ui/nav-bar";
 import { ListGroup, ListRow } from "@/components/ui/list-row";
-import { LogOutButton, ProfileCard } from "./account-client";
+import { AccountActions, ProfileCard } from "./account-client";
 import { BookingLimitRow } from "./limit-client";
 
 // H3 · Account. Customer support has no screen yet, so it's marked "Soon".
@@ -23,9 +23,7 @@ export default function AccountPage() {
           <ListRow icon="lock" title="Privacy and your data" href="/account/privacy" />
         </ListGroup>
 
-        <div className="mt-6 flex justify-center">
-          <LogOutButton />
-        </div>
+        <AccountActions />
       </ScreenBody>
       <NavBar active="account" />
     </Screen>

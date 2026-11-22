@@ -80,6 +80,9 @@ interface AccountState {
 }
 
 const KEY = "sparetime.account.v1";
+// Each person's durable data is also kept under their phone number, so logging
+// out ends the session without losing anything and signing back in restores it.
+const PERSON_PREFIX = "sparetime.person.v1:";
 const EMPTY: AccountState = {
   profile: null,
   pending: null,
@@ -103,6 +106,32 @@ export const RESEND_AFTER_SECONDS = 30;
 let state: AccountState | null = null;
 const listeners = new Set<() => void>();
 
+/** The durable, person-owned part of an account (kept per phone number). */
+type PersonData = Pick<AccountState, "profile" | "bookings" | "favorites">;
+
+const personKey = (phone: string) => PERSON_PREFIX + phoneDigits(phone);
+
+/** Save this person's durable data under their phone, so it survives log out. */
+function archivePerson(s: AccountState) {
+  if (typeof window === "undefined" || !s.profile?.phone) return;
+  try {
+    const data: PersonData = { profile: s.profile, bookings: s.bookings, favorites: s.favorites };
+    localStorage.setItem(personKey(s.profile.phone), JSON.stringify(data));
+  } catch {
+    /* ignore */
+  }
+}
+
+/** The account saved for this phone on this device, if any. */
+function loadPerson(phone: string): PersonData | null {
+  try {
+    const raw = localStorage.getItem(personKey(phone));
+    return raw ? (JSON.parse(raw) as PersonData) : null;
+  } catch {
+    return null;
+  }
+}
+
 function load(): AccountState {
   if (typeof window === "undefined") return EMPTY;
   if (state) return state;
@@ -122,6 +151,7 @@ function save(next: AccountState) {
   } catch {
     /* storage unavailable (private mode): keep it in memory for this visit */
   }
+  archivePerson(next);
   listeners.forEach((l) => l());
 }
 
@@ -210,22 +240,30 @@ export function sendCode(phone: string) {
 }
 
 /**
- * Checks the code. On success the phone is verified: the same number keeps its
- * existing profile (signing back in); a different number starts a fresh one.
+ * Checks the code. On success the phone is verified. Signing in with the number
+ * already active keeps the current session as-is. A different number restores
+ * that person's saved account on this device (bookings, favorites), or starts a
+ * fresh one if they've never signed up here — so logging out and back in brings
+ * your data back (it's kept under your phone number).
  */
 export function verifyCode(input: string): boolean {
   const s = load();
   if (!s.pending || input !== s.pending.code) return false;
-  const samePerson = !!s.profile && s.profile.phone === s.pending.phone;
-  const profile = samePerson ? s.profile! : { ...BLANK_PROFILE, phone: s.pending.phone };
-  // A different phone number is a different person: start their history fresh.
+  const phone = s.pending.phone;
+  if (s.profile && s.profile.phone === phone) {
+    save({ ...s, pending: null });
+    return true;
+  }
+  const saved = loadPerson(phone);
   save({
     ...s,
-    profile,
+    profile: saved?.profile ?? { ...BLANK_PROFILE, phone },
+    bookings: saved?.bookings ?? [],
+    favorites: saved?.favorites ?? [],
     pending: null,
-    bookings: samePerson ? s.bookings : [],
-    favorites: samePerson ? s.favorites : [],
-    draft: samePerson ? s.draft : null,
+    draft: null,
+    reschedule: null,
+    slotGone: null,
   });
   return true;
 }
@@ -236,8 +274,20 @@ export function updateProfile(patch: Partial<Profile>) {
   save({ ...s, profile: { ...base, ...patch } });
 }
 
-/** Log out: forget everything saved on this device and start over. */
-export function clearAccount() {
+/**
+ * Log out: end the session on this device. The person's account is kept under
+ * their phone number, so signing back in with the same number restores it.
+ */
+export function signOut() {
+  archivePerson(load());
+  save(EMPTY);
+}
+
+/**
+ * Start fresh on a shared demo device: forget every account saved in this
+ * browser. Can't be undone — use it to hand a demo phone to the next person.
+ */
+export function resetDevice() {
   try {
     Object.keys(localStorage)
       .filter((k) => k.startsWith("sparetime."))
