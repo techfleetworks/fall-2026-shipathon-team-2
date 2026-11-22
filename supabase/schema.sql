@@ -109,22 +109,62 @@ create index slots_service_idx on public.slots (service_id);
 create index bookings_user_idx on public.bookings (user_id);
 
 -- ───────────── 3. Trust ladder (counted from bookings, not stored) ─────────────
--- shows  = bookings the business confirmed (checked_in)
--- misses = no-shows, plus late cancels (less than 2 hours before the start)
--- limit  = how many active bookings the person may hold
+-- Matches the app (PR #22, src/lib/account.ts):
+--   kept  = bookings the business confirmed (checked_in)
+--   miss  = no-show, a late cancel (less than 2 hours before the start), or a
+--           booking still "booked" after its slot has ended (no confirmation)
+--   Two misses reset the counts to zero, so the person starts climbing again.
+--   Limit: 1 at first, 2 after 2 kept, no limit after 4 kept (counted since the last reset).
+-- Counts are worked out in time order, the same way the app does it.
 
-create or replace function public.booking_limit(p_shows integer, p_misses integer)
+drop function if exists public.booking_limit(integer, integer);
+
+create or replace function public.booking_limit(p_kept integer)
 returns integer
 language sql
 immutable
 set search_path = ''
 as $$
   select case
-    when p_misses >= 2 then 1
-    when p_shows >= 4 then 1000
-    when p_shows >= 2 then 2
+    when p_kept >= 4 then 1000
+    when p_kept >= 2 then 2
     else 1
   end;
+$$;
+
+create or replace function public.trust_counts(p_user uuid)
+returns table (kept integer, missed integer)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  r record;
+  v_kept integer := 0;
+  v_missed integer := 0;
+begin
+  for r in
+    select b.status, b.cancelled_at, s.starts_at, s.ends_at
+    from public.bookings b
+    join public.slots s on s.id = b.slot_id
+    where b.user_id = p_user
+    order by s.starts_at
+  loop
+    if r.status = 'checked_in' then
+      v_kept := v_kept + 1;
+    elsif r.status = 'no_show'
+       or (r.status = 'cancelled' and r.cancelled_at > r.starts_at - interval '2 hours')
+       or (r.status = 'booked' and r.ends_at <= now()) then
+      v_missed := v_missed + 1;
+      if v_missed >= 2 then
+        v_kept := 0;
+        v_missed := 0;
+      end if;
+    end if;
+  end loop;
+  return query select v_kept, v_missed;
+end;
 $$;
 
 -- What the signed-in user sees about their own ladder.
@@ -136,24 +176,22 @@ security definer
 set search_path = ''
 as $$
 declare
-  v_shows integer;
-  v_misses integer;
+  v_kept integer;
+  v_missed integer;
   v_active integer;
 begin
   if auth.uid() is null then
     raise exception 'Not signed in';
   end if;
-  select
-    count(*) filter (where b.status = 'checked_in'),
-    count(*) filter (where b.status = 'no_show'
-      or (b.status = 'cancelled' and b.cancelled_at > s.starts_at - interval '2 hours')),
-    count(*) filter (where b.status = 'booked')
-  into v_shows, v_misses, v_active
+
+  select t.kept, t.missed into v_kept, v_missed from public.trust_counts(auth.uid()) t;
+
+  select count(*)::integer into v_active
   from public.bookings b
   join public.slots s on s.id = b.slot_id
-  where b.user_id = auth.uid();
+  where b.user_id = auth.uid() and b.status = 'booked' and s.ends_at > now();
 
-  return query select v_shows, v_misses, v_active, public.booking_limit(v_shows, v_misses);
+  return query select v_kept, v_missed, v_active, public.booking_limit(v_kept);
 end;
 $$;
 
@@ -238,8 +276,7 @@ set search_path = ''
 as $$
 declare
   v_slot public.slots%rowtype;
-  v_shows integer;
-  v_misses integer;
+  v_kept integer;
   v_active integer;
   v_code text;
 begin
@@ -269,17 +306,13 @@ begin
     raise exception 'You already have a booking for this slot';
   end if;
 
-  select
-    count(*) filter (where b.status = 'checked_in'),
-    count(*) filter (where b.status = 'no_show'
-      or (b.status = 'cancelled' and b.cancelled_at > s.starts_at - interval '2 hours')),
-    count(*) filter (where b.status = 'booked')
-  into v_shows, v_misses, v_active
+  select t.kept into v_kept from public.trust_counts(auth.uid()) t;
+  select count(*)::integer into v_active
   from public.bookings b
   join public.slots s on s.id = b.slot_id
-  where b.user_id = auth.uid();
+  where b.user_id = auth.uid() and b.status = 'booked' and s.ends_at > now();
 
-  if v_active >= public.booking_limit(v_shows, v_misses) then
+  if v_active >= public.booking_limit(v_kept) then
     raise exception 'Booking limit reached';
   end if;
 
@@ -324,6 +357,9 @@ begin
   end if;
 
   select starts_at into v_starts from public.slots where id = v_booking.slot_id;
+  if v_starts <= now() then
+    raise exception 'This booking has already started';
+  end if;
 
   update public.bookings set status = 'cancelled', cancelled_at = now() where id = p_booking_id;
 
@@ -380,6 +416,7 @@ revoke execute on function public.accept_terms(text) from public, anon;
 revoke execute on function public.book_slot(uuid, integer) from public, anon;
 revoke execute on function public.cancel_booking(uuid) from public, anon;
 revoke execute on function public.my_trust_status() from public, anon;
+revoke execute on function public.trust_counts(uuid) from public, anon, authenticated;
 revoke execute on function public.confirm_show_up(uuid) from public, anon, authenticated;
 revoke execute on function public.mark_no_show(uuid) from public, anon, authenticated;
 grant execute on function public.accept_terms(text) to authenticated;
