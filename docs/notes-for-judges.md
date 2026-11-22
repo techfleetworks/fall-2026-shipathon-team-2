@@ -43,7 +43,7 @@ This page lists each one and why.
 - The business-side screens (posting off-peak slots; a full shop app for confirming
   visits).
 - Typing your reason "in your own words" at sign-up (designed in Figma as an
-  assistant). The team decided to save this for a later version.
+  AI assistant). The team decided to save this for a later version.
 
 ## Tips for trying it
 
